@@ -1,0 +1,371 @@
+package com.example.fithub.ui.navigation
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
+
+@Composable
+fun FitHubNavGraph(
+    navController: NavHostController,
+    startDestination: String = Screen.SPLASH
+) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+
+    MainScaffold(navController = navController, currentRoute = currentRoute) { padding ->
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = Modifier.padding(padding)
+        ) {
+            // ========================
+            // AUTH & ONBOARDING
+            // ========================
+            composable(Screen.SPLASH) {
+                PlaceholderScreen(
+                    title = "Splash",
+                    subtitle = "Auto-navigates to Landing or Dashboard"
+                )
+            }
+
+            composable(Screen.LANDING) {
+                PlaceholderScreen(
+                    title = "Landing",
+                    subtitle = "LOGIN / REGISTER"
+                )
+            }
+
+            composable(Screen.LOGIN) {
+                PlaceholderScreen(
+                    title = "Login",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Email/Password + Fingerprint"
+                )
+            }
+
+            composable(Screen.ONBOARDING_USER_DETAILS) {
+                PlaceholderScreen(
+                    title = "Onboarding · User Details",
+                    subtitle = "Step 1 of 7",
+                    onBack = { navController.navigateUp() }
+                )
+            }
+            composable(Screen.ONBOARDING_BIOMETRIC) {
+                PlaceholderScreen(
+                    title = "Onboarding · Biometric",
+                    subtitle = "Step 2 of 7",
+                    onBack = { navController.navigateUp() }
+                )
+            }
+            composable(Screen.ONBOARDING_AGE) {
+                PlaceholderScreen(
+                    title = "Onboarding · Age",
+                    subtitle = "Step 3 of 7",
+                    onBack = { navController.navigateUp() }
+                )
+            }
+            composable(Screen.ONBOARDING_GENDER) {
+                PlaceholderScreen(
+                    title = "Onboarding · Gender",
+                    subtitle = "Step 4 of 7",
+                    onBack = { navController.navigateUp() }
+                )
+            }
+            composable(Screen.ONBOARDING_HEIGHT) {
+                PlaceholderScreen(
+                    title = "Onboarding · Height",
+                    subtitle = "Step 5 of 7",
+                    onBack = { navController.navigateUp() }
+                )
+            }
+            composable(Screen.ONBOARDING_WEIGHT) {
+                PlaceholderScreen(
+                    title = "Onboarding · Weight",
+                    subtitle = "Step 6 of 7",
+                    onBack = { navController.navigateUp() }
+                )
+            }
+            composable(Screen.ONBOARDING_LIFESTYLE) {
+                PlaceholderScreen(
+                    title = "Onboarding · Lifestyle",
+                    subtitle = "Step 7 of 7",
+                    onBack = { navController.navigateUp() }
+                )
+            }
+            composable(Screen.ONBOARDING_COMPLETE) {
+                PlaceholderScreen(
+                    title = "Onboarding Complete",
+                    subtitle = "Confirm → Dashboard"
+                )
+            }
+
+            // ========================
+            // MAIN TABS
+            // ========================
+            composable(Screen.DASHBOARD) {
+                PlaceholderScreen(
+                    title = "Dashboard",
+                    subtitle = "Today's overview · Tap hero for Progress"
+                )
+            }
+            composable(Screen.JOURNAL) {
+                PlaceholderScreen(
+                    title = "Journal",
+                    subtitle = "Weight · Nutrition · Workouts"
+                )
+            }
+            composable(Screen.PLANS) {
+                PlaceholderScreen(
+                    title = "Fitness Hub",
+                    subtitle = "Recent · Created · Saved · Verified"
+                )
+            }
+            composable(Screen.GOALS) {
+                PlaceholderScreen(
+                    title = "Goals & Targets",
+                    subtitle = "Nutrition · Workout · Checkpoints · Weight"
+                )
+            }
+            composable(Screen.REWARDS) {
+                PlaceholderScreen(
+                    title = "Rewards",
+                    subtitle = "Particles · Achievements"
+                )
+            }
+
+            // ========================
+            // PROGRESS
+            // ========================
+            composable(Screen.PROGRESS_OVERVIEW) {
+                PlaceholderScreen(
+                    title = "Progress Overview",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Weight · Nutrition · Workouts"
+                )
+            }
+            composable(Screen.NUTRITION_OVERVIEW) {
+                PlaceholderScreen(
+                    title = "Nutrition Overview",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Goals vs Actual"
+                )
+            }
+            composable(Screen.WORKOUTS_OVERVIEW) {
+                PlaceholderScreen(
+                    title = "Workouts Overview",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Activity · Habits · Breakdown"
+                )
+            }
+
+            // ========================
+            // BODY & WEIGHT
+            // ========================
+            composable(Screen.BODY_WEIGHT) {
+                PlaceholderScreen(
+                    title = "Body & Weight",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Goal · Journey · Checkpoint log"
+                )
+            }
+            composable(Screen.CHECKPOINT_LOGGER) {
+                PlaceholderScreen(
+                    title = "Checkpoint Logger",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Record new weigh-in"
+                )
+            }
+            composable(Screen.CHECKPOINT_MANAGER) {
+                PlaceholderScreen(
+                    title = "Checkpoint Manager",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Frequency · Upcoming · Reminders"
+                )
+            }
+            composable(Screen.WEIGHT_GOAL) {
+                PlaceholderScreen(
+                    title = "Weight Goal",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Current vs Target"
+                )
+            }
+
+            // ========================
+            // FOOD
+            // ========================
+            composable(Screen.ADD_MEAL) {
+                PlaceholderScreen(
+                    title = "Add Meal",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Search · Category · Barcode · Camera"
+                )
+            }
+            composable(
+                route = Screen.LIST_FOOD,
+                arguments = listOf(navArgument("category") { type = NavType.StringType })
+            ) { entry ->
+                val category = entry.arguments?.getString("category").orEmpty()
+                PlaceholderScreen(
+                    title = "List · $category",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Browse foods"
+                )
+            }
+            composable(
+                route = Screen.FOOD_DETAILS,
+                arguments = listOf(navArgument("foodId") { type = NavType.StringType })
+            ) { entry ->
+                val foodId = entry.arguments?.getString("foodId").orEmpty()
+                PlaceholderScreen(
+                    title = "Food Details",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "id: $foodId"
+                )
+            }
+
+            // ========================
+            // WORKOUTS
+            // ========================
+            composable(Screen.VERIFIED_PLANS) {
+                PlaceholderScreen(
+                    title = "Verified Workout Plans",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Categories · Search · Filter"
+                )
+            }
+            composable(
+                route = Screen.LIST_WORKOUTS,
+                arguments = listOf(navArgument("category") { type = NavType.StringType })
+            ) { entry ->
+                val category = entry.arguments?.getString("category").orEmpty()
+                PlaceholderScreen(
+                    title = "List · $category",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Browse workouts"
+                )
+            }
+            composable(
+                route = Screen.WORKOUT_DETAILS,
+                arguments = listOf(navArgument("planId") { type = NavType.StringType })
+            ) { entry ->
+                val planId = entry.arguments?.getString("planId").orEmpty()
+                PlaceholderScreen(
+                    title = "Workout Plan Details",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "planId: $planId"
+                )
+            }
+
+            composable(Screen.CREATE_WORKOUT_1) {
+                PlaceholderScreen(
+                    title = "Create Workout · Step 1",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Name & details"
+                )
+            }
+            composable(Screen.CREATE_WORKOUT_2) {
+                PlaceholderScreen(
+                    title = "Create Workout · Step 2",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Exercise selection"
+                )
+            }
+            composable(Screen.CREATE_WORKOUT_3) {
+                PlaceholderScreen(
+                    title = "Create Workout · Step 3",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Configure exercises"
+                )
+            }
+            composable(Screen.CREATE_WORKOUT_4) {
+                PlaceholderScreen(
+                    title = "Create Workout · Step 4",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Review & create"
+                )
+            }
+
+            composable(
+                route = Screen.SESSION_MODE,
+                arguments = listOf(navArgument("planId") { type = NavType.StringType })
+            ) { entry ->
+                val planId = entry.arguments?.getString("planId").orEmpty()
+                PlaceholderScreen(
+                    title = "Session Mode",
+                    subtitle = "planId: $planId"
+                )
+            }
+            composable(
+                route = Screen.SESSION_COMPLETED,
+                arguments = listOf(navArgument("sessionId") { type = NavType.StringType })
+            ) { entry ->
+                val sessionId = entry.arguments?.getString("sessionId").orEmpty()
+                PlaceholderScreen(
+                    title = "Session Completed",
+                    subtitle = "sessionId: $sessionId"
+                )
+            }
+
+            // ========================
+            // GOALS
+            // ========================
+            composable(Screen.NUTRITION_GOALS) {
+                PlaceholderScreen(
+                    title = "Nutrition Goals",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Calories · Meals · Macros"
+                )
+            }
+            composable(Screen.WORKOUT_GOALS) {
+                PlaceholderScreen(
+                    title = "Workout Goals",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Weekly sessions · Monthly activity"
+                )
+            }
+
+            // ========================
+            // PROFILE & SETTINGS
+            // ========================
+            composable(Screen.PROFILE) {
+                PlaceholderScreen(
+                    title = "Profile",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Account · Edit · Settings"
+                )
+            }
+            composable(Screen.EDIT_PROFILE) {
+                PlaceholderScreen(
+                    title = "Edit Profile",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Account details · Physical details"
+                )
+            }
+            composable(Screen.SETTINGS) {
+                PlaceholderScreen(
+                    title = "Settings",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Notifications · Language · Biometric"
+                )
+            }
+
+            // ========================
+            // ACHIEVEMENTS
+            // ========================
+            composable(Screen.ACHIEVEMENTS) {
+                PlaceholderScreen(
+                    title = "Achievements",
+                    onBack = { navController.navigateUp() },
+                    subtitle = "Level · Nutrition · Workout"
+                )
+            }
+        }
+    }
+}

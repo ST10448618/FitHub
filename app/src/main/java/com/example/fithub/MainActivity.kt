@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.example.fithub.ui.navigation.FitHubNavGraph
+import com.example.fithub.ui.navigation.Screen
 import com.example.fithub.ui.theme.FitHubTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +20,12 @@ class MainActivity : ComponentActivity() {
             FitHubTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
-                    // Navigation graph comes in later
+                    FitHubNavGraph(
+                        navController = navController,
+                        // For now, start at Landing so you can click through.
+                        // Track A will replace this with real auth-state logic.
+                        startDestination = Screen.LANDING
+                    )
                 }
             }
         }
