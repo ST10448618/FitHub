@@ -47,6 +47,8 @@ abstract class FitHubDatabase : RoomDatabase() {
     abstract fun completedExerciseDao(): CompletedExerciseDao
     abstract fun userAchievementDao(): UserAchievementDao
     abstract fun particleBalanceDao(): ParticleBalanceDao
+    abstract fun workoutExerciseDao(): WorkoutExerciseDao
+
 
     companion object {
         private const val DB_NAME = "fithub.db"

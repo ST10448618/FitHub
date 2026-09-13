@@ -19,5 +19,6 @@ class FitHubApplication : Application() {
 
         // Initialise service locator last
         ServiceLocator.init(this)
+
     }
 }

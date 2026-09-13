@@ -54,10 +54,10 @@ class WeightRepositoryImpl(
     }
 
     override suspend fun deleteEntry(entryId: String): Resource<Unit> = try {
-        // We need the uid to delete remotely — fetch the entry from Room first
-        // (DAO has no direct query for that; we'll add a convenience method later if needed)
-        // For the prototype we'll rely on the caller having passed the right uid.
-        // We'll handle remote delete in a future iteration.
+        val entity = dao.getById(entryId)
+            ?: return Resource.Error("Weight entry not found")
+        dao.delete(entryId)
+        FirestorePaths.weightEntry(entity.userId, entryId).delete().await()
         Resource.Success(Unit)
     } catch (e: Exception) {
         Resource.Error(e.message ?: "Failed to delete weight entry", e)
