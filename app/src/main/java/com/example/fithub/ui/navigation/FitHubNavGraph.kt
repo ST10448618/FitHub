@@ -110,29 +110,31 @@ fun FitHubNavGraph(
             // MAIN TABS
             // ========================
             composable(Screen.DASHBOARD) {
-                PlaceholderScreen(
-                    title = "Dashboard",
-                    subtitle = "Today's overview · Tap hero for Progress"
+                com.example.fithub.ui.screens.dashboard.DashboardScreen(
+                    onNavigate = { navController.navigate(it) },
+                    onProfileClick = { navController.navigate(Screen.PROFILE) }
                 )
             }
+
             composable(Screen.JOURNAL) {
-                PlaceholderScreen(
-                    title = "Journal",
-                    subtitle = "Weight · Nutrition · Workouts"
+                com.example.fithub.ui.screens.journal.JournalScreen(
+                    onNavigate = { navController.navigate(it) }
                 )
             }
+
             composable(Screen.PLANS) {
                 PlaceholderScreen(
                     title = "Fitness Hub",
                     subtitle = "Recent · Created · Saved · Verified"
                 )
             }
+
             composable(Screen.GOALS) {
-                PlaceholderScreen(
-                    title = "Goals & Targets",
-                    subtitle = "Nutrition · Workout · Checkpoints · Weight"
+                com.example.fithub.ui.screens.goals.GoalsTargetsScreen(
+                    onNavigate = { navController.navigate(it) }
                 )
             }
+
             composable(Screen.REWARDS) {
                 PlaceholderScreen(
                     title = "Rewards",
