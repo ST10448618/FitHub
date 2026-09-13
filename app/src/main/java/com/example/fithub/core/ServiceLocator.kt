@@ -2,21 +2,10 @@ package com.example.fithub.core
 
 import android.content.Context
 import com.example.fithub.data.local.FitHubDatabase
-import com.example.fithub.data.repository.AuthRepositoryImpl
-import com.example.fithub.data.repository.GoalRepositoryImpl
-import com.example.fithub.data.repository.UserRepositoryImpl
-import com.example.fithub.data.repository.WeightRepositoryImpl
-import com.example.fithub.domain.repository.AuthRepository
-import com.example.fithub.domain.repository.GoalRepository
-import com.example.fithub.domain.repository.UserRepository
-import com.example.fithub.domain.repository.WeightRepository
-import kotlin.getValue
+import com.example.fithub.data.repository.*
+import com.example.fithub.data.seed.SeedManager
+import com.example.fithub.domain.repository.*
 
-/**
- * Application-wide service locator.
- * Initialise once from FitHubApplication.onCreate().
- * Add new repositories here as they are built.
- */
 object ServiceLocator {
 
     private lateinit var appContext: Context
@@ -24,11 +13,38 @@ object ServiceLocator {
     lateinit var database: FitHubDatabase
         private set
 
-    // Repositories (lazy — only created when first accessed)
     val authRepository: AuthRepository by lazy { AuthRepositoryImpl() }
     val userRepository: UserRepository by lazy { UserRepositoryImpl(database.userProfileDao()) }
-    val weightRepository: WeightRepository by lazy { WeightRepositoryImpl(database.weightEntryDao(), database.userProfileDao()) }
+    val weightRepository: WeightRepository by lazy {
+        WeightRepositoryImpl(database.weightEntryDao(), database.userProfileDao())
+    }
     val goalRepository: GoalRepository by lazy { GoalRepositoryImpl(database.goalDao()) }
+    val nutritionGoalsRepository: NutritionGoalsRepository by lazy {
+        NutritionGoalsRepositoryImpl(database.nutritionGoalsDao())
+    }
+    val workoutGoalsRepository: WorkoutGoalsRepository by lazy {
+        WorkoutGoalsRepositoryImpl(database.workoutGoalsDao())
+    }
+    val checkpointRepository: CheckpointRepository by lazy {
+        CheckpointRepositoryImpl(database.checkpointScheduleDao())
+    }
+    val foodLogRepository: FoodLogRepository by lazy {
+        FoodLogRepositoryImpl(database.foodLogDao())
+    }
+    val exerciseRepository: ExerciseRepository by lazy {
+        ExerciseRepositoryImpl(database.exerciseDao())
+    }
+    val workoutPlanRepository: WorkoutPlanRepository by lazy {
+        WorkoutPlanRepositoryImpl(database.workoutPlanDao(), database)
+    }
+    val workoutSessionRepository: WorkoutSessionRepository by lazy {
+        WorkoutSessionRepositoryImpl(database.workoutSessionDao(), database)
+    }
+    val rewardRepository: RewardRepository by lazy {
+        RewardRepositoryImpl(database.particleBalanceDao(), database.userAchievementDao())
+    }
+
+    val seedManager: SeedManager by lazy { SeedManager(database, exerciseRepository) }
 
     fun init(context: Context) {
         appContext = context.applicationContext
