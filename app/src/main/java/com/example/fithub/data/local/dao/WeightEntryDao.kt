@@ -23,4 +23,10 @@ interface WeightEntryDao {
 
     @Query("DELETE FROM weight_entry WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAll(entries: List<WeightEntryEntity>)
+
+    @Query("SELECT * FROM weight_entry WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): WeightEntryEntity?
 }
