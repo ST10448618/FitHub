@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface FoodDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(food: FoodEntity)
+    @Query("SELECT COUNT(*) FROM food")
+    suspend fun count(): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(foods: List<FoodEntity>)
@@ -23,4 +25,7 @@ interface FoodDao {
 
     @Query("DELETE FROM food WHERE cachedAt < :cutoff")
     suspend fun deleteOlderThan(cutoff: String)
+
+    @Query("SELECT * FROM food ORDER BY category, name LIMIT :limit")
+    suspend fun getAllCached(limit: Int = 100): List<FoodEntity>
 }

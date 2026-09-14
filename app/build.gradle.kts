@@ -45,6 +45,17 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    configurations.all {
+        // ML Kit pulls in Google's Litert which duplicates TFLite classes.
+        // We only use org.tensorflow:tensorflow-lite, so exclude Litert globally.
+        exclude(group = "com.google.ai.edge.litert", module = "litert-api")
+        exclude(group = "com.google.ai.edge.litert", module = "litert")
+        exclude(group = "com.google.ai.edge.litert", module = "litert-gpu")
+        exclude(group = "com.google.ai.edge.litert", module = "litert-support")
+    }
+
+
 }
 
 /*jvm tool
@@ -108,6 +119,10 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+
+
+    // TensorFlow Lite
+    implementation("org.tensorflow:tensorflow-lite:2.16.1")
 
     // Testing
     testImplementation(libs.junit)

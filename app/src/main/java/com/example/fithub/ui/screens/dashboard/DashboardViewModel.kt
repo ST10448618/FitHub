@@ -61,13 +61,47 @@ class DashboardViewModel : ViewModel() {
     private fun observeNutrition() {
         val today = LocalDate.now()
         viewModelScope.launch {
+            // Ensure NutritionGoals exist — create default if missing
+            var goals = nutritionGoalsRepo.getCurrent(uid)
+            if (goals == null) {
+                val profile = userRepo.getProfile(uid)
+                val goal = goalRepo.getCurrent(uid)
+                val direction = goal?.direction ?: com.example.fithub.domain.model.GoalDirection.MAINTAIN
+
+                val recommended = if (profile != null) {
+                    com.example.fithub.domain.calculator.CalorieEngine.calculate(
+                        com.example.fithub.domain.calculator.CalorieEngine.Input(
+                            age = profile.age,
+                            gender = profile.gender,
+                            heightCm = profile.heightCm,
+                            weightKg = profile.currentWeightKg,
+                            activityLevel = profile.activityLevel,
+                            goalDirection = direction
+                        )
+                    ).recommendedDailyCalories
+                } else 2000
+
+                goals = com.example.fithub.domain.model.NutritionGoals(
+                    id = com.example.fithub.util.IdGenerator.newId(),
+                    userId = uid,
+                    recommendedDailyCalories = recommended,
+                    userDailyCalories = recommended,
+                    mealTargets = com.example.fithub.domain.calculator.MacroCalculator
+                        .starterMealTargets(recommended),
+                    macroTargets = com.example.fithub.domain.calculator.MacroCalculator
+                        .starterMacros(recommended)
+                )
+                nutritionGoalsRepo.save(goals)
+            }
+
+            val finalGoals = goals!!
+
             foodLogRepo.observeByDate(uid, today).collect { logs ->
-                val goals = nutritionGoalsRepo.getCurrent(uid) ?: return@collect
                 val snapshot = NutritionProgressCalculator.dashboardSnapshot(
                     todayLogs = logs,
-                    mealTargets = goals.mealTargets,
-                    dailyCalorieTarget = goals.userDailyCalories,
-                    macroTargets = goals.macroTargets
+                    mealTargets = finalGoals.mealTargets,
+                    dailyCalorieTarget = finalGoals.userDailyCalories,
+                    macroTargets = finalGoals.macroTargets
                 )
                 _uiState.update { it.copy(nutritionSnapshot = snapshot) }
             }

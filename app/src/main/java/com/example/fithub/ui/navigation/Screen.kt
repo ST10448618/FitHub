@@ -42,6 +42,23 @@ object Screen {
     const val ADD_MEAL = "add_meal"
     const val LIST_FOOD = "list_food/{category}"
     const val FOOD_DETAILS = "food_details/{foodId}"
+    const val BARCODE_SCANNER = "barcode_scanner"
+    const val CAMERA_RECOGNITION = "camera_recognition"
+
+    // Route for the list of the day's logged foods
+    const val LIST_FOOD_LOGS = "list_food_logs/{date}"
+
+    // Route pattern for food details with pre-filled context
+    const val FOOD_DETAILS_WITH_CONTEXT =
+        "food_details/{foodId}?qty={qty}&meal={meal}"
+
+    fun listFoodLogs(date: String) = "list_food_logs/$date"
+
+    fun foodDetailsWithContext(
+        foodId: String,
+        quantity: Int = 1,
+        mealType: String = "BREAKFAST"
+    ) = "food_details/$foodId?qty=$quantity&meal=$mealType"
 
     // ---------- Workouts ----------
     const val VERIFIED_PLANS = "verified_plans"
@@ -82,6 +99,7 @@ object Screen {
      * Anything not in here hides the bottom bar (auth, onboarding, modals, sessions).
      */
     val routesWithBottomBar: Set<String> = setOf(
+        LIST_FOOD_LOGS,
         DASHBOARD, JOURNAL, PLANS, GOALS, REWARDS,
         PROGRESS_OVERVIEW, NUTRITION_OVERVIEW, WORKOUTS_OVERVIEW,
         BODY_WEIGHT,
@@ -89,6 +107,7 @@ object Screen {
         VERIFIED_PLANS,
         PROFILE, EDIT_PROFILE, SETTINGS,
         ACHIEVEMENTS
+
     )
 
     /** Main bottom-nav tab routes only. */

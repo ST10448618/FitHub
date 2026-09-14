@@ -21,6 +21,12 @@ class SeedManager(
         seedVerifiedPlansIfNeeded()
     }
 
+    suspend fun seedFoodsIfNeeded() = withContext(Dispatchers.IO) {
+        val count = db.foodDao().count()   // You'll need to add this to FoodDao
+        if (count >= 20) return@withContext
+        db.foodDao().upsertAll(FoodSeed.foods())
+    }
+
     private suspend fun seedExercisesIfNeeded() {
         val existing = db.exerciseDao().count()
         if (existing > 0) return

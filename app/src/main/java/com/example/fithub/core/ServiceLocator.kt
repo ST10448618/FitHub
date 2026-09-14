@@ -50,6 +50,15 @@ object ServiceLocator {
 
     val seedManager: SeedManager by lazy { SeedManager(database, exerciseRepository) }
 
+
+    val foodRepository: com.example.fithub.domain.repository.FoodRepository by lazy {
+        com.example.fithub.data.repository.FoodRepositoryImpl(
+            database.foodDao(),
+            com.example.fithub.data.remote.api.OpenFoodFactsDataSource()
+        )
+    }
+
+
     fun init(context: Context) {
         appContext = context.applicationContext
         database = FitHubDatabase.getInstance(appContext)

@@ -29,8 +29,9 @@ class FitHubApplication : Application() {
         appScope.launch {
             // 1. Seed verified plans + exercises (needed by both tracks)
             ServiceLocator.seedManager.seedIfNeeded()
+            ServiceLocator.seedManager.seedFoodsIfNeeded()
 
-            // 2. Seed demo user data for the shared containers
+                    // 2. Seed demo user data for the shared containers
             DemoDataSeeder.seedIfNeeded(ServiceLocator.database)
 
             // 3. Quick verification logs

@@ -19,6 +19,7 @@ fun FitHubNavGraph(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
+
     MainScaffold(navController = navController, currentRoute = currentRoute) { padding ->
         NavHost(
             navController = navController,
@@ -213,34 +214,102 @@ fun FitHubNavGraph(
             // FOOD
             // ========================
             composable(Screen.ADD_MEAL) {
-                PlaceholderScreen(
-                    title = "Add Meal",
+                com.example.fithub.ui.screens.food.addmeal.AddMealScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Search · Category · Barcode · Camera"
+                    onFoodSelected = { foodId ->
+                        navController.navigate(Screen.foodDetails(foodId))
+                    },
+                    onBarcodeScan = { navController.navigate("barcode_scanner") },
+                    onCameraRecognition = { navController.navigate("camera_recognition") }
                 )
             }
-            composable(
-                route = Screen.LIST_FOOD,
-                arguments = listOf(navArgument("category") { type = NavType.StringType })
-            ) { entry ->
-                val category = entry.arguments?.getString("category").orEmpty()
-                PlaceholderScreen(
-                    title = "List · $category",
+
+            composable(Screen.LIST_FOOD) {
+                com.example.fithub.ui.screens.food.list.FoodListScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Browse foods"
+                    onFoodSelected = { foodId ->
+                        navController.navigate(Screen.foodDetails(foodId))
+                    }
                 )
             }
+
+            // New routes for scanner + camera
+            composable(Screen.BARCODE_SCANNER) {
+                com.example.fithub.ui.screens.food.scanner.BarcodeScannerScreen(
+                    onBack = { navController.navigateUp() },
+                    onBarcodeDetected = { barcode ->
+                        navController.navigate(Screen.foodDetails("off:$barcode")) {
+                            popUpTo(Screen.BARCODE_SCANNER) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable(Screen.CAMERA_RECOGNITION) {
+                com.example.fithub.ui.screens.food.scanner.CameraRecognitionScreen(
+                    onBack = { navController.navigateUp() },
+                    onRecognized = { label, _ ->
+                        // For prototype, take the label and search OpenFoodFacts for it,
+                        // landing the user on the Add Meal screen with a query prefilled.
+                        navController.navigate(Screen.ADD_MEAL) {
+                            popUpTo(Screen.CAMERA_RECOGNITION) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            // Simple food details (used from Add Meal / Food List)
             composable(
                 route = Screen.FOOD_DETAILS,
                 arguments = listOf(navArgument("foodId") { type = NavType.StringType })
             ) { entry ->
-                val foodId = entry.arguments?.getString("foodId").orEmpty()
-                PlaceholderScreen(
-                    title = "Food Details",
+                com.example.fithub.ui.screens.food.details.FoodDetailsScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "id: $foodId"
+                    onAdded = {
+                        navController.popBackStack(Screen.ADD_MEAL, inclusive = false)
+                    }
                 )
             }
+
+            // Contextual food details (used from Journal, with qty + meal prefilled)
+            composable(
+                route = Screen.FOOD_DETAILS_WITH_CONTEXT,
+                arguments = listOf(
+                    navArgument("foodId") { type = NavType.StringType },
+                    navArgument("qty") { type = NavType.StringType; defaultValue = "1" },
+                    navArgument("meal") { type = NavType.StringType; defaultValue = "BREAKFAST" }
+                )
+            ) { entry ->
+                com.example.fithub.ui.screens.food.details.FoodDetailsScreen(
+                    onBack = { navController.navigateUp() },
+                    onAdded = {
+                        // After adding, close details and stay on Journal
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(
+                route = Screen.LIST_FOOD_LOGS,
+                arguments = listOf(navArgument("date") { type = NavType.StringType })
+            ) { entry ->
+                com.example.fithub.ui.screens.food.list.FoodLogListScreen(
+                    onBack = { navController.navigateUp() },
+                    onLogClick = { log ->
+                        if (log.foodId != null) {
+                            navController.navigate(
+                                Screen.foodDetailsWithContext(
+                                    foodId = log.foodId,
+                                    quantity = log.portionSize.toInt().coerceAtLeast(1),
+                                    mealType = log.mealType.name
+                                )
+                            )
+                        }
+                    }
+                )
+            }
+
+
 
             // ========================
             // WORKOUTS
