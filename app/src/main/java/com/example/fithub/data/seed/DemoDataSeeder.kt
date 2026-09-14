@@ -21,10 +21,12 @@ import com.example.fithub.data.local.entity.WorkoutSessionEntity
 /**
  * Temporary demo data.
  * Track A will remove this once real authentication is wired.
+ * Track A will remove this once real authentication is wired.
  */
 object DemoDataSeeder {
 
-    const val ENABLED = true
+     //disabled for now as  got real data
+    const val ENABLED = false
     private const val DEMO_UID = "demo_user"
 
     suspend fun seedIfNeeded(db: FitHubDatabase) = withContext(Dispatchers.IO) {

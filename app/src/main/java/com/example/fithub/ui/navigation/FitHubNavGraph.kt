@@ -29,80 +29,90 @@ fun FitHubNavGraph(
             // AUTH & ONBOARDING
             // ========================
             composable(Screen.SPLASH) {
-                PlaceholderScreen(
-                    title = "Splash",
-                    subtitle = "Auto-navigates to Landing or Dashboard"
+                com.example.fithub.ui.screens.splash.SplashScreen(
+                    onFinished = {
+                        navController.navigate(Screen.LANDING) {
+                            popUpTo(Screen.SPLASH) { inclusive = true }
+                        }
+                    }
                 )
             }
 
+
             composable(Screen.LANDING) {
-                PlaceholderScreen(
-                    title = "Landing",
-                    subtitle = "LOGIN / REGISTER"
+                com.example.fithub.ui.screens.landing.LandingScreen(
+                    onLoginClick = { navController.navigate(Screen.LOGIN) },
+                    onRegisterClick = { navController.navigate(Screen.ONBOARDING_USER_DETAILS) }
                 )
             }
 
             composable(Screen.LOGIN) {
-                PlaceholderScreen(
-                    title = "Login",
-                    onBack = { navController.navigateUp() },
-                    subtitle = "Email/Password + Fingerprint"
+                com.example.fithub.ui.screens.login.LoginScreen(
+                    onLoginSuccess = {
+                        navController.navigate(Screen.DASHBOARD) {
+                            popUpTo(Screen.LANDING) { inclusive = true }
+                        }
+                    },
+                    onBack = { navController.navigateUp() }
                 )
             }
 
             composable(Screen.ONBOARDING_USER_DETAILS) {
-                PlaceholderScreen(
-                    title = "Onboarding · User Details",
-                    subtitle = "Step 1 of 7",
-                    onBack = { navController.navigateUp() }
+                com.example.fithub.ui.screens.onboarding.OnboardingStep1UserDetails(
+                    onCancel = { navController.navigateUp() },
+                    onNext = { navController.navigate(Screen.ONBOARDING_BIOMETRIC) }
                 )
             }
+
             composable(Screen.ONBOARDING_BIOMETRIC) {
-                PlaceholderScreen(
-                    title = "Onboarding · Biometric",
-                    subtitle = "Step 2 of 7",
-                    onBack = { navController.navigateUp() }
+                com.example.fithub.ui.screens.onboarding.OnboardingStep2Biometric(
+                    onCancel = { navController.popBackStack(Screen.ONBOARDING_USER_DETAILS, false) },
+                    onNext = { navController.navigate(Screen.ONBOARDING_AGE) }
                 )
             }
+
             composable(Screen.ONBOARDING_AGE) {
-                PlaceholderScreen(
-                    title = "Onboarding · Age",
-                    subtitle = "Step 3 of 7",
-                    onBack = { navController.navigateUp() }
+                com.example.fithub.ui.screens.onboarding.OnboardingStep3Age(
+                    onCancel = { navController.popBackStack(Screen.ONBOARDING_USER_DETAILS, false) },
+                    onNext = { navController.navigate(Screen.ONBOARDING_GENDER) }
                 )
             }
+
             composable(Screen.ONBOARDING_GENDER) {
-                PlaceholderScreen(
-                    title = "Onboarding · Gender",
-                    subtitle = "Step 4 of 7",
-                    onBack = { navController.navigateUp() }
+                com.example.fithub.ui.screens.onboarding.OnboardingStep4Gender(
+                    onCancel = { navController.popBackStack(Screen.ONBOARDING_USER_DETAILS, false) },
+                    onNext = { navController.navigate(Screen.ONBOARDING_HEIGHT) }
                 )
             }
+
             composable(Screen.ONBOARDING_HEIGHT) {
-                PlaceholderScreen(
-                    title = "Onboarding · Height",
-                    subtitle = "Step 5 of 7",
-                    onBack = { navController.navigateUp() }
+                com.example.fithub.ui.screens.onboarding.OnboardingStep5Height(
+                    onCancel = { navController.popBackStack(Screen.ONBOARDING_USER_DETAILS, false) },
+                    onNext = { navController.navigate(Screen.ONBOARDING_WEIGHT) }
                 )
             }
+
             composable(Screen.ONBOARDING_WEIGHT) {
-                PlaceholderScreen(
-                    title = "Onboarding · Weight",
-                    subtitle = "Step 6 of 7",
-                    onBack = { navController.navigateUp() }
+                com.example.fithub.ui.screens.onboarding.OnboardingStep6Weight(
+                    onCancel = { navController.popBackStack(Screen.ONBOARDING_USER_DETAILS, false) },
+                    onNext = { navController.navigate(Screen.ONBOARDING_LIFESTYLE) }
                 )
             }
+
             composable(Screen.ONBOARDING_LIFESTYLE) {
-                PlaceholderScreen(
-                    title = "Onboarding · Lifestyle",
-                    subtitle = "Step 7 of 7",
-                    onBack = { navController.navigateUp() }
+                com.example.fithub.ui.screens.onboarding.OnboardingStep7Lifestyle(
+                    onCancel = { navController.popBackStack(Screen.ONBOARDING_USER_DETAILS, false) },
+                    onNext = { navController.navigate(Screen.ONBOARDING_COMPLETE) }
                 )
             }
+
             composable(Screen.ONBOARDING_COMPLETE) {
-                PlaceholderScreen(
-                    title = "Onboarding Complete",
-                    subtitle = "Confirm → Dashboard"
+                com.example.fithub.ui.screens.onboarding.OnboardingCompleteScreen(
+                    onFinish = {
+                        navController.navigate(Screen.DASHBOARD) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 )
             }
 

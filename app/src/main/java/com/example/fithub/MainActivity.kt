@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         // For now, start at Landing so you can click through.
                         // Track A will replace this with real auth-state logic.
-                        startDestination = Screen.DASHBOARD
+                        startDestination = Screen.SPLASH
                     )
                 }
             }

@@ -92,7 +92,9 @@ fun SecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    fullWidth: Boolean = true
+    fullWidth: Boolean = true,
+    borderColor: Color = FitHubPrimary,
+    contentColor: Color = FitHubPrimary
 ) {
     val baseModifier = if (fullWidth) modifier.fillMaxWidth() else modifier
     OutlinedButton(
@@ -100,9 +102,9 @@ fun SecondaryButton(
         modifier = baseModifier.height(52.dp),
         enabled = enabled,
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.5.dp, FitHubPrimary),
+        border = BorderStroke(1.5.dp, borderColor),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = FitHubPrimary
+            contentColor = contentColor
         )
     ) {
         Text(
