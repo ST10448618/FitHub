@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
+import com.example.fithub.core.SessionManager
 import com.example.fithub.domain.model.*
 import com.example.fithub.util.IdGenerator
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +51,10 @@ class OnboardingViewModel : ViewModel() {
 
             val uid = (registerResult as Resource.Success).data
             val now = LocalDateTime.now()
+            SessionManager.setUser(uid)
+
+            // Ensure the profile is fully pulled from Firestore after registration
+            ServiceLocator.userRepository.syncFromRemote(uid)
 
             val profile = UserProfile(
                 id = uid,

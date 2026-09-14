@@ -44,6 +44,10 @@ object ServiceLocator {
         RewardRepositoryImpl(database.particleBalanceDao(), database.userAchievementDao())
     }
 
+    val preferencesManager: PreferencesManager by lazy {
+        PreferencesManager(appContext)
+    }
+
     val seedManager: SeedManager by lazy { SeedManager(database, exerciseRepository) }
 
     fun init(context: Context) {

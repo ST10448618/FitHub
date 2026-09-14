@@ -347,24 +347,23 @@ fun FitHubNavGraph(
             // PROFILE & SETTINGS
             // ========================
             composable(Screen.PROFILE) {
-                PlaceholderScreen(
-                    title = "Profile",
+                com.example.fithub.ui.screens.profile.ProfileScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Account · Edit · Settings"
+                    onEditClick = { navController.navigate(Screen.EDIT_PROFILE) },
+                    onSettingsClick = { navController.navigate(Screen.SETTINGS) }
                 )
             }
+
             composable(Screen.EDIT_PROFILE) {
-                PlaceholderScreen(
-                    title = "Edit Profile",
+                com.example.fithub.ui.screens.profile.EditProfileScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Account details · Physical details"
+                    onSaved = { navController.navigateUp() }
                 )
             }
+
             composable(Screen.SETTINGS) {
-                PlaceholderScreen(
-                    title = "Settings",
-                    onBack = { navController.navigateUp() },
-                    subtitle = "Notifications · Language · Biometric"
+                com.example.fithub.ui.screens.settings.SettingsScreen(
+                    onBack = { navController.navigateUp() }
                 )
             }
 

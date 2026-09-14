@@ -18,10 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.core.BiometricHelper
 import com.example.fithub.ui.components.FitHubLogo
 import com.example.fithub.ui.components.FitHubPasswordField
 import com.example.fithub.ui.components.FitHubTextField
@@ -34,6 +37,7 @@ fun LoginScreen(
     onBack: () -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.successUserId) {
@@ -125,11 +129,13 @@ fun LoginScreen(
                     modifier = Modifier.weight(1f),
                     color = Color.White.copy(alpha = 0.4f)
                 )
+
                 Text(
                     "  OR  ",
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.White.copy(alpha = 0.8f)
                 )
+
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
                     color = Color.White.copy(alpha = 0.4f)
@@ -153,7 +159,25 @@ fun LoginScreen(
                     .clip(CircleShape)
                     .background(Color.White.copy(alpha = 0.15f))
                     .clickable {
-                        // TODO(Track A): trigger Android BiometricPrompt
+                        val activity = context as? FragmentActivity
+
+                        if (
+                            activity != null &&
+                            BiometricHelper.isAvailable(context)
+                        ) {
+                            BiometricHelper.authenticate(
+                                activity = activity,
+                                title = "FitHub Login",
+                                subtitle = "Authenticate to continue",
+                                onSuccess = {
+                                    // For prototype, treat biometric as offline login.
+                                    // TODO(Track A): check local cached session and navigate.
+                                },
+                                onError = {
+                                    // No-op: user can still log in with password.
+                                }
+                            )
+                        }
                     },
                 contentAlignment = Alignment.Center
             ) {

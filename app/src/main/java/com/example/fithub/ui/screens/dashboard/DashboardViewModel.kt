@@ -15,7 +15,7 @@ import java.time.LocalDate
 
 class DashboardViewModel : ViewModel() {
 
-    private val uid = SessionManager.currentUserId ?: ""
+    private val uid: String = SessionManager.currentUserId ?: ""
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()

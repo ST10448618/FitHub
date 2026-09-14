@@ -1,8 +1,9 @@
 package com.example.fithub.core
 
 /**
- * Temporary user session holder.
- * Track A will replace this with real Firebase auth state observation.
+ * Holds the current user ID after authentication.
+ * Written by LoginViewModel and OnboardingViewModel.
+ * Read by every ViewModel that needs the current user's data.
  */
 object SessionManager {
 
@@ -14,5 +15,12 @@ object SessionManager {
         _currentUserId = uid
     }
 
+    fun currentUserIdOrThrow(): String =
+        _currentUserId ?: error("No user session — call setUser() after login/onboarding.")
+
     fun isLoggedIn(): Boolean = _currentUserId != null
+
+
+    fun requireUserId(): String =
+        _currentUserId ?: error("No user session — call setUser() after login/onboarding.")
 }
