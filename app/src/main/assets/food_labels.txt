@@ -1,0 +1,12 @@
+0 Pizza
+1 Burger
+2 Salad
+3 Apple
+4 Banana
+5 Chicken
+6 Rice
+7 Pasta
+8 Sandwich
+9 Sushi
+10 Soup
+11 Steak
