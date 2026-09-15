@@ -196,17 +196,15 @@ fun FitHubNavGraph(
                 )
             }
             composable(Screen.CHECKPOINT_MANAGER) {
-                PlaceholderScreen(
-                    title = "Checkpoint Manager",
+                com.example.fithub.ui.screens.goals.checkpoint.CheckpointManagerScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Frequency · Upcoming · Reminders"
+                    onSaved = { navController.navigateUp() }
                 )
             }
             composable(Screen.WEIGHT_GOAL) {
-                PlaceholderScreen(
-                    title = "Weight Goal",
+                com.example.fithub.ui.screens.goals.weight.WeightGoalScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Current vs Target"
+                    onSaved = { navController.navigateUp() }
                 )
             }
 
@@ -383,10 +381,9 @@ fun FitHubNavGraph(
                 )
             }
             composable(Screen.WORKOUT_GOALS) {
-                PlaceholderScreen(
-                    title = "Workout Goals",
+                com.example.fithub.ui.screens.goals.workout.WorkoutGoalsScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Weekly sessions · Monthly activity"
+                    onSaved = { navController.navigateUp() }
                 )
             }
 
