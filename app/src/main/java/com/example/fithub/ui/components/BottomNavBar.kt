@@ -28,7 +28,7 @@ enum class BottomNavItem(
     JOURNAL("journal", "Journal", Icons.Filled.MenuBook),
     PLANS("plans", "Plans", Icons.Filled.FitnessCenter),
     GOALS("goals", "Goals", Icons.Filled.TrackChanges),
-    REWARDS("rewards", "Rewards", Icons.Filled.EmojiEvents)
+    REWARDS("RewardsScreen", "Rewards", Icons.Filled.EmojiEvents)
 }
 
 @Composable

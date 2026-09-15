@@ -147,9 +147,8 @@ fun FitHubNavGraph(
             }
 
             composable(Screen.REWARDS) {
-                PlaceholderScreen(
-                    title = "Rewards",
-                    subtitle = "Particles · Achievements"
+                com.example.fithub.ui.screens.rewards.RewardsScreen(
+                    onOpenAchievements = { navController.navigate(Screen.ACHIEVEMENTS) }
                 )
             }
 
@@ -164,12 +163,13 @@ fun FitHubNavGraph(
                 )
             }
             composable(Screen.NUTRITION_OVERVIEW) {
-                PlaceholderScreen(
-                    title = "Nutrition Overview",
+                com.example.fithub.ui.screens.nutrition.overview.NutritionOverviewScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Goals vs Actual"
+                    onEditGoals = { navController.navigate(Screen.NUTRITION_GOALS) }
                 )
             }
+
+
             composable(Screen.WORKOUTS_OVERVIEW) {
                 PlaceholderScreen(
                     title = "Workouts Overview",
@@ -374,12 +374,13 @@ fun FitHubNavGraph(
             // GOALS
             // ========================
             composable(Screen.NUTRITION_GOALS) {
-                PlaceholderScreen(
-                    title = "Nutrition Goals",
+                com.example.fithub.ui.screens.nutrition.goals.NutritionGoalsScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Calories · Meals · Macros"
+                    onSaved = { navController.navigateUp() }
                 )
             }
+
+
             composable(Screen.WORKOUT_GOALS) {
                 com.example.fithub.ui.screens.goals.workout.WorkoutGoalsScreen(
                     onBack = { navController.navigateUp() },
@@ -414,13 +415,14 @@ fun FitHubNavGraph(
             // ========================
             // ACHIEVEMENTS
             // ========================
+
             composable(Screen.ACHIEVEMENTS) {
-                PlaceholderScreen(
-                    title = "Achievements",
-                    onBack = { navController.navigateUp() },
-                    subtitle = "Level · Nutrition · Workout"
+                com.example.fithub.ui.screens.achievements.AchievementsScreen(
+                    onBack = { navController.navigateUp() }
                 )
             }
+
+
         }
     }
 }

@@ -25,7 +25,7 @@ object Screen {
     const val JOURNAL = "journal"
     const val PLANS = "plans"
     const val GOALS = "goals"
-    const val REWARDS = "rewards"
+    const val REWARDS = "RewardsScreen"
 
     // ---------- Progress / Overview ----------
     const val PROGRESS_OVERVIEW = "progress_overview"

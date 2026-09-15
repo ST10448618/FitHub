@@ -152,6 +152,6 @@ class RewardRepositoryImpl(
         }
         Resource.Success(Unit)
     } catch (e: Exception) {
-        Resource.Error(e.message ?: "Failed to sync rewards", e)
+        Resource.Error(e.message ?: "Failed to sync RewardsScreen", e)
     }
 }
