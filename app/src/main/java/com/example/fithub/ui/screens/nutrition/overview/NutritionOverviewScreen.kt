@@ -46,10 +46,11 @@ fun NutritionOverviewScreen(
         ) {
             Spacer(Modifier.height(8.dp))
 
-            MonthSelector(
-                label = state.monthLabel,
-                onPrev = { viewModel.shiftMonth(-1) },
-                onNext = { viewModel.shiftMonth(1) }
+            DaySelector(
+                label = state.dateLabel,
+                isToday = state.isToday,
+                onPrev = { viewModel.shiftDay(-1) },
+                onNext = { viewModel.shiftDay(1) }
             )
 
             Spacer(Modifier.height(14.dp))
@@ -57,8 +58,8 @@ fun NutritionOverviewScreen(
             // ---------- Summary cards ----------
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 SummaryCard(
-                    label = "Average Daily Intake",
-                    value = "${state.avgDailyIntake.toInt()} kcal",
+                    label = "Daily Intake",
+                    value = "${state.consumedCalories.toInt()} kcal",
                     modifier = Modifier.weight(1f)
                 )
                 SummaryCard(
@@ -70,15 +71,15 @@ fun NutritionOverviewScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // ---------- Overall progress ----------
+            // ---------- Overall progress for the day ----------
             val target = state.goals?.userDailyCalories ?: 0
             val pct = if (target > 0)
-                ((state.avgDailyIntake / target) * 100).toInt().coerceIn(0, 200) else 0
-            val below = (target - state.avgDailyIntake).toInt()
+                ((state.consumedCalories / target) * 100).toInt().coerceIn(0, 200) else 0
+            val below = (target - state.consumedCalories).toInt()
 
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Overall Nutrition Progress",
+                    "Daily Nutrition Progress",
                     style = MaterialTheme.typography.titleMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold,
@@ -86,7 +87,7 @@ fun NutritionOverviewScreen(
                 )
                 Spacer(Modifier.height(10.dp))
                 RoundedProgressBar(
-                    progress = (state.avgDailyIntake / target.coerceAtLeast(1)).toFloat()
+                    progress = (state.consumedCalories / target.coerceAtLeast(1)).toFloat()
                         .coerceIn(0f, 1f),
                     height = 12.dp
                 )
@@ -96,13 +97,14 @@ fun NutritionOverviewScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        if (below > 0) "$below kcal below daily goal"
-                        else "${-below} kcal above daily goal",
+                        if (below > 0) "$below kcal remaining"
+                        else if (below < 0) "${-below} kcal exceeded"
+                        else "On target!",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TextSecondary,
+                        color = if (below < 0) ErrorRed else TextSecondary,
                         modifier = Modifier.weight(1f)
                     )
-                    PctPill("$pct% of target", FitHubLightBlue, FitHubPrimary)
+                    PctPill("$pct% of goal", FitHubLightBlue, FitHubPrimary)
                 }
             }
 
@@ -120,21 +122,21 @@ fun NutritionOverviewScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 MacroDonutCard(
                     label = "PROTEIN",
-                    actual = state.avgProtein,
+                    actual = state.consumedProtein,
                     target = state.goals?.macroTargets?.proteinG ?: 0,
                     color = MacroProtein,
                     modifier = Modifier.weight(1f)
                 )
                 MacroDonutCard(
                     label = "CARBS",
-                    actual = state.avgCarbs,
+                    actual = state.consumedCarbs,
                     target = state.goals?.macroTargets?.carbsG ?: 0,
                     color = MacroCarbs,
                     modifier = Modifier.weight(1f)
                 )
                 MacroDonutCard(
                     label = "FATS",
-                    actual = state.avgFat,
+                    actual = state.consumedFat,
                     target = state.goals?.macroTargets?.fatG ?: 0,
                     color = MacroFats,
                     modifier = Modifier.weight(1f)
@@ -145,7 +147,7 @@ fun NutritionOverviewScreen(
 
             // ---------- Meals ----------
             Text(
-                "Average Calories by Meal Type",
+                "Calories by Meal Type",
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -155,22 +157,22 @@ fun NutritionOverviewScreen(
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 MealBreakdownRow(
                     label = "Breakfast", color = MealBreakfast,
-                    actual = state.avgMealBreakdown.breakfast,
+                    actual = state.mealBreakdown.breakfast,
                     target = state.goals?.mealTargets?.breakfastKcal ?: 0
                 )
                 MealBreakdownRow(
                     label = "Lunch", color = MealLunch,
-                    actual = state.avgMealBreakdown.lunch,
+                    actual = state.mealBreakdown.lunch,
                     target = state.goals?.mealTargets?.lunchKcal ?: 0
                 )
                 MealBreakdownRow(
                     label = "Dinner", color = MealDinner,
-                    actual = state.avgMealBreakdown.dinner,
+                    actual = state.mealBreakdown.dinner,
                     target = state.goals?.mealTargets?.dinnerKcal ?: 0
                 )
                 MealBreakdownRow(
                     label = "Snack", color = MealSnack,
-                    actual = state.avgMealBreakdown.snack,
+                    actual = state.mealBreakdown.snack,
                     target = state.goals?.mealTargets?.snackKcal ?: 0
                 )
             }
@@ -189,10 +191,6 @@ fun NutritionOverviewScreen(
 
 // ---------- Helpers ----------
 
-/**
- * Pill-shaped badge showing a percentage or short label.
- * Used in the overall-progress row and per-meal rows to match the design.
- */
 @Composable
 private fun PctPill(
     text: String,
@@ -215,7 +213,12 @@ private fun PctPill(
 }
 
 @Composable
-private fun MonthSelector(label: String, onPrev: () -> Unit, onNext: () -> Unit) {
+private fun DaySelector(
+    label: String,
+    isToday: Boolean,
+    onPrev: () -> Unit,
+    onNext: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -224,22 +227,34 @@ private fun MonthSelector(label: String, onPrev: () -> Unit, onNext: () -> Unit)
         IconButton(onClick = onPrev) {
             Icon(
                 Icons.Filled.ChevronLeft,
-                contentDescription = "Previous month",
+                contentDescription = "Previous day",
                 tint = FitHubPrimary
             )
         }
-        Text(
-            label,
-            style = MaterialTheme.typography.titleMedium,
-            color = FitHubPrimary,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 12.dp)
-        )
-        IconButton(onClick = onNext) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                label,
+                style = MaterialTheme.typography.titleMedium,
+                color = FitHubPrimary,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 12.dp)
+            )
+            if (isToday) {
+                Text(
+                    "Today",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextSecondary
+                )
+            }
+        }
+        IconButton(
+            onClick = onNext,
+            enabled = !isToday
+        ) {
             Icon(
                 Icons.Filled.ChevronRight,
-                contentDescription = "Next month",
-                tint = FitHubPrimary
+                contentDescription = "Next day",
+                tint = if (isToday) TextHint else FitHubPrimary
             )
         }
     }
@@ -316,7 +331,6 @@ private fun MacroDonutCard(
     }
 }
 
-
 @Composable
 private fun MealBreakdownRow(
     label: String,
@@ -330,7 +344,6 @@ private fun MealBreakdownRow(
 
     Column(modifier = Modifier.padding(vertical = 10.dp)) {
 
-        // ---- Top line: dot · name · actual / target ----
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
@@ -358,7 +371,6 @@ private fun MealBreakdownRow(
 
         Spacer(Modifier.height(6.dp))
 
-        // ---- Second line: delta · pill ----
         Row(
             modifier = Modifier.padding(start = 44.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -382,7 +394,6 @@ private fun MealBreakdownRow(
 
         Spacer(Modifier.height(8.dp))
 
-        // ---- Full-width progress bar (indented past the dot) ----
         Row(modifier = Modifier.padding(start = 44.dp)) {
             LinearProgressIndicator(
                 progress = {

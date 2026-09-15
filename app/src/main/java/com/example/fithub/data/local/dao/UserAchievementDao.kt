@@ -17,4 +17,7 @@ interface UserAchievementDao {
 
     @Query("SELECT * FROM user_achievement WHERE userId = :userId AND isUnlocked = 1 AND isClaimed = 0")
     suspend fun getClaimable(userId: String): List<UserAchievementEntity>
+
+    @Query("SELECT * FROM user_achievement WHERE userId = :userId")
+    suspend fun getAllOnce(userId: String): List<UserAchievementEntity>
 }

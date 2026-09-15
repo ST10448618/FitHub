@@ -22,6 +22,8 @@ class GoalRepositoryImpl(
         dao.getCurrent(uid)?.let(GoalLocalMapper::toDomain)
 
     override suspend fun setGoal(goal: Goal): Resource<Unit> = try {
+        // Wipe any old goal rows for this user, then insert the single authoritative one
+        dao.deleteAllForUser(goal.userId)
         dao.upsert(GoalLocalMapper.toEntity(goal))
         FirestorePaths.goal(goal.userId, goal.id)
             .set(GoalMapper.toMap(goal))

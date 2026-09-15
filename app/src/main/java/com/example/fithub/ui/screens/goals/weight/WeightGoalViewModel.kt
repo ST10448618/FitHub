@@ -44,6 +44,7 @@ class WeightGoalViewModel : ViewModel() {
 
     private fun load() {
         viewModelScope.launch {
+            // getLatest expects the USER ID, not a record ID
             val latest = weightRepo.getLatest(uid)
             val current = latest?.weightKg?.toInt()
             val existingGoal = goalRepo.getCurrent(uid)
@@ -91,7 +92,7 @@ class WeightGoalViewModel : ViewModel() {
             _uiState.update { it.copy(isSaving = true, errorMessage = null) }
 
             val goal = Goal(
-                id = IdGenerator.newId(),
+                id = IdGenerator.userSingletonId("goal", uid),   // stable ID — correct
                 userId = uid,
                 currentWeightKgAtGoalSet = current.toDouble(),
                 targetWeightKg = state.targetWeightKg.toDouble(),

@@ -12,4 +12,6 @@ interface RewardRepository {
     suspend fun upsertAchievement(uid: String, achievement: UserAchievement): Resource<Unit>
     suspend fun claimAchievement(uid: String, achievementId: String): Resource<Unit>
     suspend fun syncFromRemote(uid: String): Resource<Unit>
+
+    suspend fun getAchievementsForUser(uid: String): List<UserAchievement>
 }

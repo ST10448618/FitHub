@@ -47,42 +47,24 @@ class AchievementsViewModel : ViewModel() {
     private val workoutGoalsRepo = ServiceLocator.workoutGoalsRepository
 
     init {
-        observeAndEvaluate()
+        // 1. Evaluate once, up-front
+        viewModelScope.launch {
+            evaluateAchievements()
+        }
+        // 2. Then observe (pure render, no side effects)
+        observeCards()
+        observeBalance()
     }
 
-    private fun observeAndEvaluate() {
+    private fun observeCards() {
         viewModelScope.launch {
-            // Evaluate achievements whenever state changes
             rewardRepo.observeAchievements(uid).collect { userList ->
-                // Re-evaluate against data
-                evaluateAchievements()
-                val map = userList.associateBy { it.achievementId }
-
-                val cards = AchievementCatalog.ALL.map { def ->
-                    AchievementCard(
-                        definition = def,
-                        userState = map[def.id] ?: UserAchievement(
-                            achievementId = def.id,
-                            userId = uid
-                        )
-                    )
-                }
-                val balance = rewardRepo.observeBalance(uid)
-                // Balance is collected separately below
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        nutritionAchievements = cards.filter {
-                            it.definition.category == AchievementCategory.NUTRITION
-                        },
-                        workoutAchievements = cards.filter {
-                            it.definition.category == AchievementCategory.WORKOUT
-                        }
-                    )
-                }
+                renderCards(userList)
             }
         }
+    }
 
+    private fun observeBalance() {
         viewModelScope.launch {
             rewardRepo.observeBalance(uid).collect { balance ->
                 val lifetime = balance?.lifetimeEarned ?: 0
@@ -98,7 +80,31 @@ class AchievementsViewModel : ViewModel() {
         }
     }
 
-    /** Run through every achievement, update its progress. */
+    private fun renderCards(userList: List<UserAchievement>) {
+        val map = userList.associateBy { it.achievementId }
+        val cards = AchievementCatalog.ALL.map { def ->
+            AchievementCard(
+                definition = def,
+                userState = map[def.id] ?: UserAchievement(
+                    achievementId = def.id,
+                    userId = uid
+                )
+            )
+        }
+        _uiState.update {
+            it.copy(
+                isLoading = false,
+                nutritionAchievements = cards.filter {
+                    it.definition.category == AchievementCategory.NUTRITION
+                },
+                workoutAchievements = cards.filter {
+                    it.definition.category == AchievementCategory.WORKOUT
+                }
+            )
+        }
+    }
+
+    /** Evaluate all achievements against real data. Called once on init. */
     private suspend fun evaluateAchievements() {
         val today = LocalDate.now()
         val monthStart = today.withDayOfMonth(1)
@@ -109,27 +115,33 @@ class AchievementsViewModel : ViewModel() {
         val nutritionGoals = nutritionRepo.getCurrent(uid)
         val workoutGoals = workoutGoalsRepo.get(uid)
 
+        // ---- Fetch existing achievement states ONCE from DB ----
+        val existingMap = rewardRepo.getAchievementsForUser(uid)
+            .associateBy { it.achievementId }
+
         // FIRST_LOG
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.FIRST_LOG,
             progress = if (logsAll.isNotEmpty()) 1 else 0,
-            unlocked = logsAll.isNotEmpty()
+            unlocked = logsAll.isNotEmpty(),
+            existing = existingMap
         )
 
-        // HIT_GOAL: any day where total consumed >= user daily calories
+        // HIT_GOAL
         val dailyTarget = nutritionGoals?.userDailyCalories ?: 0
         val hitGoal = if (dailyTarget > 0) {
             logsAll.groupBy { it.logDate }.any { (_, dayLogs) ->
                 dayLogs.sumOf { it.calories } >= dailyTarget
             }
         } else false
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.HIT_GOAL,
             progress = if (hitGoal) 1 else 0,
-            unlocked = hitGoal
+            unlocked = hitGoal,
+            existing = existingMap
         )
 
-        // PERFECT_WEEK: 7 consecutive days with at least one log
+        // PERFECT_WEEK
         val uniqueDays = logsAll.map { it.logDate }.distinct().sorted()
         var longestStreak = 0
         var current = 0
@@ -139,44 +151,48 @@ class AchievementsViewModel : ViewModel() {
             longestStreak = maxOf(longestStreak, current)
             prev = d
         }
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.PERFECT_WEEK,
             progress = longestStreak.coerceAtMost(7),
-            unlocked = longestStreak >= 7
+            unlocked = longestStreak >= 7,
+            existing = existingMap
         )
 
-        // MONTHLY_STREAK: >= 20 days this month with logs
+        // MONTHLY_STREAK
         val daysThisMonth = logsAll
             .filter { it.logDate >= monthStart && it.logDate <= monthEnd }
             .map { it.logDate }
             .distinct()
             .size
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.MONTHLY_STREAK,
             progress = daysThisMonth.coerceAtMost(20),
-            unlocked = daysThisMonth >= 20
+            unlocked = daysThisMonth >= 20,
+            existing = existingMap
         )
 
         // FIRST_SESSION
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.FIRST_SESSION,
             progress = if (sessionsAll.isNotEmpty()) 1 else 0,
-            unlocked = sessionsAll.isNotEmpty()
+            unlocked = sessionsAll.isNotEmpty(),
+            existing = existingMap
         )
 
-        // WEEKLY_GOAL: any week with sessionsPerWeek sessions
+        // WEEKLY_GOAL
         val weekTarget = workoutGoals?.sessionsPerWeek ?: 4
         val byWeek = sessionsAll.groupBy {
             it.logDate.minusDays((it.logDate.dayOfWeek.value - 1).toLong())
         }
         val hitWeekly = byWeek.values.any { it.size >= weekTarget }
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.WEEKLY_GOAL,
             progress = if (hitWeekly) 1 else 0,
-            unlocked = hitWeekly
+            unlocked = hitWeekly,
+            existing = existingMap
         )
 
-        // WORKOUT_STREAK: 4 consecutive weeks with >= 1 session
+        // WORKOUT_STREAK
         val weeksWithSession = byWeek.keys.sorted()
         var best = 0; var cur = 0; var prevW: LocalDate? = null
         for (w in weeksWithSession) {
@@ -184,47 +200,49 @@ class AchievementsViewModel : ViewModel() {
             best = maxOf(best, cur)
             prevW = w
         }
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.WORKOUT_STREAK,
             progress = best.coerceAtMost(4),
-            unlocked = best >= 4
+            unlocked = best >= 4,
+            existing = existingMap
         )
 
-        // MONTHLY_MILESTONE: any month where activity >= monthly target
+        // MONTHLY_MILESTONE
         val monthlyTarget = workoutGoals?.monthlyActivityGoalKcal ?: 10000
         val hitMonthly = sessionsAll
             .groupBy { it.logDate.withDayOfMonth(1) }
             .values
             .any { list -> list.sumOf { it.estimatedActivityKcal } >= monthlyTarget }
-        updateIfNeeded(
+        upsertProgress(
             id = AchievementCatalog.MONTHLY_MILESTONE,
             progress = if (hitMonthly) 1 else 0,
-            unlocked = hitMonthly
+            unlocked = hitMonthly,
+            existing = existingMap
         )
     }
 
-    private suspend fun updateIfNeeded(id: String, progress: Int, unlocked: Boolean) {
-        val existing = rewardRepo.observeAchievements(uid).let { _ -> null } // placeholder — we fetch directly below
-        // Simpler: read from current state
-        val existingCard = _uiState.value.let {
-            it.nutritionAchievements + it.workoutAchievements
-        }.firstOrNull { it.definition.id == id }?.userState
+    private suspend fun upsertProgress(
+        id: String,
+        progress: Int,
+        unlocked: Boolean,
+        existing: Map<String, UserAchievement>
+    ) {
+        val current = existing[id]
 
-        // If we haven't loaded yet, skip — the observe loop will re-evaluate.
-        val currentUnlocked = existingCard?.isUnlocked ?: false
-        val currentProgress = existingCard?.progress ?: 0
-
-        if (unlocked == currentUnlocked && progress == currentProgress) return
+        // No change → don't touch the row (protects claim state from churn)
+        val sameUnlocked = unlocked == (current?.isUnlocked ?: false)
+        val sameProgress = progress == (current?.progress ?: 0)
+        if (sameUnlocked && sameProgress) return
 
         val updated = UserAchievement(
             achievementId = id,
             userId = uid,
             progress = progress,
             isUnlocked = unlocked,
-            isClaimed = existingCard?.isClaimed ?: false,
-            unlockedAt = if (unlocked && existingCard?.unlockedAt == null) LocalDateTime.now()
-            else existingCard?.unlockedAt,
-            claimedAt = existingCard?.claimedAt
+            isClaimed = current?.isClaimed ?: false,       // ← preserved from DB
+            unlockedAt = if (unlocked && current?.unlockedAt == null)
+                LocalDateTime.now() else current?.unlockedAt,
+            claimedAt = current?.claimedAt                  // ← preserved from DB
         )
         rewardRepo.upsertAchievement(uid, updated)
     }

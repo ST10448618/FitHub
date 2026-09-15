@@ -17,4 +17,7 @@ interface GoalDao {
 
     @Query("SELECT * FROM goal WHERE userId = :userId ORDER BY effectiveDate DESC")
     suspend fun getHistory(userId: String): List<GoalEntity>
+
+    @Query("DELETE FROM goal WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: String)
 }

@@ -19,6 +19,9 @@ class RewardRepositoryImpl(
     private val achievementDao: UserAchievementDao
 ) : RewardRepository {
 
+
+
+
     override fun observeBalance(uid: String): Flow<ParticleBalance?> =
         balanceDao.observe(uid).map { entity ->
             entity?.let {
@@ -162,4 +165,19 @@ class RewardRepositoryImpl(
     } catch (e: Exception) {
         Resource.Error(e.message ?: "Failed to sync RewardsScreen", e)
     }
+
+    override suspend fun getAchievementsForUser(uid: String): List<UserAchievement> =
+        achievementDao.getAllOnce(uid).map {
+            UserAchievement(
+                achievementId = it.achievementId,
+                userId = it.userId,
+                progress = it.progress,
+                isUnlocked = it.isUnlocked,
+                isClaimed = it.isClaimed,
+                unlockedAt = it.unlockedAt,
+                claimedAt = it.claimedAt
+            )
+        }
+
+
 }
