@@ -1,26 +1,28 @@
 package com.example.fithub.core
 
+import com.google.firebase.auth.FirebaseAuth
+
 /**
- * Holds the current user ID after authentication.
- * Written by LoginViewModel and OnboardingViewModel.
- * Read by every ViewModel that needs the current user's data.
+ * Single source of truth for the current user's UID.
+ * Reads directly from Firebase Auth so it always matches the real session.
+ *
+ * DO NOT hard-code a demo UID here — screens will silently query for the
+ * wrong user and appear empty or corrupt.
  */
 object SessionManager {
 
-    private var _currentUserId: String? = null
+    private val auth: FirebaseAuth get() = FirebaseAuth.getInstance()
 
-    val currentUserId: String? get() = _currentUserId
+    /** Current authenticated user's UID, or null if not logged in. */
+    val currentUserId: String?
+        get() = auth.currentUser?.uid
 
-    fun setUser(uid: String?) {
-        _currentUserId = uid
+    fun isLoggedIn(): Boolean = currentUser != null
+
+    fun logout() {
+        auth.signOut()
     }
 
-    fun currentUserIdOrThrow(): String =
-        _currentUserId ?: error("No user session — call setUser() after login/onboarding.")
 
-    fun isLoggedIn(): Boolean = _currentUserId != null
-
-
-    fun requireUserId(): String =
-        _currentUserId ?: error("No user session — call setUser() after login/onboarding.")
+    private val currentUser get() = auth.currentUser
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
-import com.example.fithub.core.SessionManager
 import com.example.fithub.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,13 +26,26 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    fun onIdentifierChange(v: String) = _uiState.update { it.copy(identifier = v, errorMessage = null) }
-    fun onPasswordChange(v: String) = _uiState.update { it.copy(password = v, errorMessage = null) }
+    fun onIdentifierChange(v: String) =
+        _uiState.update { it.copy(identifier = v, errorMessage = null) }
+
+    fun onPasswordChange(v: String) =
+        _uiState.update { it.copy(password = v, errorMessage = null) }
+
+    fun showBiometricUnavailable() = _uiState.update {
+        it.copy(errorMessage = "Biometric not available on this device.")
+    }
+
+    fun showBiometricNeedsFirstLogin() = _uiState.update {
+        it.copy(errorMessage = "Please log in with your password once before using fingerprint.")
+    }
 
     fun submit() {
         val state = _uiState.value
         if (state.identifier.isBlank() || state.password.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Please enter your username and password.") }
+            _uiState.update {
+                it.copy(errorMessage = "Please enter your username and password.")
+            }
             return
         }
 
@@ -43,13 +55,18 @@ class LoginViewModel(
             val result = auth.login(state.identifier.trim(), state.password)
             when (result) {
                 is Resource.Success -> {
-                    SessionManager.setUser(result.data)
-                    // Pull the fresh profile from Firestore so Room is populated
-                    viewModelScope.launch {
-                        com.example.fithub.core.ServiceLocator.userRepository
-                            .syncFromRemote(result.data)
+                    // Firebase Auth now holds the session.
+                    // Pull the fresh profile from Firestore so Room is populated.
+                    ServiceLocator.userRepository.syncFromRemote(result.data)
+                    ServiceLocator.weightRepository.syncFromRemote(result.data)
+                    ServiceLocator.goalRepository.syncFromRemote(result.data)
+                    ServiceLocator.nutritionGoalsRepository.syncFromRemote(result.data)
+                    ServiceLocator.workoutGoalsRepository.syncFromRemote(result.data)
+                    ServiceLocator.checkpointRepository.syncFromRemote(result.data)
+
+                    _uiState.update {
+                        it.copy(isLoading = false, successUserId = result.data)
                     }
-                    _uiState.update { it.copy(isLoading = false, successUserId = result.data) }
                 }
                 is Resource.Error -> _uiState.update {
                     it.copy(isLoading = false, errorMessage = result.message)

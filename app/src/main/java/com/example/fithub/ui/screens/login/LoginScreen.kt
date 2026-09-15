@@ -160,24 +160,28 @@ fun LoginScreen(
                     .background(Color.White.copy(alpha = 0.15f))
                     .clickable {
                         val activity = context as? FragmentActivity
+                        if (activity == null) return@clickable
 
-                        if (
-                            activity != null &&
-                            BiometricHelper.isAvailable(context)
-                        ) {
-                            BiometricHelper.authenticate(
-                                activity = activity,
-                                title = "FitHub Login",
-                                subtitle = "Authenticate to continue",
-                                onSuccess = {
-                                    // For prototype, treat biometric as offline login.
-                                    // TODO(Track A): check local cached session and navigate.
-                                },
-                                onError = {
-                                    // No-op: user can still log in with password.
-                                }
-                            )
+                        if (!BiometricHelper.isAvailable(context)) {
+                            viewModel.showBiometricUnavailable()
+                            return@clickable
                         }
+
+                        BiometricHelper.authenticate(
+                            activity = activity,
+                            title = "FitHub Login",
+                            subtitle = "Authenticate to continue",
+                            onSuccess = {
+                                // Firebase persists auth state across restarts. If a user is
+                                // already cached, biometric success is enough to enter.
+                                if (com.google.firebase.auth.FirebaseAuth.getInstance().currentUser != null) {
+                                    onLoginSuccess()
+                                } else {
+                                    viewModel.showBiometricNeedsFirstLogin()
+                                }
+                            },
+                            onError = { /* silent — user can still use password */ }
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {
