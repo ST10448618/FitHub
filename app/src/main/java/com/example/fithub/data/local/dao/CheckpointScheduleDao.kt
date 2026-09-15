@@ -14,4 +14,7 @@ interface CheckpointScheduleDao {
 
     @Query("SELECT * FROM checkpoint_schedule WHERE userId = :userId LIMIT 1")
     fun observe(userId: String): Flow<CheckpointScheduleEntity?>
+
+    @Query("DELETE FROM checkpoint_schedule WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: String)
 }

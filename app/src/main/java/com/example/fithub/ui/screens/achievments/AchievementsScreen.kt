@@ -13,12 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fithub.domain.catalog.AchievementCatalog
+import coil.compose.AsyncImage
 import com.example.fithub.ui.components.AppHeader
 import com.example.fithub.ui.theme.*
 
@@ -28,6 +30,7 @@ fun AchievementsScreen(
     viewModel: AchievementsViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -44,7 +47,7 @@ fun AchievementsScreen(
         ) {
             Spacer(Modifier.height(8.dp))
 
-            // Level card
+            // -------- Level card --------
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -57,15 +60,32 @@ fun AchievementsScreen(
                     .padding(20.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("🏆", style = MaterialTheme.typography.displayLarge)
+                    // Trophy icon — drawable preferred, emoji fallback
+                    val trophyRes = context.resources.getIdentifier(
+                        "ic_trophy", "drawable", context.packageName
+                    )
+                    if (trophyRes != 0) {
+                        AsyncImage(
+                            model = trophyRes,
+                            contentDescription = "Trophy",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.size(72.dp)
+                        )
+                    } else {
+                        Text("🏆", style = MaterialTheme.typography.displayLarge)
+                    }
+
                     Spacer(Modifier.height(8.dp))
+
                     Text(
                         "Current Level",
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
+
                     Spacer(Modifier.height(10.dp))
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -89,7 +109,9 @@ fun AchievementsScreen(
                             color = Color.White
                         )
                     }
+
                     Spacer(Modifier.height(8.dp))
+
                     Text(
                         "Receive ${state.particlesToNextLevel} ✨ on next Level Up",
                         style = MaterialTheme.typography.labelSmall,
@@ -163,6 +185,7 @@ private fun AchievementTile(
 ) {
     val claimed = card.userState.isClaimed
     val unlocked = card.userState.isUnlocked
+    val context = LocalContext.current
 
     Card(
         modifier = modifier
@@ -184,12 +207,29 @@ private fun AchievementTile(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    if (unlocked) "🎖" else "🔒",
-                    style = MaterialTheme.typography.headlineMedium
+                val medalRes = context.resources.getIdentifier(
+                    "ic_medal", "drawable", context.packageName
                 )
+                when {
+                    unlocked && medalRes != 0 -> AsyncImage(
+                        model = medalRes,
+                        contentDescription = card.definition.title,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(36.dp)
+                    )
+                    unlocked -> Text(
+                        "🎖",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    else -> Text(
+                        "🔒",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
             }
+
             Spacer(Modifier.height(8.dp))
+
             Text(
                 card.definition.title,
                 style = MaterialTheme.typography.titleSmall,

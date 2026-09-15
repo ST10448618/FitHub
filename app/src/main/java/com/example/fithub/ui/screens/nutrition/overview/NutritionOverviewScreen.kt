@@ -54,7 +54,7 @@ fun NutritionOverviewScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // Summary cards
+            // ---------- Summary cards ----------
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 SummaryCard(
                     label = "Average Daily Intake",
@@ -70,7 +70,7 @@ fun NutritionOverviewScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // Overall progress
+            // ---------- Overall progress ----------
             val target = state.goals?.userDailyCalories ?: 0
             val pct = if (target > 0)
                 ((state.avgDailyIntake / target) * 100).toInt().coerceIn(0, 200) else 0
@@ -91,25 +91,24 @@ fun NutritionOverviewScreen(
                     height = 12.dp
                 )
                 Spacer(Modifier.height(8.dp))
-                Row(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        if (below > 0) "$below kcal below daily goal" else "${-below} kcal above daily goal",
+                        if (below > 0) "$below kcal below daily goal"
+                        else "${-below} kcal above daily goal",
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary,
                         modifier = Modifier.weight(1f)
                     )
-                    Text(
-                        "$pct% of target",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = FitHubPrimary,
-                        fontWeight = FontWeight.Bold
-                    )
+                    PctPill("$pct% of target", FitHubLightBlue, FitHubPrimary)
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // Macro goals
+            // ---------- Macro goals ----------
             Text(
                 "Macro Goals",
                 style = MaterialTheme.typography.titleMedium,
@@ -144,7 +143,7 @@ fun NutritionOverviewScreen(
 
             Spacer(Modifier.height(18.dp))
 
-            // Meals
+            // ---------- Meals ----------
             Text(
                 "Average Calories by Meal Type",
                 style = MaterialTheme.typography.titleMedium,
@@ -188,6 +187,33 @@ fun NutritionOverviewScreen(
     }
 }
 
+// ---------- Helpers ----------
+
+/**
+ * Pill-shaped badge showing a percentage or short label.
+ * Used in the overall-progress row and per-meal rows to match the design.
+ */
+@Composable
+private fun PctPill(
+    text: String,
+    background: Color = FitHubLightBlue,
+    contentColor: Color = FitHubPrimary
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(background)
+            .padding(horizontal = 10.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text,
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
 @Composable
 private fun MonthSelector(label: String, onPrev: () -> Unit, onNext: () -> Unit) {
     Row(
@@ -196,8 +222,11 @@ private fun MonthSelector(label: String, onPrev: () -> Unit, onNext: () -> Unit)
         horizontalArrangement = Arrangement.Center
     ) {
         IconButton(onClick = onPrev) {
-            Icon(Icons.Filled.ChevronLeft, contentDescription = "Previous month",
-                tint = FitHubPrimary)
+            Icon(
+                Icons.Filled.ChevronLeft,
+                contentDescription = "Previous month",
+                tint = FitHubPrimary
+            )
         }
         Text(
             label,
@@ -207,8 +236,11 @@ private fun MonthSelector(label: String, onPrev: () -> Unit, onNext: () -> Unit)
             modifier = Modifier.padding(horizontal = 12.dp)
         )
         IconButton(onClick = onNext) {
-            Icon(Icons.Filled.ChevronRight, contentDescription = "Next month",
-                tint = FitHubPrimary)
+            Icon(
+                Icons.Filled.ChevronRight,
+                contentDescription = "Next month",
+                tint = FitHubPrimary
+            )
         }
     }
 }
@@ -266,7 +298,8 @@ private fun MacroDonutCard(
             )
             Spacer(Modifier.height(8.dp))
             DonutProgress(
-                progress = if (target > 0) (actual / target).toFloat().coerceIn(0f, 1f) else 0f,
+                progress = if (target > 0)
+                    (actual / target).toFloat().coerceIn(0f, 1f) else 0f,
                 size = 74.dp,
                 strokeWidth = 10.dp,
                 progressColor = color,
@@ -283,6 +316,7 @@ private fun MacroDonutCard(
     }
 }
 
+
 @Composable
 private fun MealBreakdownRow(
     label: String,
@@ -294,54 +328,72 @@ private fun MealBreakdownRow(
     val pct = if (target > 0)
         ((actual / target) * 100).toInt().coerceIn(0, 200) else 0
 
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+    Column(modifier = Modifier.padding(vertical = 10.dp)) {
+
+        // ---- Top line: dot · name · actual / target ----
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(50))
                     .background(color)
             )
-            Spacer(Modifier.width(10.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    label,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    when {
-                        delta > 5 -> "$delta kcal under daily goal"
-                        delta < -5 -> "${-delta} kcal over daily goal"
-                        else -> "On Target!"
-                    },
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TextSecondary
-                )
-            }
+            Spacer(Modifier.width(12.dp))
+
+            Text(
+                label,
+                style = MaterialTheme.typography.titleSmall,
+                color = TextPrimary,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+
             Text(
                 "${actual.toInt()} kcal / $target kcal",
                 style = MaterialTheme.typography.labelSmall,
-                color = color,
+                color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
             )
         }
+
         Spacer(Modifier.height(6.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+
+        // ---- Second line: delta · pill ----
+        Row(
+            modifier = Modifier.padding(start = 44.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                when {
+                    delta > 5 -> "$delta kcal under daily goal"
+                    delta < -5 -> "${-delta} kcal over daily goal"
+                    else -> "On Target!"
+                },
+                style = MaterialTheme.typography.labelSmall,
+                color = TextSecondary,
+                modifier = Modifier.weight(1f)
+            )
+            PctPill(
+                text = "$pct% of target",
+                background = FitHubLightBlue,
+                contentColor = color
+            )
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        // ---- Full-width progress bar (indented past the dot) ----
+        Row(modifier = Modifier.padding(start = 44.dp)) {
             LinearProgressIndicator(
                 progress = {
                     if (target > 0) (actual / target).toFloat().coerceIn(0f, 1f) else 0f
                 },
-                modifier = Modifier.weight(1f).height(6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
                 color = color,
                 trackColor = SurfaceGray.copy(alpha = 0.4f)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                "$pct% of target",
-                style = MaterialTheme.typography.labelSmall,
-                color = color,
-                fontWeight = FontWeight.Bold
             )
         }
     }

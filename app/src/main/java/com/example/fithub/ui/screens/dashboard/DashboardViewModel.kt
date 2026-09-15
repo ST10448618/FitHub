@@ -35,6 +35,40 @@ class DashboardViewModel : ViewModel() {
         observeNutrition()
         observeWorkouts()
         loadRecommendations()
+        observeWeeklyCalories()
+    }
+
+
+    private fun observeWeeklyCalories() {
+        val today = LocalDate.now()
+        val start = today.minusDays(6)
+
+        viewModelScope.launch {
+            foodLogRepo.observeRecent(uid, limit = 200).collect { logs ->
+                val goals = nutritionGoalsRepo.getCurrent(uid)
+                val target = goals?.userDailyCalories ?: 0
+
+                val byDay = logs
+                    .filter { it.logDate in start..today }
+                    .groupBy { it.logDate }
+                    .mapValues { (_, dayLogs) -> dayLogs.sumOf { it.calories }.toInt() }
+
+                val bars = (0..6).map { offset ->
+                    val date = start.plusDays(offset.toLong())
+                    val cals = byDay[date] ?: 0
+                    DailyCalorieBar(
+                        date = date,
+                        dayLabel = date.dayOfWeek.name.take(3)
+                            .lowercase().replaceFirstChar { it.uppercase() },
+                        calories = cals,
+                        isOverTarget = target > 0 && cals > target
+                    )
+                }
+                _uiState.update {
+                    it.copy(weeklyCalories = bars, dailyCalorieTarget = target)
+                }
+            }
+        }
     }
 
     private fun observeProfile() {

@@ -1,5 +1,6 @@
 package com.example.fithub.ui.screens.rewards
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,9 +8,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,8 +26,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.fithub.domain.catalog.RewardCatalog
-import com.example.fithub.ui.theme.*
 import com.example.fithub.domain.catalog.RewardOffer
+import com.example.fithub.ui.theme.*
+
 
 @Composable
 fun RewardsScreen(
@@ -33,6 +36,14 @@ fun RewardsScreen(
     viewModel: RewardsViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(state.toastMessage) {
+        state.toastMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.consumeToast()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -40,7 +51,7 @@ fun RewardsScreen(
             .background(BackgroundGray)
             .verticalScroll(rememberScrollState())
     ) {
-        // Header
+        // -------- Header --------
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,8 +73,21 @@ fun RewardsScreen(
                 Spacer(Modifier.height(20.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("✨", style = MaterialTheme.typography.displayLarge)
+                    val trophyRes = context.resources.getIdentifier(
+                        "ic_trophy", "drawable", context.packageName
+                    )
+                    if (trophyRes != 0) {
+                        AsyncImage(
+                            model = trophyRes,
+                            contentDescription = "Rewards",
+                            modifier = Modifier.size(64.dp)
+                        )
+                    } else {
+                        Text("🏆", style = MaterialTheme.typography.displayLarge)
+                    }
+
                     Spacer(Modifier.weight(1f))
+
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
                             "Current Particles:",
@@ -81,7 +105,6 @@ fun RewardsScreen(
 
                 Spacer(Modifier.height(18.dp))
 
-                // Earn particles banner
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -105,7 +128,7 @@ fun RewardsScreen(
                         )
                     }
                     Icon(
-                        Icons.Filled.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "Open achievements",
                         tint = Color.White
                     )
@@ -115,7 +138,6 @@ fun RewardsScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        // Rewards on offer
         Text(
             "Rewards on offer",
             style = MaterialTheme.typography.titleLarge,
@@ -134,7 +156,8 @@ fun RewardsScreen(
                 OfferRow(
                     offer = offer,
                     status = state.statuses[offer.id]
-                        ?: RewardCatalog.RewardStatus.INSUFFICIENT
+                        ?: RewardCatalog.RewardStatus.INSUFFICIENT,
+                    onClick = { viewModel.claimReward(offer.id) }
                 )
             }
         }
@@ -146,7 +169,8 @@ fun RewardsScreen(
 @Composable
 private fun OfferRow(
     offer: RewardOffer,
-    status: RewardCatalog.RewardStatus
+    status: RewardCatalog.RewardStatus,
+    onClick: () -> Unit
 ) {
     val context = LocalContext.current
     val resId = context.resources.getIdentifier(
@@ -156,7 +180,12 @@ private fun OfferRow(
     )
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                enabled = status == RewardCatalog.RewardStatus.AVAILABLE,
+                onClick = onClick
+            ),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = CardWhite)
     ) {
@@ -187,7 +216,9 @@ private fun OfferRow(
                     )
                 }
             }
+
             Spacer(Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     offer.title,
@@ -209,6 +240,7 @@ private fun OfferRow(
                     }
                 )
             }
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("✨", style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.width(4.dp))

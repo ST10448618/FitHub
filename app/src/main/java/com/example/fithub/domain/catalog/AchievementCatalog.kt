@@ -102,8 +102,8 @@ object AchievementCatalog {
         ALL.filter { it.category == category }
 
     // ---- Level formula ----
-    // Every 150 lifetime particles = 1 level. Starting at Level 1.
-    const val PARTICLES_PER_LEVEL = 150
+    // Every 300 lifetime particles = 1 level. Starting at Level 1.
+    const val PARTICLES_PER_LEVEL = 300
 
     fun levelFromLifetimeParticles(lifetimeEarned: Int): Int =
         (lifetimeEarned / PARTICLES_PER_LEVEL) + 1

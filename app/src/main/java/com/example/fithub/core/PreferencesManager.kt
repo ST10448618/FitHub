@@ -16,6 +16,27 @@ class PreferencesManager(private val context: Context) {
         val PUSH_NOTIFICATIONS = booleanPreferencesKey("push_notifications")
         val LANGUAGE = stringPreferencesKey("language")
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
+
+        val CLAIMED_REWARDS = stringPreferencesKey("claimed_rewards")
+    }
+
+    val claimedRewards: Flow<Set<String>> = context.dataStore.data.map { prefs ->
+        prefs[Keys.CLAIMED_REWARDS]
+            ?.split(",")
+            ?.filter { it.isNotBlank() }
+            ?.toSet()
+            ?: emptySet()
+    }
+
+    suspend fun addClaimedReward(rewardId: String) {
+        context.dataStore.edit { prefs ->
+            val current = prefs[Keys.CLAIMED_REWARDS]
+                ?.split(",")
+                ?.filter { it.isNotBlank() }
+                .orEmpty()
+            val updated = (current + rewardId).distinct()
+            prefs[Keys.CLAIMED_REWARDS] = updated.joinToString(",")
+        }
     }
 
     val pushNotificationsEnabled: Flow<Boolean> =

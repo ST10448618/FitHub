@@ -22,6 +22,7 @@ class CheckpointRepositoryImpl(
         dao.get(uid)?.let(CheckpointLocalMapper::toDomain)
 
     override suspend fun save(schedule: CheckpointSchedule): Resource<Unit> = try {
+        dao.deleteAllForUser(schedule.userId)
         dao.upsert(CheckpointLocalMapper.toEntity(schedule))
         FirestorePaths.checkpointSchedule(schedule.userId, schedule.id)
             .set(CheckpointMapper.toMap(schedule))

@@ -47,9 +47,17 @@ class RewardRepositoryImpl(
         }
 
     override suspend fun addParticles(uid: String, amount: Int): Resource<Unit> = try {
+
+
         val existing = balanceDao.get(uid)
-        val newBalance = (existing?.balance ?: 0) + amount
-        val newLifetime = (existing?.lifetimeEarned ?: 0) + amount
+
+        val newBalance = ((existing?.balance ?: 0) + amount).coerceAtLeast(0)
+        val newLifetime = if (amount > 0) {
+            (existing?.lifetimeEarned ?: 0) + amount
+        } else {
+            existing?.lifetimeEarned ?: 0   // spending never reduces lifetime
+        }
+
         val updated = ParticleBalanceEntity(
             userId = uid,
             balance = newBalance,

@@ -22,6 +22,7 @@ class WorkoutGoalsRepositoryImpl(
         dao.get(uid)?.let(WorkoutGoalsLocalMapper::toDomain)
 
     override suspend fun save(goals: WorkoutGoals): Resource<Unit> = try {
+        dao.deleteAllForUser(goals.userId)
         dao.upsert(WorkoutGoalsLocalMapper.toEntity(goals))
         FirestorePaths.workoutGoal(goals.userId, goals.id)
             .set(WorkoutGoalsMapper.toMap(goals))

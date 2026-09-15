@@ -14,4 +14,7 @@ interface NutritionGoalsDao {
 
     @Query("SELECT * FROM nutrition_goals WHERE userId = :userId ORDER BY effectiveDate DESC LIMIT 1")
     fun observeCurrent(userId: String): Flow<NutritionGoalsEntity?>
+
+    @Query("DELETE FROM nutrition_goals WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: String)
 }

@@ -22,6 +22,8 @@ class NutritionGoalsRepositoryImpl(
         dao.getCurrent(uid)?.let(NutritionGoalsLocalMapper::toDomain)
 
     override suspend fun save(goals: NutritionGoals): Resource<Unit> = try {
+        // Wipe any stale rows for this user, then insert the single authoritative one
+        dao.deleteAllForUser(goals.userId)
         dao.upsert(NutritionGoalsLocalMapper.toEntity(goals))
         FirestorePaths.nutritionGoal(goals.userId, goals.id)
             .set(NutritionGoalsMapper.toMap(goals))

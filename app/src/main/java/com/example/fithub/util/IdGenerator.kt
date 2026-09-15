@@ -21,4 +21,10 @@ object IdGenerator {
 
     /** Food ID from a barcode, so cached foods can be looked up by barcode. */
     fun foodIdFromBarcode(barcode: String): String = "off:$barcode"
+
+    /**
+     * Stable ID for singleton-per-user records (nutrition goals, workout goals,
+     * checkpoint schedule). Repeated saves overwrite the same row.
+     */
+    fun userSingletonId(prefix: String, userId: String): String = "${prefix}_$userId"
 }

@@ -18,28 +18,28 @@ object RewardCatalog {
             id = "bun_n_bite",
             title = "Bun n Bite",
             subtitle = "Meal voucher",
-            costParticles = 200,
+            costParticles = 100,
             brandDrawableName = "brand_bun_n_bite"
         ),
         RewardOffer(
             id = "noosh",
             title = "NOOSH",
             subtitle = "Snack voucher",
-            costParticles = 250,
+            costParticles = 150,
             brandDrawableName = "brand_noosh"
         ),
         RewardOffer(
             id = "planet_fitness",
             title = "Planet Fitness",
             subtitle = "1 month membership",
-            costParticles = 3000,
+            costParticles = 100,
             brandDrawableName = "brand_planet_fitness"
         ),
         RewardOffer(
             id = "steam",
             title = "Steam Voucher",
             subtitle = "R100 wallet top-up",
-            costParticles = 800,
+            costParticles = 1000,
             brandDrawableName = "brand_steam"
         )
     )

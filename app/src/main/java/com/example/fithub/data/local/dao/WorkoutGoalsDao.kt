@@ -14,4 +14,7 @@ interface WorkoutGoalsDao {
 
     @Query("SELECT * FROM workout_goals WHERE userId = :userId LIMIT 1")
     fun observe(userId: String): Flow<WorkoutGoalsEntity?>
+
+    @Query("DELETE FROM workout_goals WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: String)
 }

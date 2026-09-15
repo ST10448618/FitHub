@@ -233,7 +233,7 @@ class NutritionGoalsViewModel : ViewModel() {
             _uiState.update { it.copy(isSaving = true, errorMessage = null) }
 
             val goals = NutritionGoals(
-                id = IdGenerator.newId(),
+                id = IdGenerator.userSingletonId("nutrition_goals", uid),
                 userId = uid,
                 recommendedDailyCalories = state.recommendedDailyCalories,
                 userDailyCalories = state.userDailyCalories,

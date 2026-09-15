@@ -2,6 +2,7 @@ package com.example.fithub.ui.screens.dashboard
 
 import com.example.fithub.domain.calculator.NutritionProgressCalculator
 import com.example.fithub.domain.model.*
+import java.time.LocalDate
 
 data class DashboardUiState(
     val isLoading: Boolean = true,
@@ -24,5 +25,16 @@ data class DashboardUiState(
 
     // Recent/recommended
     val recentSessions: List<WorkoutSession> = emptyList(),
-    val recommendedPlans: List<WorkoutPlan> = emptyList()
+    val recommendedPlans: List<WorkoutPlan> = emptyList(),
+
+    val weeklyCalories: List<DailyCalorieBar> = emptyList(),
+    val dailyCalorieTarget: Int = 0
 )
+
+data class DailyCalorieBar(
+    val date: LocalDate,
+    val dayLabel: String,
+    val calories: Int,
+    val isOverTarget: Boolean
+)
+

@@ -70,7 +70,8 @@ fun DashboardScreen(
         Spacer(Modifier.height(20.dp))
 
         CalorieIntakeChartSection(
-            snapshot = state.nutritionSnapshot,
+            weeklyCalories = state.weeklyCalories,
+            dailyTarget = state.dailyCalorieTarget,
             onViewMoreClick = { onNavigate(Screen.NUTRITION_OVERVIEW) }
         )
 
