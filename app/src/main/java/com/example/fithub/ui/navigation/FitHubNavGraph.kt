@@ -182,17 +182,17 @@ fun FitHubNavGraph(
             // BODY & WEIGHT
             // ========================
             composable(Screen.BODY_WEIGHT) {
-                PlaceholderScreen(
-                    title = "Body & Weight",
+                com.example.fithub.ui.screens.body.BodyWeightScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Goal · Journey · Checkpoint log"
+                    onLogWeightClick = { navController.navigate(Screen.CHECKPOINT_LOGGER) },
+                    onManageCheckpointsClick = { navController.navigate(Screen.CHECKPOINT_MANAGER) }
                 )
             }
+
             composable(Screen.CHECKPOINT_LOGGER) {
-                PlaceholderScreen(
-                    title = "Checkpoint Logger",
+                com.example.fithub.ui.screens.body.CheckpointLoggerScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Record new weigh-in"
+                    onSaved = { navController.navigateUp() }
                 )
             }
             composable(Screen.CHECKPOINT_MANAGER) {
