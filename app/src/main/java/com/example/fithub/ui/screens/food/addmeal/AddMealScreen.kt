@@ -7,9 +7,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,9 +30,8 @@ import com.example.fithub.ui.theme.*
 @Composable
 fun AddMealScreen(
     onBack: () -> Unit,
-    onFoodSelected: (String) -> Unit,      // passes foodId
+    onFoodSelected: (String) -> Unit,
     onBarcodeScan: () -> Unit,
-    onCameraRecognition: () -> Unit,
     viewModel: AddMealViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -42,7 +43,7 @@ fun AddMealScreen(
     ) {
         AppHeader(title = "Add Meal", onBack = onBack)
 
-        // Search bar + scan button
+        // Search bar + barcode button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,31 +63,27 @@ fun AddMealScreen(
             )
             Spacer(Modifier.width(8.dp))
             Button(
-                onClick = onCameraRecognition,
+                onClick = onBarcodeScan,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = FitHubPrimary,
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 12.dp)
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp)
             ) {
-                Text("📸 Scan Meal", fontWeight = FontWeight.Bold)
+                Icon(
+                    Icons.Filled.QrCodeScanner,
+                    contentDescription = "Scan barcode",
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(Modifier.width(6.dp))
+                Text("Scan", fontWeight = FontWeight.Bold)
             }
         }
 
-        // Second scan button row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp)
-        ) {
-            TextButton(onClick = onBarcodeScan) {
-                Text("📷  Scan Barcode", color = FitHubPrimary, fontWeight = FontWeight.Bold)
-            }
-        }
+        Spacer(Modifier.height(6.dp))
 
         // Categories
-        Spacer(Modifier.height(4.dp))
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -112,7 +109,7 @@ fun AddMealScreen(
         Spacer(Modifier.height(8.dp))
 
         when {
-            state.isSearching -> LoadingState(message = "Searching…")
+            state.isSearching -> LoadingState(message = "Searching OpenFoodFacts…")
             state.errorMessage != null -> Box(
                 Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -124,7 +121,7 @@ fun AddMealScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "Search for a food or pick a category.",
+                    "Search for a food, scan a barcode, or pick a category.",
                     color = TextSecondary
                 )
             }

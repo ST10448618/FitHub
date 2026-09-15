@@ -219,8 +219,7 @@ fun FitHubNavGraph(
                     onFoodSelected = { foodId ->
                         navController.navigate(Screen.foodDetails(foodId))
                     },
-                    onBarcodeScan = { navController.navigate("barcode_scanner") },
-                    onCameraRecognition = { navController.navigate("camera_recognition") }
+                    onBarcodeScan = { navController.navigate(Screen.BARCODE_SCANNER) }
                 )
             }
 
@@ -233,30 +232,9 @@ fun FitHubNavGraph(
                 )
             }
 
-            // New routes for scanner + camera
-            composable(Screen.BARCODE_SCANNER) {
-                com.example.fithub.ui.screens.food.scanner.BarcodeScannerScreen(
-                    onBack = { navController.navigateUp() },
-                    onBarcodeDetected = { barcode ->
-                        navController.navigate(Screen.foodDetails("off:$barcode")) {
-                            popUpTo(Screen.BARCODE_SCANNER) { inclusive = true }
-                        }
-                    }
-                )
-            }
 
-            composable(Screen.CAMERA_RECOGNITION) {
-                com.example.fithub.ui.screens.food.scanner.CameraRecognitionScreen(
-                    onBack = { navController.navigateUp() },
-                    onRecognized = { label, _ ->
-                        // For prototype, take the label and search OpenFoodFacts for it,
-                        // landing the user on the Add Meal screen with a query prefilled.
-                        navController.navigate(Screen.ADD_MEAL) {
-                            popUpTo(Screen.CAMERA_RECOGNITION) { inclusive = true }
-                        }
-                    }
-                )
-            }
+
+
 
             // Simple food details (used from Add Meal / Food List)
             composable(

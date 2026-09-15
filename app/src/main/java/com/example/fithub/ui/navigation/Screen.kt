@@ -43,8 +43,6 @@ object Screen {
     const val LIST_FOOD = "list_food/{category}"
     const val FOOD_DETAILS = "food_details/{foodId}"
     const val BARCODE_SCANNER = "barcode_scanner"
-    const val CAMERA_RECOGNITION = "camera_recognition"
-
     // Route for the list of the day's logged foods
     const val LIST_FOOD_LOGS = "list_food_logs/{date}"
 
