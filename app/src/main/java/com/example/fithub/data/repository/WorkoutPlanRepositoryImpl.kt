@@ -68,24 +68,11 @@ class WorkoutPlanRepositoryImpl(
         dao.observeSavedByUser(uid).map { list -> list.mapNotNull { hydrate(it.id) } }
 
     override suspend fun saveFromLibrary(uid: String, plan: WorkoutPlan): Resource<Unit> = try {
-        // Clone the verified plan as a saved copy for the user
-        val cloneId = "${plan.id}_saved_$uid"
-        val cloned = plan.copy(
-            id = cloneId,
-            userId = uid,
-            isVerified = false,
-            isSaved = true
-        )
-        val entity = WorkoutPlanLocalMapper.toEntity(cloned)
-        dao.upsert(entity)
+        val updated = plan.copy(isSaved = true, userId = uid)
+        dao.upsert(WorkoutPlanLocalMapper.toEntity(updated))
 
-        db.workoutExerciseDao().deleteForPlan(cloneId)
-        db.workoutExerciseDao().upsertAll(
-            WorkoutPlanLocalMapper.toExerciseEntities(cloneId, cloned.exercises)
-        )
-
-        FirestorePaths.savedPlan(uid, cloneId)
-            .set(WorkoutPlanMapper.toMap(cloned))
+        FirestorePaths.savedPlan(uid, plan.id)
+            .set(mapOf("savedAt" to java.time.LocalDateTime.now().toString()))
             .await()
 
         Resource.Success(Unit)
@@ -94,7 +81,16 @@ class WorkoutPlanRepositoryImpl(
     }
 
     override suspend fun unsave(uid: String, planId: String): Resource<Unit> = try {
-        dao.delete(planId)
+        val existing = dao.getById(planId)
+        if (existing != null) {
+            if (existing.isVerified) {
+                // Verified library plan — just flip the flag back
+                dao.upsert(existing.copy(isSaved = false))
+            } else {
+                // User-cloned/created plan — delete entirely
+                dao.delete(planId)
+            }
+        }
         FirestorePaths.savedPlan(uid, planId).delete().await()
         Resource.Success(Unit)
     } catch (e: Exception) {
