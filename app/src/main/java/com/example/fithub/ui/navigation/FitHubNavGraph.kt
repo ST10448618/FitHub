@@ -134,9 +134,8 @@ fun FitHubNavGraph(
             }
 
             composable(Screen.PLANS) {
-                PlaceholderScreen(
-                    title = "Fitness Hub",
-                    subtitle = "Recent · Created · Saved · Verified"
+                com.example.fithub.ui.screens.plans.PlansScreen(
+                    onNavigate = { route -> navController.navigate(route) }
                 )
             }
 
@@ -291,32 +290,31 @@ fun FitHubNavGraph(
             // WORKOUTS
             // ========================
             composable(Screen.VERIFIED_PLANS) {
-                PlaceholderScreen(
-                    title = "Verified Workout Plans",
+                com.example.fithub.ui.screens.plans.VerifiedPlansScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Categories · Search · Filter"
+                    onPlanClick = { planId ->
+                        navController.navigate(Screen.workoutDetails(planId))
+                    },
+                    onSeeAllClick = { category ->
+                        navController.navigate(Screen.listWorkouts(category.name))
+                    },
+                    onCreatePlanClick = { navController.navigate(Screen.CREATE_WORKOUT_1) }
                 )
             }
-            composable(
-                route = Screen.LIST_WORKOUTS,
-                arguments = listOf(navArgument("category") { type = NavType.StringType })
-            ) { entry ->
-                val category = entry.arguments?.getString("category").orEmpty()
-                PlaceholderScreen(
-                    title = "List · $category",
+            composable(Screen.LIST_WORKOUTS) {
+                com.example.fithub.ui.screens.plans.WorkoutListScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Browse workouts"
+                    onPlanClick = { planId ->
+                        navController.navigate(Screen.workoutDetails(planId))
+                    }
                 )
             }
-            composable(
-                route = Screen.WORKOUT_DETAILS,
-                arguments = listOf(navArgument("planId") { type = NavType.StringType })
-            ) { entry ->
-                val planId = entry.arguments?.getString("planId").orEmpty()
-                PlaceholderScreen(
-                    title = "Workout Plan Details",
+            composable(Screen.WORKOUT_DETAILS) {
+                com.example.fithub.ui.screens.plans.details.WorkoutDetailsScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "planId: $planId"
+                    onStartSession = { planId ->
+                        navController.navigate(Screen.sessionMode(planId))
+                    }
                 )
             }
 
