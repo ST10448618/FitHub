@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,8 +27,15 @@ import com.example.fithub.ui.theme.*
 fun WorkoutCardHorizontal(
     plan: WorkoutPlan,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    localImageRes: Int = 0
 ) {
+    val imageModel: Any? = when {
+        plan.imageUrl != null -> plan.imageUrl
+        localImageRes != 0 -> localImageRes
+        else -> null
+    }
+
     Box(
         modifier = modifier
             .width(210.dp)
@@ -36,10 +44,9 @@ fun WorkoutCardHorizontal(
             .background(CardWhite)
             .clickable(onClick = onClick)
     ) {
-        // Hero image
-        if (plan.imageUrl != null) {
+        if (imageModel != null) {
             AsyncImage(
-                model = plan.imageUrl,
+                model = imageModel,
                 contentDescription = plan.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -49,80 +56,79 @@ fun WorkoutCardHorizontal(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        Brush.verticalGradient(
-                            listOf(FitHubMidBlue, FitHubPrimary)
-                        )
-                    )
-            )
+                        Brush.verticalGradient(listOf(FitHubMidBlue, FitHubPrimary))
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    plan.name.take(1).uppercase(),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = Color.White.copy(alpha = 0.4f),
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
-        // Gradient scrim
+        // Gradient scrim for legibility
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            androidx.compose.ui.graphics.Color.Transparent,
-                            androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.55f)
-                        )
+                        listOf(Color.Transparent, Color.Black.copy(alpha = 0.65f))
                     )
                 )
         )
 
-        // Bottom info
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(12.dp)
         ) {
             Text(
-                text = plan.name,
+                plan.name,
                 style = MaterialTheme.typography.titleSmall,
-                color = androidx.compose.ui.graphics.Color.White,
+                color = Color.White,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "${plan.exercises.size} exercises • ${plan.estimatedDurationMinutes} min",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.9f)
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "${plan.exercises.size} exercises • ${plan.estimatedDurationMinutes} min",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White.copy(alpha = 0.9f)
+            )
+            Spacer(Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Filled.LocalFireDepartment,
+                    Icons.Filled.LocalFireDepartment,
                     contentDescription = null,
-                    tint = androidx.compose.ui.graphics.Color.White,
-                    modifier = Modifier.size(14.dp)
+                    tint = Color.White,
+                    modifier = Modifier.size(13.dp)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(Modifier.width(3.dp))
                 Text(
-                    text = "${plan.estimatedActivityKcal} kcal",
+                    "${plan.estimatedActivityKcal} kcal",
                     style = MaterialTheme.typography.labelSmall,
-                    color = androidx.compose.ui.graphics.Color.White
+                    color = Color.White
                 )
             }
         }
 
-        // Difficulty badge
         if (plan.isVerified) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(10.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(FitHubPrimary.copy(alpha = 0.85f))
+                    .background(FitHubPrimary.copy(alpha = 0.9f))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = "Verified",
+                    "Verified",
                     style = MaterialTheme.typography.labelSmall,
-                    color = androidx.compose.ui.graphics.Color.White,
+                    color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -134,8 +140,15 @@ fun WorkoutCardHorizontal(
 fun WorkoutCardRow(
     plan: WorkoutPlan,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    localImageRes: Int = 0
 ) {
+    val imageModel: Any? = when {
+        plan.imageUrl != null -> plan.imageUrl
+        localImageRes != 0 -> localImageRes
+        else -> null
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -152,35 +165,44 @@ fun WorkoutCardRow(
                 .background(FitHubLightBlue),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = plan.name.firstOrNull()?.toString() ?: "W",
-                style = MaterialTheme.typography.headlineMedium,
-                color = FitHubPrimary,
-                fontWeight = FontWeight.Bold
-            )
+            if (imageModel != null) {
+                AsyncImage(
+                    model = imageModel,
+                    contentDescription = plan.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Text(
+                    plan.name.take(1).uppercase(),
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = FitHubPrimary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(Modifier.width(12.dp))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = plan.name,
+                plan.name,
                 style = MaterialTheme.typography.titleSmall,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(Modifier.height(2.dp))
             Text(
-                text = "${plan.exercises.size} exercises • ${plan.estimatedDurationMinutes} min",
+                "${plan.estimatedDurationMinutes} minutes",
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
         }
 
         Text(
-            text = "${plan.estimatedActivityKcal} kcal",
+            "${plan.estimatedActivityKcal} kcal",
             style = MaterialTheme.typography.titleSmall,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold
