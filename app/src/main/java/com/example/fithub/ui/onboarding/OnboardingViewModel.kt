@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
-import com.example.fithub.core.SessionManager
 import com.example.fithub.domain.model.*
 import com.example.fithub.util.IdGenerator
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,14 +25,11 @@ class OnboardingViewModel : ViewModel() {
     private val _submitState = MutableStateFlow(OnboardingSubmitState())
     val submitState: StateFlow<OnboardingSubmitState> = _submitState.asStateFlow()
 
-    /**
-     * Called from the "Confirm" on the Onboarding Complete overlay.
-     * Creates the Firebase user, writes the profile to Room, and creates
-     * default goals + checkpoint schedule.
-     */
     fun submit() {
         if (!OnboardingSession.isReadyToSubmit()) {
-            _submitState.update { it.copy(errorMessage = "Some onboarding details are missing.") }
+            _submitState.update {
+                it.copy(errorMessage = "Some onboarding details are missing.")
+            }
             return
         }
 
@@ -41,7 +37,10 @@ class OnboardingViewModel : ViewModel() {
             _submitState.update { it.copy(isSubmitting = true, errorMessage = null) }
 
             val auth = ServiceLocator.authRepository
-            val registerResult = auth.register(OnboardingSession.email, OnboardingSession.password)
+            val registerResult = auth.register(
+                OnboardingSession.email,
+                OnboardingSession.password
+            )
             if (registerResult is Resource.Error) {
                 _submitState.update {
                     it.copy(isSubmitting = false, errorMessage = registerResult.message)
@@ -51,14 +50,10 @@ class OnboardingViewModel : ViewModel() {
 
             val uid = (registerResult as Resource.Success).data
             val now = LocalDateTime.now()
-            SessionManager.setUser(uid)
-
-            // Ensure the profile is fully pulled from Firestore after registration
-            ServiceLocator.userRepository.syncFromRemote(uid)
 
             val profile = UserProfile(
                 id = uid,
-                firstName = OnboardingSession.username,      // single field per screenshot
+                firstName = OnboardingSession.username,
                 surname = "",
                 email = OnboardingSession.email,
                 gender = OnboardingSession.gender ?: Gender.OTHER,
@@ -80,8 +75,6 @@ class OnboardingViewModel : ViewModel() {
                 }
                 return@launch
             }
-
-            com.example.fithub.core.SessionManager.setUser(uid)
 
             // Initial weight entry — starting weight
             ServiceLocator.weightRepository.addEntry(
@@ -114,9 +107,6 @@ class OnboardingViewModel : ViewModel() {
                     remindersEnabled = true
                 )
             )
-
-            // NOTE: NutritionGoals and Goal are set by the user later via Goals section
-            // (per master spec: target weight is NOT set during onboarding).
 
             OnboardingSession.reset()
             _submitState.update { it.copy(isSubmitting = false, isComplete = true) }

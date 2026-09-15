@@ -2,7 +2,6 @@ package com.example.fithub.ui.screens.food.scanner
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,13 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.example.fithub.ml.FoodClassifier
 import com.example.fithub.ui.components.AppHeader
 import com.example.fithub.ui.components.PrimaryButton
-import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -38,6 +38,7 @@ fun CameraRecognitionScreen(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
     val classifier = remember { FoodClassifier(context) }
 
     var hasPermission by remember {
@@ -64,8 +65,14 @@ fun CameraRecognitionScreen(
     var statusText by remember {
         mutableStateOf(
             if (classifier.isReady()) "Tap Capture to recognise your meal"
-            else "Model unavailable — falling back to manual entry"
+            else "Model unavailable — please add the meal manually."
         )
+    }
+
+    // Back always works, even if the previous capture threw.
+    val safeBack: () -> Unit = {
+        isProcessing = false
+        onBack()
     }
 
     Column(
@@ -75,7 +82,7 @@ fun CameraRecognitionScreen(
     ) {
         AppHeader(
             title = "AI Recognition",
-            onBack = onBack,
+            onBack = safeBack,
             titleColor = Color.White
         )
 
@@ -84,7 +91,8 @@ fun CameraRecognitionScreen(
                 Text(
                     "Camera permission required.",
                     color = Color.White,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
                 )
             }
             return@Column
@@ -104,7 +112,8 @@ fun CameraRecognitionScreen(
             Text(
                 statusText,
                 color = Color.White,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(12.dp))
             if (isProcessing) {
@@ -113,28 +122,71 @@ fun CameraRecognitionScreen(
                 PrimaryButton(
                     text = "📸  Capture",
                     onClick = {
-                        val capture = imageCapture ?: return@PrimaryButton
+                        val capture = imageCapture
+                        if (capture == null) {
+                            statusText = "Camera not ready yet — try again in a moment."
+                            return@PrimaryButton
+                        }
                         isProcessing = true
                         statusText = "Analysing…"
+
+                        // Write JPEG to cache dir — this is the reliable path.
+                        val photoFile = File(
+                            context.cacheDir,
+                            "food_capture_${System.currentTimeMillis()}.jpg"
+                        )
+                        val outputOptions = ImageCapture.OutputFileOptions
+                            .Builder(photoFile)
+                            .build()
+
                         capture.takePicture(
+                            outputOptions,
                             executor,
-                            object : ImageCapture.OnImageCapturedCallback() {
-                                override fun onCaptureSuccess(image: ImageProxy) {
-                                    val bitmap = imageProxyToBitmap(image)
-                                    image.close()
-                                    val prediction = classifier.classify(bitmap)
-                                    isProcessing = false
-                                    if (prediction != null) {
-                                        statusText = "${prediction.label} (${(prediction.confidence * 100).toInt()}%)"
-                                        onRecognized(prediction.label, prediction.confidence)
-                                    } else {
-                                        statusText = "No model — please add the meal manually."
+                            object : ImageCapture.OnImageSavedCallback {
+                                override fun onImageSaved(
+                                    outputFileResults: ImageCapture.OutputFileResults
+                                ) {
+                                    // Decode off the main thread, classify, then hop back.
+                                    var prediction: FoodClassifier.Prediction? = null
+                                    var err: String? = null
+                                    try {
+                                        val bmp = BitmapFactory.decodeFile(photoFile.absolutePath)
+                                        if (bmp != null) {
+                                            prediction = classifier.classify(bmp)
+                                        } else {
+                                            err = "Could not read the captured photo."
+                                        }
+                                    } catch (t: Throwable) {
+                                        err = "Recognition failed: ${t.message ?: "unknown error"}"
+                                    } finally {
+                                        photoFile.delete()
+                                    }
+
+                                    val finalPrediction = prediction
+                                    val finalErr = err
+                                    ContextCompat.getMainExecutor(context).execute {
+                                        isProcessing = false
+                                        when {
+                                            finalPrediction != null -> {
+                                                statusText = "${finalPrediction.label} " +
+                                                        "(${(finalPrediction.confidence * 100).toInt()}%)"
+                                                onRecognized(
+                                                    finalPrediction.label,
+                                                    finalPrediction.confidence
+                                                )
+                                            }
+                                            finalErr != null -> statusText = finalErr
+                                            else -> statusText =
+                                                "No model — please add the meal manually."
+                                        }
                                     }
                                 }
 
                                 override fun onError(exception: ImageCaptureException) {
-                                    isProcessing = false
-                                    statusText = "Capture failed. Try again."
+                                    ContextCompat.getMainExecutor(context).execute {
+                                        isProcessing = false
+                                        statusText = "Capture failed: ${exception.message ?: "unknown"}"
+                                    }
                                 }
                             }
                         )
@@ -144,41 +196,32 @@ fun CameraRecognitionScreen(
         }
 
         LaunchedEffect(Unit) {
-            val future = ProcessCameraProvider.getInstance(context)
-            future.addListener({
-                val provider = future.get()
-                val preview = Preview.Builder().build().also {
-                    it.setSurfaceProvider(previewView.surfaceProvider)
-                }
-                val capture = ImageCapture.Builder()
-                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                    .build()
-                imageCapture = capture
-                provider.unbindAll()
-                provider.bindToLifecycle(
-                    lifecycleOwner,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    preview,
-                    capture
-                )
-            }, ContextCompat.getMainExecutor(context))
+            try {
+                val future = ProcessCameraProvider.getInstance(context)
+                future.addListener({
+                    try {
+                        val provider = future.get()
+                        val preview = Preview.Builder().build().also {
+                            it.setSurfaceProvider(previewView.surfaceProvider)
+                        }
+                        val capture = ImageCapture.Builder()
+                            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                            .build()
+                        imageCapture = capture
+                        provider.unbindAll()
+                        provider.bindToLifecycle(
+                            lifecycleOwner,
+                            CameraSelector.DEFAULT_BACK_CAMERA,
+                            preview,
+                            capture
+                        )
+                    } catch (t: Throwable) {
+                        statusText = "Camera unavailable: ${t.message ?: "unknown error"}"
+                    }
+                }, ContextCompat.getMainExecutor(context))
+            } catch (t: Throwable) {
+                statusText = "Camera unavailable: ${t.message ?: "unknown error"}"
+            }
         }
     }
-}
-
-/** CameraX ImageProxy → Bitmap helper. */
-private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-    val buffer = image.planes[0].buffer
-    val bytes = ByteArray(buffer.remaining())
-    buffer.get(bytes)
-    val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-    // Rotate according to image rotation
-    val matrix = android.graphics.Matrix().apply {
-        postRotate(image.imageInfo.rotationDegrees.toFloat())
-    }
-    return Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
-        .let { corrected ->
-            // Some YUV_420_888 images decode as null via the JPEG shortcut — fallback to raw.
-            corrected.takeIf { it.width > 0 } ?: bmp
-        }
 }
