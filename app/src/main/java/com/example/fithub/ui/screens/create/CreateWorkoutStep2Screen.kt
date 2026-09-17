@@ -47,7 +47,7 @@ fun CreateWorkoutStep2Screen(
             onBack()
         },
         onNext = onNext,
-        nextEnabled = CreateWorkoutSession.isStep2Valid()
+        nextEnabled = state.draft.exercises.isNotEmpty()
     ) {
         Text(
             "Session Builder",

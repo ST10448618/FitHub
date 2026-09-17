@@ -35,7 +35,7 @@ fun CreateWorkoutStep1Screen(
             onBack()
         },
         onNext = onNext,
-        nextEnabled = CreateWorkoutSession.isStep1Valid()
+        nextEnabled = state.draft.name.isNotBlank()
     ) {
         Text(
             "Task Details",
