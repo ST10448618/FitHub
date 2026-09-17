@@ -19,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fithub.ui.components.CreateWorkoutScaffold
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SuccessOverlay
 import com.example.fithub.ui.theme.*
