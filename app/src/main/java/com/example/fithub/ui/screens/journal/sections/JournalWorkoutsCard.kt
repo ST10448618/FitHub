@@ -13,9 +13,10 @@ import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SectionHeader
 import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.TextSecondary
+import java.time.format.DateTimeFormatter
 
 // ============================================================
-// OWNER: Track B (Muhammad Akeel)
+// OWNER: Track B (Muhammad Akeel / Perez Seth Roy)
 // ============================================================
 @Composable
 fun JournalWorkoutsCard(
@@ -63,7 +64,9 @@ fun JournalWorkoutsCard(
                         )
                     }
                     Text(
-                        session.logDate.toString(),
+                        session.completedAt.format(
+                            DateTimeFormatter.ofPattern("d MMM, HH:mm")
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )

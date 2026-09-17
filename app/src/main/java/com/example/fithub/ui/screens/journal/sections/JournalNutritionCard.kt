@@ -47,8 +47,8 @@ fun JournalNutritionCard(
                 emoji = "🍽"
             )
         } else {
-            // Show at most the first 3 tiles in a 2-column grid (2 + 1)
-            val visible = foodLogs.take(3)
+            // Show at most the first 4 tiles in a 2-column grid (no nested scroll)
+            val visible = foodLogs.take(4)
             visible.chunked(2).forEach { rowItems ->
                 Row(
                     modifier = Modifier
@@ -67,6 +67,18 @@ fun JournalNutritionCard(
                         Spacer(modifier = Modifier.weight(1f))
                     }
                 }
+            }
+
+            // If there were more than 4, prompt for the rest
+            if (foodLogs.size > 4) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    "+ ${foodLogs.size - 4} more — tap View All",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextSecondary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
             }
         }
     }
