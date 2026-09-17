@@ -126,7 +126,9 @@ fun WorkoutsOverviewScreen(
                 Text(
                     "$remaining kcal below monthly goal",
                     style = MaterialTheme.typography.labelSmall,
-                    color = TextSecondary
+                    color = TextSecondary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
             }
 
@@ -157,7 +159,9 @@ fun WorkoutsOverviewScreen(
                     Text(
                         "No workout activity to show.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = TextSecondary,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
                 } else {
                     SimpleLineChart(
@@ -222,28 +226,41 @@ fun WorkoutsOverviewScreen(
                         .background(FitHubLightBlue.copy(alpha = 0.4f))
                         .padding(14.dp)
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
                             "Training Summary",
                             style = MaterialTheme.typography.labelMedium,
                             color = FitHubPrimary,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
-                        Spacer(Modifier.height(6.dp))
+                        Spacer(Modifier.height(8.dp))
                         Text(
                             "Total Sessions Completed : ${state.habits.totalSessions} Sessions",
                             style = MaterialTheme.typography.bodySmall,
-                            color = FitHubPrimary
+                            color = FitHubPrimary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
+                        Spacer(Modifier.height(4.dp))
                         Text(
                             "Average Session Length : ${state.habits.averageSessionMinutes} minutes",
                             style = MaterialTheme.typography.bodySmall,
-                            color = FitHubPrimary
+                            color = FitHubPrimary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
+                        Spacer(Modifier.height(4.dp))
                         Text(
                             "Longest Session Completed : ${state.habits.longestSessionMinutes} minutes",
                             style = MaterialTheme.typography.bodySmall,
-                            color = FitHubPrimary
+                            color = FitHubPrimary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -255,7 +272,9 @@ fun WorkoutsOverviewScreen(
                     Text(
                         "No categories to display yet.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = TextSecondary,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
                 } else {
                     state.categoryBreakdown.forEach { item ->
