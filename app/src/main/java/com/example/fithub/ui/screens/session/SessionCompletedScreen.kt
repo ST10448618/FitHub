@@ -1,6 +1,8 @@
 package com.example.fithub.ui.screens.session
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -14,18 +16,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fithub.R
 import com.example.fithub.ui.components.LoadingState
 import com.example.fithub.ui.components.RoundedProgressBar
 import com.example.fithub.ui.theme.*
@@ -204,7 +207,7 @@ fun SessionCompletedScreen(
         ) {
             if (particleRes != 0) {
                 Icon(
-                    painter = androidx.compose.ui.res.painterResource(particleRes),
+                    painter = painterResource(particleRes),
                     contentDescription = null,
                     tint = Color(0xFFFFD700),
                     modifier = Modifier.size(22.dp)
@@ -228,40 +231,27 @@ fun SessionCompletedScreen(
 
         Spacer(Modifier.height(28.dp))
 
-        Text(
-            "Tap anywhere to continue",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.White.copy(alpha = 0.85f),
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.Transparent)
-                .padding(12.dp)
-                .fillMaxWidth()
-                .let { it }
-        )
-        Spacer(Modifier.height(4.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.Transparent)
-                .clickableFlat(onDone)
-        )
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onDone
+                )
+                .padding(vertical = 14.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                "Tap anywhere to continue",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.85f)
+            )
+        }
+
         Spacer(Modifier.height(20.dp))
     }
-}
-
-// Minor helper for a clickable without ripple
-@Composable
-private fun Modifier.clickableFlat(onClick: () -> Unit): Modifier {
-    return this.then(
-        androidx.compose.foundation.clickable(
-            interactionSource = androidx.compose.foundation.interaction.MutableInteractionSource(),
-            indication = null,
-            onClick = onClick
-        )
-    )
 }
 
 @Composable

@@ -352,24 +352,24 @@ fun FitHubNavGraph(
                 )
             }
 
-            composable(
-                route = Screen.SESSION_MODE,
-                arguments = listOf(navArgument("planId") { type = NavType.StringType })
-            ) { entry ->
-                val planId = entry.arguments?.getString("planId").orEmpty()
-                PlaceholderScreen(
-                    title = "Session Mode",
-                    subtitle = "planId: $planId"
+            composable(Screen.SESSION_MODE) {
+                com.example.fithub.ui.screens.session.SessionModeScreen(
+                    onNavigateToCompleted = { sessionId ->
+                        navController.navigate(Screen.sessionCompleted(sessionId)) {
+                            popUpTo(Screen.SESSION_MODE) { inclusive = true }
+                        }
+                    },
+                    onExit = { navController.navigateUp() }
                 )
             }
-            composable(
-                route = Screen.SESSION_COMPLETED,
-                arguments = listOf(navArgument("sessionId") { type = NavType.StringType })
-            ) { entry ->
-                val sessionId = entry.arguments?.getString("sessionId").orEmpty()
-                PlaceholderScreen(
-                    title = "Session Completed",
-                    subtitle = "sessionId: $sessionId"
+
+            composable(Screen.SESSION_COMPLETED) {
+                com.example.fithub.ui.screens.session.SessionCompletedScreen(
+                    onDone = {
+                        navController.navigate(Screen.PLANS) {
+                            popUpTo(Screen.SESSION_COMPLETED) { inclusive = true }
+                        }
+                    }
                 )
             }
 
