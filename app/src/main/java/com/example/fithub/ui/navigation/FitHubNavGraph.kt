@@ -155,10 +155,11 @@ fun FitHubNavGraph(
             // PROGRESS
             // ========================
             composable(Screen.PROGRESS_OVERVIEW) {
-                PlaceholderScreen(
-                    title = "Progress Overview",
+                com.example.fithub.ui.screens.progress.ProgressOverviewScreen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Weight · Nutrition · Workouts"
+                    onNutritionOverview = { navController.navigate(Screen.NUTRITION_OVERVIEW) },
+                    onBodyWeight = { navController.navigate(Screen.BODY_WEIGHT) },
+                    onWorkoutsOverview = { navController.navigate(Screen.WORKOUTS_OVERVIEW) }
                 )
             }
             composable(Screen.NUTRITION_OVERVIEW) {
