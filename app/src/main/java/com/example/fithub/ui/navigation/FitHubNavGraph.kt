@@ -169,12 +169,9 @@ fun FitHubNavGraph(
                 )
             }
 
-
             composable(Screen.WORKOUTS_OVERVIEW) {
-                PlaceholderScreen(
-                    title = "Workouts Overview",
-                    onBack = { navController.navigateUp() },
-                    subtitle = "Activity · Habits · Breakdown"
+                com.example.fithub.ui.screens.progress.WorkoutsOverviewScreen(
+                    onBack = { navController.navigateUp() }
                 )
             }
 
