@@ -319,31 +319,36 @@ fun FitHubNavGraph(
             }
 
             composable(Screen.CREATE_WORKOUT_1) {
-                PlaceholderScreen(
-                    title = "Create Workout · Step 1",
+                com.example.fithub.ui.screens.plans.create.CreateWorkoutStep1Screen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Name & details"
+                    onNext = { navController.navigate(Screen.CREATE_WORKOUT_2) }
                 )
             }
+
             composable(Screen.CREATE_WORKOUT_2) {
-                PlaceholderScreen(
-                    title = "Create Workout · Step 2",
+                com.example.fithub.ui.screens.plans.create.CreateWorkoutStep2Screen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Exercise selection"
+                    onNext = { navController.navigate(Screen.CREATE_WORKOUT_3) }
                 )
             }
+
             composable(Screen.CREATE_WORKOUT_3) {
-                PlaceholderScreen(
-                    title = "Create Workout · Step 3",
+                com.example.fithub.ui.screens.plans.create.CreateWorkoutStep3Screen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Configure exercises"
+                    onNext = { navController.navigate(Screen.CREATE_WORKOUT_4) }
                 )
             }
+
             composable(Screen.CREATE_WORKOUT_4) {
-                PlaceholderScreen(
-                    title = "Create Workout · Step 4",
+                com.example.fithub.ui.screens.plans.create.CreateWorkoutStep4Screen(
                     onBack = { navController.navigateUp() },
-                    subtitle = "Review & create"
+                    onCancelAll = { navController.navigateUp() },
+                    onCreated = {
+                        // Pop back to Plans
+                        navController.navigate(Screen.PLANS) {
+                            popUpTo(Screen.PLANS) { inclusive = true }
+                        }
+                    }
                 )
             }
 
