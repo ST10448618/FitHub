@@ -18,9 +18,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * Outcome the screen must act on. `null` = no action pending.
- */
 sealed interface GoogleSignInOutcome {
     data object ExistingUser : GoogleSignInOutcome
     data object NeedsOnboarding : GoogleSignInOutcome
@@ -32,22 +29,6 @@ data class GoogleSignInUiState(
     val outcome: GoogleSignInOutcome? = null
 )
 
-/**
- * Drives "Continue with Google" for both Login and Landing.
- *
- * Decision tree (Phase 2 spec §5):
- * 1. Resolve Google identity via Credential Manager.
- * 2. Exchange for Firebase session.
- * 3. Pull `users/{uid}` from Firestore.
- * 4. If `onboardingComplete == true` → [PostLoginSync.run] + `ExistingUser`.
- * 5. Else → seed [OnboardingSession] fields and set `isGoogleUser = true`,
- *    `googleUid = uid` → `NeedsOnboarding`.
- *
- * References:
- *  • https://developer.android.com/identity/sign-in/credential-manager-siwg
- *  • https://firebase.google.com/docs/auth/android/google-signin
- * (accessed February 2026)
- */
 class GoogleSignInViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(GoogleSignInUiState())
@@ -66,15 +47,12 @@ class GoogleSignInViewModel : ViewModel() {
                     appCtx.getString(R.string.default_web_client_id)
                 }.getOrDefault("")
                 if (serverClientId.isBlank()) {
-                    // This only happens if google-services.json was not
-                    // re-downloaded after enabling Google provider.
                     Log.e(LogTags.AUTH, "default_web_client_id missing — check google-services.json")
                 }
 
                 val helper = GoogleSignInHelper(appCtx)
                 when (val acc = helper.signIn(serverClientId)) {
                     is Resource.Error -> {
-                        Log.w(LogTags.AUTH, "Google sign-in aborted before Firebase exchange")
                         _uiState.update {
                             it.copy(isWorking = false, error = acc.message)
                         }
@@ -105,19 +83,16 @@ class GoogleSignInViewModel : ViewModel() {
     }
 
     private suspend fun classify(result: GoogleAuthResult) {
-        Log.i(
-            LogTags.AUTH,
-            "Google → Firebase uid=${result.uid.take(8)}… isNewUser=${result.isNewUser}"
-        )
         userRepo.syncFromRemote(result.uid)
         val profile = userRepo.getProfile(result.uid)
         val isExisting = profile?.onboardingComplete == true
         if (isExisting) {
-            Log.i(LogTags.AUTH, "Google user is existing — running PostLoginSync")
             PostLoginSync.run(result.uid)
+            // Phase 3: drain outbox for existing user before navigating.
+            runCatching { ServiceLocator.syncManager.flush(result.uid) }
+                .onFailure { Log.e(LogTags.SYNC, "Google existing-user flush threw", it) }
             _uiState.update { it.copy(isWorking = false, outcome = GoogleSignInOutcome.ExistingUser) }
         } else {
-            Log.i(LogTags.AUTH, "Google user is new — seeding OnboardingSession")
             OnboardingSession.reset()
             OnboardingSession.isGoogleUser = true
             OnboardingSession.googleUid = result.uid
@@ -128,7 +103,6 @@ class GoogleSignInViewModel : ViewModel() {
         }
     }
 
-    /** Called by the screen after acting on [GoogleSignInOutcome], so it can be re-triggered. */
     fun consumeOutcome() {
         _uiState.update { it.copy(outcome = null) }
     }

@@ -75,4 +75,9 @@
     <string name="profile_logout_confirm_title">Log out of FitHub?</string>
     <string name="profile_logout_confirm_body">You will need to sign in again next time.</string>
     <string name="profile_logout_confirm_yes">Log out</string>
+
+    <!-- Phase 3 : Sync banner -->
+    <string name="sync_banner_offline">You\'re offline — changes will sync when you reconnect.</string>
+    <string name="sync_banner_syncing">Syncing %1$d change(s)…</string>
+    <string name="sync_banner_done">All changes synced ✓</string>
 </resources>

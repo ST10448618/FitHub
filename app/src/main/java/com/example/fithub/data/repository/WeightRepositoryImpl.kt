@@ -1,20 +1,31 @@
 package com.example.fithub.data.repository
 
+import android.util.Log
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
+import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.await
+import com.example.fithub.core.sync.SyncScheduler
+import com.example.fithub.data.local.dao.PendingSyncDao
 import com.example.fithub.data.local.dao.UserProfileDao
 import com.example.fithub.data.local.dao.WeightEntryDao
+import com.example.fithub.data.local.entity.PendingSyncEntity
+import com.example.fithub.data.local.entity.PendingSyncOperation
+import com.example.fithub.data.local.entity.PendingSyncType
 import com.example.fithub.data.local.mapper.WeightLocalMapper
 import com.example.fithub.data.remote.FirestorePaths
 import com.example.fithub.data.remote.mapper.WeightMapper
 import com.example.fithub.domain.model.WeightEntry
 import com.example.fithub.domain.repository.WeightRepository
+import com.example.fithub.util.IdGenerator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
 
 class WeightRepositoryImpl(
     private val dao: WeightEntryDao,
-    private val userDao: UserProfileDao
+    private val userDao: UserProfileDao,
+    private val pendingSyncDao: PendingSyncDao
 ) : WeightRepository {
 
     override fun observeAll(uid: String): Flow<List<WeightEntry>> =
@@ -28,38 +39,40 @@ class WeightRepositoryImpl(
     override suspend fun getLatest(uid: String): WeightEntry? =
         dao.getLatest(uid)?.let(WeightLocalMapper::toDomain)
 
+    /**
+     * Offline-first add. Room write + local profile `currentWeightKg` update +
+     * outbox UPSERT + SyncWorker enqueue. Never awaits Firestore.
+     */
     override suspend fun addEntry(entry: WeightEntry): Resource<Unit> = try {
-        // 1. Local write
         dao.upsert(WeightLocalMapper.toEntity(entry))
-
-        // 2. Update profile's currentWeightKg locally
         userDao.updateCurrentWeight(
             entry.userId,
             entry.weightKg,
-            java.time.LocalDateTime.now().toString()
+            LocalDateTime.now().toString()
         )
-
-        // 3. Push both to Firestore
-        FirestorePaths.weightEntry(entry.userId, entry.id)
-            .set(WeightMapper.toMap(entry))
-            .await()
-
-        FirestorePaths.user(entry.userId)
-            .update("currentWeightKg", entry.weightKg)
-            .await()
-
+        enqueueOutbox(entry.userId, entry.id, PendingSyncOperation.UPSERT)
+        Log.d(LogTags.SYNC, "Weight add queued id=${entry.id.take(8)}…")
         Resource.Success(Unit)
     } catch (e: Exception) {
+        Log.e(LogTags.SYNC, "Weight add failed (local write)", e)
         Resource.Error(e.message ?: "Failed to save weight entry", e)
     }
 
+    /**
+     * Offline-first delete. Room delete + outbox DELETE. `entityId` is enough
+     * for the gateway to reconstruct the Firestore document path because it
+     * reads the userId from the local row at push time — if the row is already
+     * gone the remote delete is a no-op (documented behaviour).
+     */
     override suspend fun deleteEntry(entryId: String): Resource<Unit> = try {
         val entity = dao.getById(entryId)
             ?: return Resource.Error("Weight entry not found")
         dao.delete(entryId)
-        FirestorePaths.weightEntry(entity.userId, entryId).delete().await()
+        enqueueOutbox(entity.userId, entryId, PendingSyncOperation.DELETE)
+        Log.d(LogTags.SYNC, "Weight delete queued id=${entryId.take(8)}…")
         Resource.Success(Unit)
     } catch (e: Exception) {
+        Log.e(LogTags.SYNC, "Weight delete failed (local write)", e)
         Resource.Error(e.message ?: "Failed to delete weight entry", e)
     }
 
@@ -70,8 +83,26 @@ class WeightRepositoryImpl(
             WeightMapper.fromMap(doc.id, uid, map)
         }
         dao.upsertAll(entries.map(WeightLocalMapper::toEntity))
+        Log.d(LogTags.SYNC, "Weight syncFromRemote loaded ${entries.size} rows")
         Resource.Success(Unit)
     } catch (e: Exception) {
+        Log.e(LogTags.SYNC, "Weight syncFromRemote failed", e)
         Resource.Error(e.message ?: "Failed to sync weight entries", e)
+    }
+
+    private suspend fun enqueueOutbox(userId: String, entityId: String, operation: String) {
+        pendingSyncDao.insert(
+            PendingSyncEntity(
+                id = IdGenerator.newId(),
+                userId = userId,
+                entityType = PendingSyncType.WEIGHT_ENTRY,
+                entityId = entityId,
+                operation = operation,
+                createdAt = System.currentTimeMillis(),
+                attemptCount = 0,
+                lastError = null
+            )
+        )
+        SyncScheduler.enqueue(ServiceLocator.appContext())
     }
 }
