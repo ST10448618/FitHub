@@ -4,12 +4,22 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
+ * Single source of truth for whether the device currently has a *usable*
+ * internet connection.
+ *
+ * "Usable" means the active network advertises both
+ * [NetworkCapabilities.NET_CAPABILITY_INTERNET] **and**
+ * [NetworkCapabilities.NET_CAPABILITY_VALIDATED] — i.e. captive-portal or
+ * dead-airplane-with-Wi-Fi cases report as **offline**, which is what the
+ * offline-sync UX needs.
+ *
  * Reference: https://developer.android.com/training/monitoring-device-state/connectivity-status-type
  *            https://developer.android.com/reference/android/net/ConnectivityManager#registerDefaultNetworkCallback(android.net.ConnectivityManager.NetworkCallback)
  * (accessed February 2026)

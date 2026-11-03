@@ -1,9 +1,7 @@
 package com.example.fithub.ui.screens.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fithub.core.LogTags
 import com.example.fithub.core.PostLoginSync
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
@@ -58,13 +56,8 @@ class LoginViewModel(
             val result = auth.login(state.identifier.trim(), state.password)
             when (result) {
                 is Resource.Success -> {
+                    // Phase 1: single reused hydration path (also used by BiometricGateScreen).
                     PostLoginSync.run(result.data)
-
-                    // Phase 3: drain any outbox rows from a previous session
-                    // before navigating so the banner does not appear stale.
-                    runCatching { ServiceLocator.syncManager.flush(result.data) }
-                        .onFailure { Log.e(LogTags.SYNC, "Login flush threw", it) }
-
                     _uiState.update {
                         it.copy(isLoading = false, successUserId = result.data)
                     }

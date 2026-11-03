@@ -4,8 +4,6 @@ import android.app.Application
 import android.util.Log
 import com.example.fithub.core.LogTags
 import com.example.fithub.core.ServiceLocator
-import com.example.fithub.core.SessionManager
-import com.example.fithub.core.sync.SyncWorker
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,7 +11,6 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FitHubApplication : Application() {
@@ -25,6 +22,13 @@ class FitHubApplication : Application() {
         Log.i(LogTags.APP, "Application.onCreate — process start")
 
         FirebaseApp.initializeApp(this)
+
+        // ============================================================
+        // MUST RUN FIRST: ServiceLocator.init() populates the `appContext`
+        // lateinit property and creates the Room database. Everything below
+        // (preferencesManager, repositories, etc.) relies on this.
+        // ============================================================
+        ServiceLocator.init(this)
 
         // ============================================================
         // SESSION POLICY (final POE v2)
@@ -41,7 +45,10 @@ class FitHubApplication : Application() {
         //     routes to BiometricGateScreen, which authenticates the
         //     device owner before letting them in.
         //   • Otherwise (lock off, or no session) → sign out exactly as
-        //     before.
+        //     before, preserving the original "cold start = logged out"
+        //     guarantee for prototype-style usage and after explicit logout.
+        //
+        // Must run BEFORE any screen reads SessionManager.currentUserId.
         //
         // Reference: https://developer.android.com/training/sign-in/biometric-auth
         //            https://firebase.google.com/docs/auth/android/manage-users
@@ -67,8 +74,6 @@ class FitHubApplication : Application() {
             .build()
         FirebaseFirestore.getInstance().firestoreSettings = settings
 
-        ServiceLocator.init(this)
-
         appScope.launch {
             // 1. Seed verified plans + exercises + foods (needed by both tracks)
             ServiceLocator.seedManager.seedIfNeeded()
@@ -83,59 +88,6 @@ class FitHubApplication : Application() {
                 "FitHubSeed",
                 "VERIFIED PLANS: " + ServiceLocator.database.workoutPlanDao().verifiedCount()
             )
-
-            // 4. Phase 3 — cold-start flush: if a user is already signed in
-            //    (biometric lock on path, or resumed from a warm process that
-            //    was recreated by the OS), drain any pending outbox rows and
-            //    ensure a SyncWorker is queued.
-            startPhase3SyncTriggers()
-        }
-    }
-
-    /**
-     * Two-way trigger for the sync outbox:
-     *  • on cold start (this method, once) — if a session exists
-     *  • on every offline → online transition (collected continuously)
-     *
-     * Never waits for a connectivity event to fire on boot: if the device is
-     * already online and a session exists, we flush immediately.
-     */
-    private fun startPhase3SyncTriggers() {
-        // Cold-start kick
-        val uid = SessionManager.currentUserId
-        if (uid != null) {
-            Log.i(LogTags.SYNC, "Cold start with session — enqueue sync worker")
-            SyncWorker.enqueue(this)
-            appScope.launch {
-                runCatching { ServiceLocator.syncManager.flush(uid) }
-                    .onFailure { Log.e(LogTags.SYNC, "Cold-start flush threw", it) }
-            }
-        } else {
-            Log.d(LogTags.SYNC, "Cold start without session — skip sync worker")
-        }
-
-        // Connectivity-triggered flush. First emission is the initial state,
-        // so we explicitly skip it and only react to *transitions* to online.
-        appScope.launch {
-            var first = true
-            var lastOnline: Boolean? = null
-            ServiceLocator.connectivityMonitor.isOnline.collectLatest { online ->
-                val previous = lastOnline
-                lastOnline = online
-                if (first) {
-                    first = false
-                    Log.d(LogTags.SYNC, "Connectivity first emission online=$online")
-                    return@collectLatest
-                }
-                if (previous != online) {
-                    Log.i(LogTags.SYNC, "Connectivity transition previous=$previous → now=$online")
-                    if (online) {
-                        val currentUid = SessionManager.currentUserId ?: return@collectLatest
-                        runCatching { ServiceLocator.syncManager.flush(currentUid) }
-                            .onFailure { Log.e(LogTags.SYNC, "Connectivity flush threw", it) }
-                    }
-                }
-            }
         }
     }
 }

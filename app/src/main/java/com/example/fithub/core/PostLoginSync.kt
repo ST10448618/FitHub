@@ -1,4 +1,3 @@
-// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.core
 
 import android.util.Log
@@ -6,6 +5,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
+ * Runs the exact post-login hydration sequence that [LoginViewModel] historically
+ * performed inline. Pulled out (Phase 1) so both the password login flow and the
+ * new biometric gate can call the same routine — one code path, one bug surface.
+ *
+ * The calls are ordered user → weight → goals → nutrition → workout → checkpoint
+ * so downstream reads always see a profile row first.
+ *
  * Reference: https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents
  * (accessed February 2026)
  */

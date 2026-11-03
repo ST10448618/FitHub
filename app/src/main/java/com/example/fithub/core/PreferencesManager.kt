@@ -1,4 +1,3 @@
-// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.core
 
 import android.content.Context
@@ -13,6 +12,16 @@ import kotlinx.coroutines.flow.map
 private val Context.dataStore by preferencesDataStore(name = "fithub_prefs")
 
 /**
+ * User-scoped preferences persisted with Jetpack DataStore.
+ *
+ * ### Biometric flag mirror
+ * [biometricEnabled] is a hot DataStore flow, which is asynchronous. But
+ * [com.example.fithub.FitHubApplication.onCreate] must decide whether to keep
+ * the Firebase session **synchronously**, before the DataStore actor has
+ * emitted its first value. We therefore mirror the same flag into a tiny
+ * `SharedPreferences` file (`fithub_security`) that can be read on any thread
+ * without suspending.
+ *
  * Reference: https://developer.android.com/topic/libraries/architecture/datastore
  *            https://developer.android.com/reference/android/content/SharedPreferences
  * (accessed February 2026)
@@ -84,8 +93,7 @@ class PreferencesManager(private val context: Context) {
     /**
      * Blocking read of the biometric-lock mirror. Safe from any thread; this is
      * the single tiny SharedPreferences read that the brief explicitly allows
-     * on the main thread (called only from Application.onCreate / Splash /
-     * LoginScreen).
+     * on the main thread (called only from Application.onCreate / Splash).
      */
     fun isBiometricLockEnabledSync(): Boolean =
         securityPrefs.getBoolean(SECURITY_KEY_BIOMETRIC_LOCK, false)

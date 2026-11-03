@@ -1,5 +1,11 @@
 package com.example.fithub.core
 
+/**
+ * Centralised Logcat tags. Every `Log.*` call in the app must use one of these
+ * so `adb logcat -s FitHub/Sync FitHub/Biometric ...` can be filtered reliably.
+ *
+ * Reference: https://developer.android.com/studio/debug/logcat (accessed February 2026)
+ */
 object LogTags {
     const val APP: String       = "FitHub/App"
     const val AUTH: String      = "FitHub/Auth"
