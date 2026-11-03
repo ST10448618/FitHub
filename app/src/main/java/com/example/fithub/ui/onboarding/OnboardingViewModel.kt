@@ -1,8 +1,12 @@
 package com.example.fithub.ui.screens.onboarding
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.OnboardingSession
+import com.example.fithub.core.PostLoginSync
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.domain.model.*
@@ -27,28 +31,46 @@ class OnboardingViewModel : ViewModel() {
 
     fun submit() {
         if (!OnboardingSession.isReadyToSubmit()) {
+            val ctx = ServiceLocator.appContext()
             _submitState.update {
-                it.copy(errorMessage = "Some onboarding details are missing.")
+                it.copy(errorMessage = ctx.getString(R.string.onboarding_missing_details))
             }
             return
         }
 
         viewModelScope.launch {
             _submitState.update { it.copy(isSubmitting = true, errorMessage = null) }
+            val ctx = ServiceLocator.appContext()
 
-            val auth = ServiceLocator.authRepository
-            val registerResult = auth.register(
-                OnboardingSession.email,
-                OnboardingSession.password
-            )
-            if (registerResult is Resource.Error) {
-                _submitState.update {
-                    it.copy(isSubmitting = false, errorMessage = registerResult.message)
+            val uid: String = if (OnboardingSession.isGoogleUser) {
+                val existing = OnboardingSession.googleUid
+                    ?: ServiceLocator.authRepository.currentUserId()
+                if (existing.isNullOrBlank()) {
+                    Log.e(LogTags.AUTH, "Google onboarding has no uid — aborting")
+                    _submitState.update {
+                        it.copy(
+                            isSubmitting = false,
+                            errorMessage = ctx.getString(R.string.auth_google_error_generic)
+                        )
+                    }
+                    return@launch
                 }
-                return@launch
+                Log.i(LogTags.AUTH, "Google onboarding reusing existing uid=${existing.take(8)}…")
+                existing
+            } else {
+                val registerResult = ServiceLocator.authRepository.register(
+                    OnboardingSession.email,
+                    OnboardingSession.password
+                )
+                if (registerResult is Resource.Error) {
+                    _submitState.update {
+                        it.copy(isSubmitting = false, errorMessage = registerResult.message)
+                    }
+                    return@launch
+                }
+                (registerResult as Resource.Success).data
             }
 
-            val uid = (registerResult as Resource.Success).data
             val now = LocalDateTime.now()
 
             val profile = UserProfile(
@@ -76,7 +98,6 @@ class OnboardingViewModel : ViewModel() {
                 return@launch
             }
 
-            // Initial weight entry — starting weight
             ServiceLocator.weightRepository.addEntry(
                 WeightEntry(
                     id = IdGenerator.newId(),
@@ -86,8 +107,6 @@ class OnboardingViewModel : ViewModel() {
                     createdAt = now
                 )
             )
-
-            // Default workout goals
             ServiceLocator.workoutGoalsRepository.save(
                 WorkoutGoals(
                     id = IdGenerator.newId(),
@@ -96,8 +115,6 @@ class OnboardingViewModel : ViewModel() {
                     monthlyActivityGoalKcal = 10000
                 )
             )
-
-            // Default checkpoint schedule
             ServiceLocator.checkpointRepository.save(
                 CheckpointSchedule(
                     id = IdGenerator.newId(),
@@ -108,7 +125,10 @@ class OnboardingViewModel : ViewModel() {
                 )
             )
 
+            PostLoginSync.run(uid)
+
             OnboardingSession.reset()
+            Log.i(LogTags.AUTH, "Onboarding submit complete uid=${uid.take(8)}…")
             _submitState.update { it.copy(isSubmitting = false, isComplete = true) }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.fithub.ui.screens.profile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,34 +9,45 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
+import com.example.fithub.core.LogTags
+import com.example.fithub.core.ServiceLocator
 import com.example.fithub.ui.components.AppHeader
 import com.example.fithub.ui.components.LoadingState
 import com.example.fithub.ui.components.PrimaryButton
 import com.example.fithub.ui.components.RoundedCard
+import com.example.fithub.ui.components.SecondaryButton
 import com.example.fithub.ui.theme.*
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onLogout: () -> Unit = {},
     viewModel: ProfileViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -73,8 +85,7 @@ fun ProfileScreen(
 
             // Avatar
             Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 Box(
@@ -82,9 +93,7 @@ fun ProfileScreen(
                         .size(120.dp)
                         .clip(CircleShape)
                         .background(
-                            Brush.verticalGradient(
-                                listOf(FitHubMidBlue, FitHubPrimary)
-                            )
+                            Brush.verticalGradient(listOf(FitHubMidBlue, FitHubPrimary))
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -99,7 +108,6 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // Details card
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     "Your Details",
@@ -108,10 +116,7 @@ fun ProfileScreen(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            FitHubPrimary,
-                            RoundedCornerShape(10.dp)
-                        )
+                        .background(FitHubPrimary, RoundedCornerShape(10.dp))
                         .padding(12.dp)
                 )
                 Spacer(Modifier.height(12.dp))
@@ -151,17 +156,58 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            PrimaryButton(text = "Edit Details", onClick = onEditClick)
+            PrimaryButton(
+                text = stringResource(R.string.profile_edit_details),
+                onClick = onEditClick
+            )
 
             Spacer(Modifier.height(12.dp))
 
-            com.example.fithub.ui.components.SecondaryButton(
-                text = "Settings",
+            SecondaryButton(
+                text = stringResource(R.string.profile_settings),
                 onClick = onSettingsClick
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            SecondaryButton(
+                text = stringResource(R.string.profile_logout),
+                onClick = { showLogoutDialog = true },
+                borderColor = ErrorRed,
+                contentColor = ErrorRed
             )
 
             Spacer(Modifier.height(24.dp))
         }
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(stringResource(R.string.profile_logout_confirm_title)) },
+            text = { Text(stringResource(R.string.profile_logout_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLogoutDialog = false
+                    Log.i(LogTags.AUTH, "ProfileScreen: logout confirmed")
+                    scope.launch {
+                        when (val result = ServiceLocator.authRepository.logout()) {
+                            is com.example.fithub.core.Resource.Error ->
+                                Log.e(LogTags.AUTH, "Logout failed: ${result.message}")
+                            is com.example.fithub.core.Resource.Success ->
+                                Log.i(LogTags.AUTH, "Logout succeeded")
+                            com.example.fithub.core.Resource.Loading -> Unit
+                        }
+                        onLogout()
+                    }
+                }) { Text(stringResource(R.string.profile_logout_confirm_yes), color = ErrorRed) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(stringResource(R.string.generic_cancel))
+                }
+            }
+        )
     }
 }
 

@@ -3,11 +3,6 @@ package com.example.fithub.core
 import com.example.fithub.domain.model.ActivityLevel
 import com.example.fithub.domain.model.Gender
 
-/**
- * In-memory onboarding state.
- * Persists until submission; cleared after profile is written to Firebase + Room.
- * Track A owns this — replace with a graph-scoped ViewModel later if desired.
- */
 object OnboardingSession {
 
     var username: String = ""
@@ -20,6 +15,13 @@ object OnboardingSession {
     var weightKg: Double? = null
     var activityLevel: ActivityLevel? = null
 
+    /** Phase 2: true when the session was started via Google Sign-In. */
+    var isGoogleUser: Boolean = false
+    /** Phase 2: the Firebase UID from the Google sign-in (not the email). */
+    var googleUid: String? = null
+    /** Phase 2: display name from Google, used to pre-fill username. */
+    var googleDisplayName: String? = null
+
     fun reset() {
         username = ""
         email = ""
@@ -30,15 +32,20 @@ object OnboardingSession {
         heightCm = null
         weightKg = null
         activityLevel = null
+        isGoogleUser = false
+        googleUid = null
+        googleDisplayName = null
     }
 
-    fun isReadyToSubmit(): Boolean =
-        username.isNotBlank() &&
+    fun isReadyToSubmit(): Boolean {
+        val passwordOk = if (isGoogleUser) true else password.length >= 6
+        return username.isNotBlank() &&
                 email.isNotBlank() &&
-                password.length >= 6 &&
+                passwordOk &&
                 age != null &&
                 gender != null &&
                 heightCm != null &&
                 weightKg != null &&
                 activityLevel != null
+    }
 }
