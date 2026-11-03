@@ -1,4 +1,3 @@
-// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.core.notifications
 
 import android.app.NotificationChannel

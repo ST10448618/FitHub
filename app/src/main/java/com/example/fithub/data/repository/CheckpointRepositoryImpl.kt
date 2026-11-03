@@ -1,7 +1,9 @@
 package com.example.fithub.data.repository
 
 import com.example.fithub.core.Resource
+import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.await
+import com.example.fithub.core.notifications.CheckpointReminderWorker
 import com.example.fithub.data.local.dao.CheckpointScheduleDao
 import com.example.fithub.data.local.mapper.CheckpointLocalMapper
 import com.example.fithub.data.remote.FirestorePaths
@@ -27,6 +29,10 @@ class CheckpointRepositoryImpl(
         FirestorePaths.checkpointSchedule(schedule.userId, schedule.id)
             .set(CheckpointMapper.toMap(schedule))
             .await()
+
+        // Phase 4: Ensure the daily reminder worker is scheduled or cancelled
+        CheckpointReminderWorker.reschedule(ServiceLocator.appContext(), schedule)
+
         Resource.Success(Unit)
     } catch (e: Exception) {
         Resource.Error(e.message ?: "Failed to save checkpoint schedule", e)
@@ -38,6 +44,8 @@ class CheckpointRepositoryImpl(
             doc.data?.let { map ->
                 val schedule = CheckpointMapper.fromMap(doc.id, uid, map)
                 dao.upsert(CheckpointLocalMapper.toEntity(schedule))
+                // Also schedule worker if pulling from remote!
+                CheckpointReminderWorker.reschedule(ServiceLocator.appContext(), schedule)
             }
         }
         Resource.Success(Unit)

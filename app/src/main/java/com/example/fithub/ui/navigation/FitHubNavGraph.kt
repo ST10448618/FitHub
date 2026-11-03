@@ -4,9 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,8 +15,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.fithub.core.LogTags
-import com.example.fithub.core.SessionManager
+import com.example.fithub.core.OnboardingSession
 import com.example.fithub.core.ServiceLocator
+import com.example.fithub.core.notifications.PendingRoute
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -26,9 +28,6 @@ fun FitHubNavGraph(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    // Phase 1: log every destination change so device testers can verify
-    // navigation from logcat without attaching a debugger.
-    val appContext = LocalContext.current.applicationContext
     DisposableEffect(navController) {
         val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
             Log.d(LogTags.NAV, "Destination changed → ${destination.route}")
@@ -37,29 +36,30 @@ fun FitHubNavGraph(
         onDispose { navController.removeOnDestinationChangedListener(listener) }
     }
 
+    // Phase 4: deep link from notification
+    val pendingRoute by PendingRoute.route.collectAsState()
+    LaunchedEffect(pendingRoute, currentRoute) {
+        val route = pendingRoute
+        if (route != null && currentRoute in Screen.routesWithBottomBar) {
+            PendingRoute.consume()
+            Log.i(LogTags.PUSH, "Navigating to pending notification route: $route")
+            navController.navigate(route) { launchSingleTop = true }
+        }
+    }
+
     MainScaffold(navController = navController, currentRoute = currentRoute) { padding ->
         NavHost(
             navController = navController,
             startDestination = startDestination,
             modifier = Modifier.padding(padding)
         ) {
-            // ========================
-            // AUTH & ONBOARDING
-            // ========================
             composable(Screen.SPLASH) {
                 com.example.fithub.ui.screens.splash.SplashScreen(
                     onFinished = {
-                        // Phase 1 session-policy routing:
-                        //   lock enabled  AND  Firebase user exists → BIOMETRIC_GATE
-                        //   otherwise → LANDING (prototype behaviour)
                         val prefs = ServiceLocator.preferencesManager
                         val lockOn = prefs.isBiometricLockEnabledSync()
                         val hasUser = FirebaseAuth.getInstance().currentUser != null
                         val target = if (lockOn && hasUser) Screen.BIOMETRIC_GATE else Screen.LANDING
-                        Log.i(
-                            LogTags.NAV,
-                            "Splash finished — routing to $target (lockOn=$lockOn hasUser=$hasUser)"
-                        )
                         navController.navigate(target) {
                             popUpTo(Screen.SPLASH) { inclusive = true }
                         }
@@ -70,14 +70,10 @@ fun FitHubNavGraph(
             composable(Screen.BIOMETRIC_GATE) {
                 com.example.fithub.ui.screens.biometric.BiometricGateScreen(
                     onAuthenticated = {
-                        navController.navigate(Screen.DASHBOARD) {
-                            popUpTo(0) { inclusive = true }
-                        }
+                        navController.navigate(Screen.DASHBOARD) { popUpTo(0) { inclusive = true } }
                     },
                     onUsePassword = {
-                        navController.navigate(Screen.LOGIN) {
-                            popUpTo(0) { inclusive = true }
-                        }
+                        navController.navigate(Screen.LOGIN) { popUpTo(0) { inclusive = true } }
                     }
                 )
             }
@@ -85,7 +81,9 @@ fun FitHubNavGraph(
             composable(Screen.LANDING) {
                 com.example.fithub.ui.screens.landing.LandingScreen(
                     onLoginClick = { navController.navigate(Screen.LOGIN) },
-                    onRegisterClick = { navController.navigate(Screen.ONBOARDING_USER_DETAILS) }
+                    onRegisterClick = { navController.navigate(Screen.ONBOARDING_USER_DETAILS) },
+                    onGoogleNeedsOnboarding = { navController.navigate(Screen.ONBOARDING_USER_DETAILS) },
+                    onGoogleExistingUser = { navController.navigate(Screen.DASHBOARD) { popUpTo(0) { inclusive = true } } }
                 )
             }
 
@@ -96,13 +94,21 @@ fun FitHubNavGraph(
                             popUpTo(Screen.LANDING) { inclusive = true }
                         }
                     },
-                    onBack = { navController.navigateUp() }
+                    onBack = { navController.navigateUp() },
+                    onGoogleNeedsOnboarding = { navController.navigate(Screen.ONBOARDING_USER_DETAILS) }
                 )
             }
 
             composable(Screen.ONBOARDING_USER_DETAILS) {
                 com.example.fithub.ui.screens.onboarding.OnboardingStep1UserDetails(
-                    onCancel = { navController.navigateUp() },
+                    onCancel = {
+                        if (OnboardingSession.isGoogleUser) {
+                            Log.i(LogTags.AUTH, "Onboarding cancelled mid-Google flow — signing out")
+                            FirebaseAuth.getInstance().signOut()
+                            OnboardingSession.reset()
+                        }
+                        navController.navigateUp()
+                    },
                     onNext = { navController.navigate(Screen.ONBOARDING_BIOMETRIC) }
                 )
             }
@@ -152,16 +158,11 @@ fun FitHubNavGraph(
             composable(Screen.ONBOARDING_COMPLETE) {
                 com.example.fithub.ui.screens.onboarding.OnboardingCompleteScreen(
                     onFinish = {
-                        navController.navigate(Screen.DASHBOARD) {
-                            popUpTo(0) { inclusive = true }
-                        }
+                        navController.navigate(Screen.DASHBOARD) { popUpTo(0) { inclusive = true } }
                     }
                 )
             }
 
-            // ========================
-            // MAIN TABS
-            // ========================
             composable(Screen.DASHBOARD) {
                 com.example.fithub.ui.screens.dashboard.DashboardScreen(
                     onNavigate = { navController.navigate(it) },
@@ -193,9 +194,6 @@ fun FitHubNavGraph(
                 )
             }
 
-            // ========================
-            // PROGRESS
-            // ========================
             composable(Screen.PROGRESS_OVERVIEW) {
                 com.example.fithub.ui.screens.progress.ProgressOverviewScreen(
                     onBack = { navController.navigateUp() },
@@ -204,6 +202,7 @@ fun FitHubNavGraph(
                     onWorkoutsOverview = { navController.navigate(Screen.WORKOUTS_OVERVIEW) }
                 )
             }
+
             composable(Screen.NUTRITION_OVERVIEW) {
                 com.example.fithub.ui.screens.nutrition.overview.NutritionOverviewScreen(
                     onBack = { navController.navigateUp() },
@@ -217,9 +216,6 @@ fun FitHubNavGraph(
                 )
             }
 
-            // ========================
-            // BODY & WEIGHT
-            // ========================
             composable(Screen.BODY_WEIGHT) {
                 com.example.fithub.ui.screens.body.BodyWeightScreen(
                     onBack = { navController.navigateUp() },
@@ -234,12 +230,14 @@ fun FitHubNavGraph(
                     onSaved = { navController.navigateUp() }
                 )
             }
+
             composable(Screen.CHECKPOINT_MANAGER) {
                 com.example.fithub.ui.screens.goals.checkpoint.CheckpointManagerScreen(
                     onBack = { navController.navigateUp() },
                     onSaved = { navController.navigateUp() }
                 )
             }
+
             composable(Screen.WEIGHT_GOAL) {
                 com.example.fithub.ui.screens.goals.weight.WeightGoalScreen(
                     onBack = { navController.navigateUp() },
@@ -247,15 +245,10 @@ fun FitHubNavGraph(
                 )
             }
 
-            // ========================
-            // FOOD
-            // ========================
             composable(Screen.ADD_MEAL) {
                 com.example.fithub.ui.screens.food.addmeal.AddMealScreen(
                     onBack = { navController.navigateUp() },
-                    onFoodSelected = { foodId ->
-                        navController.navigate(Screen.foodDetails(foodId))
-                    },
+                    onFoodSelected = { foodId -> navController.navigate(Screen.foodDetails(foodId)) },
                     onBarcodeScan = { navController.navigate(Screen.BARCODE_SCANNER) }
                 )
             }
@@ -263,17 +256,13 @@ fun FitHubNavGraph(
             composable(Screen.LIST_FOOD) {
                 com.example.fithub.ui.screens.food.list.FoodListScreen(
                     onBack = { navController.navigateUp() },
-                    onFoodSelected = { foodId ->
-                        navController.navigate(Screen.foodDetails(foodId))
-                    }
+                    onFoodSelected = { foodId -> navController.navigate(Screen.foodDetails(foodId)) }
                 )
             }
 
             composable(Screen.BARCODE_SCANNER) {
                 com.example.fithub.ui.screens.food.scanner.BarcodeScannerScreen(
                     onBack = { navController.navigateUp() },
-                    // FIXED: The screen actually uses `onBarcodeDetected` and
-                    // expects a typed String parameter, not `onFoodResolved`.
                     onBarcodeDetected = { foodId: String ->
                         navController.navigate(Screen.foodDetails(foodId)) {
                             popUpTo(Screen.BARCODE_SCANNER) { inclusive = true }
@@ -285,12 +274,10 @@ fun FitHubNavGraph(
             composable(
                 route = Screen.FOOD_DETAILS,
                 arguments = listOf(navArgument("foodId") { type = NavType.StringType })
-            ) { entry ->
+            ) {
                 com.example.fithub.ui.screens.food.details.FoodDetailsScreen(
                     onBack = { navController.navigateUp() },
-                    onAdded = {
-                        navController.popBackStack(Screen.ADD_MEAL, inclusive = false)
-                    }
+                    onAdded = { navController.popBackStack(Screen.ADD_MEAL, inclusive = false) }
                 )
             }
 
@@ -301,19 +288,17 @@ fun FitHubNavGraph(
                     navArgument("qty") { type = NavType.StringType; defaultValue = "1" },
                     navArgument("meal") { type = NavType.StringType; defaultValue = "BREAKFAST" }
                 )
-            ) { entry ->
+            ) {
                 com.example.fithub.ui.screens.food.details.FoodDetailsScreen(
                     onBack = { navController.navigateUp() },
-                    onAdded = {
-                        navController.popBackStack()
-                    }
+                    onAdded = { navController.popBackStack() }
                 )
             }
 
             composable(
                 route = Screen.LIST_FOOD_LOGS,
                 arguments = listOf(navArgument("date") { type = NavType.StringType })
-            ) { entry ->
+            ) {
                 com.example.fithub.ui.screens.food.list.FoodLogListScreen(
                     onBack = { navController.navigateUp() },
                     onLogClick = { log ->
@@ -330,35 +315,26 @@ fun FitHubNavGraph(
                 )
             }
 
-            // ========================
-            // WORKOUTS
-            // ========================
             composable(Screen.VERIFIED_PLANS) {
                 com.example.fithub.ui.screens.plans.VerifiedPlansScreen(
                     onBack = { navController.navigateUp() },
-                    onPlanClick = { planId ->
-                        navController.navigate(Screen.workoutDetails(planId))
-                    },
-                    onSeeAllClick = { category ->
-                        navController.navigate(Screen.listWorkouts(category.name))
-                    },
+                    onPlanClick = { planId -> navController.navigate(Screen.workoutDetails(planId)) },
+                    onSeeAllClick = { category -> navController.navigate(Screen.listWorkouts(category.name)) },
                     onCreatePlanClick = { navController.navigate(Screen.CREATE_WORKOUT_1) }
                 )
             }
+
             composable(Screen.LIST_WORKOUTS) {
                 com.example.fithub.ui.screens.plans.WorkoutListScreen(
                     onBack = { navController.navigateUp() },
-                    onPlanClick = { planId ->
-                        navController.navigate(Screen.workoutDetails(planId))
-                    }
+                    onPlanClick = { planId -> navController.navigate(Screen.workoutDetails(planId)) }
                 )
             }
+
             composable(Screen.WORKOUT_DETAILS) {
                 com.example.fithub.ui.screens.plans.details.WorkoutDetailsScreen(
                     onBack = { navController.navigateUp() },
-                    onStartSession = { planId ->
-                        navController.navigate(Screen.sessionMode(planId))
-                    }
+                    onStartSession = { planId -> navController.navigate(Screen.sessionMode(planId)) }
                 )
             }
 
@@ -387,11 +363,7 @@ fun FitHubNavGraph(
                 com.example.fithub.ui.screens.plans.create.CreateWorkoutStep4Screen(
                     onBack = { navController.navigateUp() },
                     onCancelAll = { navController.navigateUp() },
-                    onCreated = {
-                        navController.navigate(Screen.PLANS) {
-                            popUpTo(Screen.PLANS) { inclusive = true }
-                        }
-                    }
+                    onCreated = { navController.navigate(Screen.PLANS) { popUpTo(Screen.PLANS) { inclusive = true } } }
                 )
             }
 
@@ -408,17 +380,10 @@ fun FitHubNavGraph(
 
             composable(Screen.SESSION_COMPLETED) {
                 com.example.fithub.ui.screens.session.SessionCompletedScreen(
-                    onDone = {
-                        navController.navigate(Screen.PLANS) {
-                            popUpTo(Screen.SESSION_COMPLETED) { inclusive = true }
-                        }
-                    }
+                    onDone = { navController.navigate(Screen.PLANS) { popUpTo(Screen.SESSION_COMPLETED) { inclusive = true } } }
                 )
             }
 
-            // ========================
-            // GOALS
-            // ========================
             composable(Screen.NUTRITION_GOALS) {
                 com.example.fithub.ui.screens.nutrition.goals.NutritionGoalsScreen(
                     onBack = { navController.navigateUp() },
@@ -433,14 +398,12 @@ fun FitHubNavGraph(
                 )
             }
 
-            // ========================
-            // PROFILE & SETTINGS
-            // ========================
             composable(Screen.PROFILE) {
                 com.example.fithub.ui.screens.profile.ProfileScreen(
                     onBack = { navController.navigateUp() },
                     onEditClick = { navController.navigate(Screen.EDIT_PROFILE) },
-                    onSettingsClick = { navController.navigate(Screen.SETTINGS) }
+                    onSettingsClick = { navController.navigate(Screen.SETTINGS) },
+                    onLogout = { navController.navigate(Screen.LANDING) { popUpTo(0) { inclusive = true } } }
                 )
             }
 
@@ -457,9 +420,6 @@ fun FitHubNavGraph(
                 )
             }
 
-            // ========================
-            // ACHIEVEMENTS
-            // ========================
             composable(Screen.ACHIEVEMENTS) {
                 com.example.fithub.ui.screens.achievements.AchievementsScreen(
                     onBack = { navController.navigateUp() }

@@ -1,5 +1,7 @@
+
 package com.example.fithub.ui.screens.biometric
 
+import android.util.Log
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.background
@@ -30,11 +32,6 @@ import com.example.fithub.ui.theme.FitHubMidBlue
 import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.FitHubSecondary
 
-/**
- * Reference: https://developer.android.com/training/sign-in/biometric-auth
- *            https://developer.android.com/reference/androidx/biometric/BiometricPrompt
- * (accessed February 2026)
- */
 @Composable
 fun BiometricGateScreen(
     onAuthenticated: () -> Unit,
@@ -47,7 +44,9 @@ fun BiometricGateScreen(
 
     LaunchedEffect(Unit) {
         Log.d(LogTags.BIOMETRIC, "BiometricGateScreen composed; evaluating availability")
-        when (val availability = checkAvailability(context)) {
+        // ADDED: Availability.Available branch to make the 'when' exhaustive
+        when (checkAvailability(context)) {
+            Availability.Available -> launchPrompt(activity) { viewModel.onBiometricSuccess() }
             Availability.NoneEnrolled -> viewModel.setError(R.string.biometric_gate_not_enrolled)
             Availability.NoHardware, Availability.Unavailable ->
                 viewModel.setError(R.string.biometric_gate_not_available)
@@ -104,6 +103,8 @@ fun BiometricGateScreen(
                 text = stringResource(R.string.biometric_gate_prompt),
                 onClick = {
                     Log.i(LogTags.BIOMETRIC, "User tapped 'Use fingerprint'")
+                    // ADDED: Actually launch the prompt when the button is tapped
+                    launchPrompt(activity) { viewModel.onBiometricSuccess() }
                 },
                 enabled = !state.isSyncing
             )
@@ -124,6 +125,8 @@ private enum class Availability { Available, NoneEnrolled, NoHardware, Unavailab
 private fun checkAvailability(context: android.content.Context): Availability {
     val manager = BiometricManager.from(context)
     return when (manager.canAuthenticate(
+        BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                BiometricManager.Authenticators.BIOMETRIC_WEAK
     )) {
         BiometricManager.BIOMETRIC_SUCCESS -> Availability.Available
         BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> Availability.NoneEnrolled
