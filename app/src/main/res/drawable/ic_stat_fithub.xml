@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Monochrome notification small icon.
+  Reference: https://developer.android.com/develop/ui/views/notifications/build-notification#SmallIcon
+             https://developer.android.com/design/ui/mobile/guides/components/status-bar-icon
+  (accessed February 2026)
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Vertical stem of the F -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M5,3h4v18h-4z" />
+    <!-- Top horizontal bar -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M5,3h15v4h-15z" />
+    <!-- Middle horizontal bar -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M5,10h11v4h-11z" />
+</vector>

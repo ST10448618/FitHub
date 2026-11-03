@@ -1,3 +1,4 @@
+
 package com.example.fithub.core
 
 import android.content.Context
@@ -11,41 +12,52 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore(name = "fithub_prefs")
 
-/**
- * User-scoped preferences persisted with Jetpack DataStore.
- *
- * ### Biometric flag mirror
- * [biometricEnabled] is a hot DataStore flow, which is asynchronous. But
- * [com.example.fithub.FitHubApplication.onCreate] must decide whether to keep
- * the Firebase session **synchronously**, before the DataStore actor has
- * emitted its first value. We therefore mirror the same flag into a tiny
- * `SharedPreferences` file (`fithub_security`) that can be read on any thread
- * without suspending.
- *
- * Reference: https://developer.android.com/topic/libraries/architecture/datastore
- *            https://developer.android.com/reference/android/content/SharedPreferences
- * (accessed February 2026)
- */
 class PreferencesManager(private val context: Context) {
 
     private object Keys {
         val PUSH_NOTIFICATIONS = booleanPreferencesKey("push_notifications")
         val LANGUAGE = stringPreferencesKey("language")
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
-
         val CLAIMED_REWARDS = stringPreferencesKey("claimed_rewards")
+        val FCM_TOKEN = stringPreferencesKey("fcm_token")
     }
 
-    /** Synchronous mirror file — tiny, only read at process start. */
     private val securityPrefs = context.applicationContext
         .getSharedPreferences(SECURITY_PREFS_NAME, Context.MODE_PRIVATE)
 
-    val claimedRewards: Flow<Set<String>> = context.dataStore.data.map { prefs ->
-        prefs[Keys.CLAIMED_REWARDS]
-            ?.split(",")
-            ?.filter { it.isNotBlank() }
-            ?.toSet()
-            ?: emptySet()
+    val claimedRewards: Flow<Set<String>> =
+        context.dataStore.data.map { prefs ->
+            prefs[Keys.CLAIMED_REWARDS]
+                ?.split(",")
+                ?.filter { it.isNotBlank() }
+                ?.toSet()
+                ?: emptySet()
+        }
+
+    val pushNotificationsEnabled: Flow<Boolean> =
+        context.dataStore.data.map {
+            it[Keys.PUSH_NOTIFICATIONS] ?: true
+        }
+
+    val language: Flow<String> =
+        context.dataStore.data.map {
+            it[Keys.LANGUAGE] ?: "ENGLISH"
+        }
+
+    val biometricEnabled: Flow<Boolean> =
+        context.dataStore.data.map {
+            it[Keys.BIOMETRIC_ENABLED] ?: false
+        }
+
+    val fcmToken: Flow<String?> =
+        context.dataStore.data.map {
+            it[Keys.FCM_TOKEN]
+        }
+
+    suspend fun setFcmToken(token: String) {
+        context.dataStore.edit { prefs ->
+            prefs[Keys.FCM_TOKEN] = token
+        }
     }
 
     suspend fun addClaimedReward(rewardId: String) {
@@ -54,52 +66,45 @@ class PreferencesManager(private val context: Context) {
                 ?.split(",")
                 ?.filter { it.isNotBlank() }
                 .orEmpty()
+
             val updated = (current + rewardId).distinct()
             prefs[Keys.CLAIMED_REWARDS] = updated.joinToString(",")
         }
     }
 
-    val pushNotificationsEnabled: Flow<Boolean> =
-        context.dataStore.data.map { it[Keys.PUSH_NOTIFICATIONS] ?: true }
-
-    val language: Flow<String> =
-        context.dataStore.data.map { it[Keys.LANGUAGE] ?: "ENGLISH" }
-
-    val biometricEnabled: Flow<Boolean> =
-        context.dataStore.data.map { it[Keys.BIOMETRIC_ENABLED] ?: false }
-
     suspend fun setPushNotifications(enabled: Boolean) {
-        context.dataStore.edit { it[Keys.PUSH_NOTIFICATIONS] = enabled }
+        context.dataStore.edit {
+            it[Keys.PUSH_NOTIFICATIONS] = enabled
+        }
     }
 
     suspend fun setLanguage(language: String) {
-        context.dataStore.edit { it[Keys.LANGUAGE] = language }
+        context.dataStore.edit {
+            it[Keys.LANGUAGE] = language
+        }
     }
 
-    /**
-     * Persists the biometric preference in both DataStore and the synchronous
-     * `SharedPreferences` mirror. Callers must go through here (never write the
-     * mirror directly) so the two stay in sync.
-     */
     suspend fun setBiometric(enabled: Boolean) {
-        context.dataStore.edit { it[Keys.BIOMETRIC_ENABLED] = enabled }
-        // Commit (synchronous) because this is read by the very next cold start
-        // in Application.onCreate — a delayed apply() could miss it if the
-        // process is killed immediately after the toggle.
-        securityPrefs.edit().putBoolean(SECURITY_KEY_BIOMETRIC_LOCK, enabled).commit()
-        Log.i(LogTags.BIOMETRIC, "Biometric preference saved: enabled=$enabled (mirror + DataStore)")
+        context.dataStore.edit {
+            it[Keys.BIOMETRIC_ENABLED] = enabled
+        }
+
+        securityPrefs.edit()
+            .putBoolean(SECURITY_KEY_BIOMETRIC_LOCK, enabled)
+            .commit()
+
+        Log.i(
+            LogTags.BIOMETRIC,
+            "Biometric preference saved: enabled=$enabled (mirror + DataStore)"
+        )
     }
 
-    /**
-     * Blocking read of the biometric-lock mirror. Safe from any thread; this is
-     * the single tiny SharedPreferences read that the brief explicitly allows
-     * on the main thread (called only from Application.onCreate / Splash).
-     */
     fun isBiometricLockEnabledSync(): Boolean =
         securityPrefs.getBoolean(SECURITY_KEY_BIOMETRIC_LOCK, false)
 
     companion object {
         private const val SECURITY_PREFS_NAME = "fithub_security"
-        private const val SECURITY_KEY_BIOMETRIC_LOCK = "biometric_lock_enabled"
+        private const val SECURITY_KEY_BIOMETRIC_LOCK =
+            "biometric_lock_enabled"
     }
 }

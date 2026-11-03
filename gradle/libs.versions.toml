@@ -51,6 +51,7 @@ googleid = "1.1.1"
 
 # PHASE 1 ADDED — coroutines testing for JVM unit tests (used from Phase 3 onward)
 coroutines = "1.10.2"
+firebaseMessagingKtx = "26.0.1"
 
 [libraries]
 # Core
@@ -128,6 +129,7 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 
 tflite = { group = "org.tensorflow", name = "tensorflow-lite", version.ref = "tflite" }
 tflite-support = { group = "org.tensorflow", name = "tensorflow-lite-support", version.ref = "tfliteSupport" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
