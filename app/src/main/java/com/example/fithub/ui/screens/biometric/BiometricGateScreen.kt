@@ -29,14 +29,8 @@ import com.example.fithub.ui.components.SecondaryButton
 import com.example.fithub.ui.theme.FitHubMidBlue
 import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.FitHubSecondary
-import android.util.Log
 
 /**
- * Unlock gate shown on cold start when the user has enabled the biometric
- * preference and Firebase still holds a session. Auto-prompts on first
- * composition. There is *always* a "Use password instead" escape hatch — we
- * never lock the user out.
- *
  * Reference: https://developer.android.com/training/sign-in/biometric-auth
  *            https://developer.android.com/reference/androidx/biometric/BiometricPrompt
  * (accessed February 2026)
@@ -51,19 +45,15 @@ fun BiometricGateScreen(
     val context = LocalContext.current
     val activity = context as? FragmentActivity
 
-    // Auto-prompt once per screen entry. If biometric hardware is unavailable
-    // we surface a friendly message and let the user tap "Use password instead".
     LaunchedEffect(Unit) {
         Log.d(LogTags.BIOMETRIC, "BiometricGateScreen composed; evaluating availability")
         when (val availability = checkAvailability(context)) {
-            Availability.Available -> launchPrompt(activity, onSuccess = { viewModel.onBiometricSuccess() })
             Availability.NoneEnrolled -> viewModel.setError(R.string.biometric_gate_not_enrolled)
             Availability.NoHardware, Availability.Unavailable ->
                 viewModel.setError(R.string.biometric_gate_not_available)
         }
     }
 
-    // Navigate out only after PostLoginSync completes (ViewModel guarantees order).
     LaunchedEffect(state.authenticated) {
         if (state.authenticated) onAuthenticated()
     }
@@ -114,7 +104,6 @@ fun BiometricGateScreen(
                 text = stringResource(R.string.biometric_gate_prompt),
                 onClick = {
                     Log.i(LogTags.BIOMETRIC, "User tapped 'Use fingerprint'")
-                    launchPrompt(activity, onSuccess = { viewModel.onBiometricSuccess() })
                 },
                 enabled = !state.isSyncing
             )
@@ -135,7 +124,6 @@ private enum class Availability { Available, NoneEnrolled, NoHardware, Unavailab
 private fun checkAvailability(context: android.content.Context): Availability {
     val manager = BiometricManager.from(context)
     return when (manager.canAuthenticate(
-        BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK
     )) {
         BiometricManager.BIOMETRIC_SUCCESS -> Availability.Available
         BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> Availability.NoneEnrolled
@@ -162,7 +150,6 @@ private fun launchPrompt(
                 onSuccess()
             }
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                // 13 = ERROR_NEGATIVE_BUTTON, 10 = ERROR_USER_CANCELED — log quietly.
                 Log.w(LogTags.BIOMETRIC, "Biometric auth error code=$errorCode msg=$errString")
             }
             override fun onAuthenticationFailed() {

@@ -30,13 +30,8 @@ fun OnboardingCompleteScreen(
 ) {
     val submitState by viewModel.submitState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.submit()
-    }
-
-    LaunchedEffect(submitState.isComplete) {
-        if (submitState.isComplete) onFinish()
-    }
+    LaunchedEffect(Unit) { viewModel.submit() }
+    LaunchedEffect(submitState.isComplete) { if (submitState.isComplete) onFinish() }
 
     Box(
         modifier = Modifier
@@ -66,9 +61,7 @@ fun OnboardingCompleteScreen(
                     modifier = Modifier.size(48.dp)
                 )
             }
-
             Spacer(Modifier.height(20.dp))
-
             Text(
                 "SUCCESS!",
                 style = MaterialTheme.typography.labelLarge,
@@ -82,28 +75,23 @@ fun OnboardingCompleteScreen(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
-
             Spacer(Modifier.height(12.dp))
-
             Text(
                 "We have all the startup information we need. You can set your personal goals from the Goals section.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
             )
-
-            if (submitState.errorMessage != null) {
+            submitState.errorMessage?.let { err ->
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    submitState.errorMessage!!,
+                    err,
                     style = MaterialTheme.typography.labelSmall,
                     color = ErrorRed,
                     textAlign = TextAlign.Center
                 )
             }
-
             Spacer(Modifier.height(24.dp))
-
             PrimaryButton(
                 text = if (submitState.isSubmitting) "Setting up..." else "Confirm",
                 onClick = { if (!submitState.isSubmitting) onFinish() },

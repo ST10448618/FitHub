@@ -1,8 +1,11 @@
 package com.example.fithub.data.repository
 
+import android.util.Log
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
 import com.example.fithub.data.remote.auth.FirebaseAuthDataSource
 import com.example.fithub.domain.repository.AuthRepository
+import com.example.fithub.domain.repository.GoogleAuthResult
 import kotlinx.coroutines.flow.Flow
 
 class AuthRepositoryImpl(
@@ -17,8 +20,10 @@ class AuthRepositoryImpl(
         try {
             val user = auth.createUser(email.trim(), password)
                 ?: return Resource.Error("Registration failed — no user returned.")
+            Log.i(LogTags.AUTH, "Register ok uid=${user.uid.take(8)}…")
             Resource.Success(user.uid)
         } catch (e: Exception) {
+            Log.e(LogTags.AUTH, "Register failed", e)
             Resource.Error(mapAuthError(e), e)
         }
 
@@ -26,15 +31,19 @@ class AuthRepositoryImpl(
         try {
             val user = auth.signIn(email.trim(), password)
                 ?: return Resource.Error("Login failed — no user returned.")
+            Log.i(LogTags.AUTH, "Login ok uid=${user.uid.take(8)}…")
             Resource.Success(user.uid)
         } catch (e: Exception) {
+            Log.e(LogTags.AUTH, "Login failed", e)
             Resource.Error(mapAuthError(e), e)
         }
 
     override suspend fun logout(): Resource<Unit> = try {
         auth.signOut()
+        Log.i(LogTags.AUTH, "AuthRepository.logout()")
         Resource.Success(Unit)
     } catch (e: Exception) {
+        Log.e(LogTags.AUTH, "Logout failed", e)
         Resource.Error(e.message ?: "Sign-out failed", e)
     }
 
@@ -42,8 +51,27 @@ class AuthRepositoryImpl(
         auth.sendPasswordReset(email.trim())
         Resource.Success(Unit)
     } catch (e: Exception) {
+        Log.e(LogTags.AUTH, "Password reset failed", e)
         Resource.Error(mapAuthError(e), e)
     }
+
+    override suspend fun signInWithGoogle(idToken: String): Resource<GoogleAuthResult> =
+        try {
+            val outcome = auth.signInWithGoogleCredential(idToken)
+                ?: return Resource.Error("Google sign-in failed — no user returned.")
+            val user = outcome.user
+            Resource.Success(
+                GoogleAuthResult(
+                    uid = user.uid,
+                    email = user.email ?: "",
+                    displayName = user.displayName ?: "",
+                    isNewUser = outcome.isNewUser
+                )
+            )
+        } catch (e: Exception) {
+            Log.e(LogTags.AUTH, "Google sign-in exchange failed", e)
+            Resource.Error(mapAuthError(e), e)
+        }
 
     /** Friendly error messages — never leak Firebase internals to the UI. */
     private fun mapAuthError(e: Exception): String {

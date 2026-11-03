@@ -13,13 +13,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * UI state for [BiometricGateScreen].
- *
- * [authenticated] flips to `true` only after the post-biometric hydration
- * ([PostLoginSync.run]) finishes, so the nav callback that navigates to the
- * dashboard is guaranteed to arrive after Room is populated.
- */
 data class BiometricGateUiState(
     val authenticated: Boolean = false,
     val isSyncing: Boolean = false,
@@ -40,7 +33,6 @@ class BiometricGateViewModel : ViewModel() {
         if (uid == null) {
             Log.w(LogTags.BIOMETRIC, "Biometric success but no Firebase user — cannot continue")
             _uiState.update { it.copy(errorMessageResId = null, authenticated = false) }
-            // Screen will call onUsePassword to reset — no exception here.
             return
         }
         if (_uiState.value.isSyncing) return

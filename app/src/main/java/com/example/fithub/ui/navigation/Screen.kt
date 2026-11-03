@@ -1,9 +1,5 @@
 package com.example.fithub.ui.navigation
 
-/**
- * All FitHub route constants.
- * Never build route strings elsewhere — always use these.
- */
 object Screen {
 
     // ---------- Auth & Onboarding ----------
