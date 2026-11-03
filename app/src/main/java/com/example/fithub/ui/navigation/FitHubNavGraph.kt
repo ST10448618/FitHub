@@ -1,15 +1,22 @@
 package com.example.fithub.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.fithub.core.LogTags
+import com.example.fithub.core.SessionManager
+import com.example.fithub.core.ServiceLocator
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun FitHubNavGraph(
@@ -19,6 +26,16 @@ fun FitHubNavGraph(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
+    // Phase 1: log every destination change so device testers can verify
+    // navigation from logcat without attaching a debugger.
+    val appContext = LocalContext.current.applicationContext
+    DisposableEffect(navController) {
+        val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
+            Log.d(LogTags.NAV, "Destination changed → ${destination.route}")
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose { navController.removeOnDestinationChangedListener(listener) }
+    }
 
     MainScaffold(navController = navController, currentRoute = currentRoute) { padding ->
         NavHost(
@@ -32,13 +49,38 @@ fun FitHubNavGraph(
             composable(Screen.SPLASH) {
                 com.example.fithub.ui.screens.splash.SplashScreen(
                     onFinished = {
-                        navController.navigate(Screen.LANDING) {
+                        // Phase 1 session-policy routing:
+                        //   lock enabled  AND  Firebase user exists → BIOMETRIC_GATE
+                        //   otherwise → LANDING (prototype behaviour)
+                        val prefs = ServiceLocator.preferencesManager
+                        val lockOn = prefs.isBiometricLockEnabledSync()
+                        val hasUser = FirebaseAuth.getInstance().currentUser != null
+                        val target = if (lockOn && hasUser) Screen.BIOMETRIC_GATE else Screen.LANDING
+                        Log.i(
+                            LogTags.NAV,
+                            "Splash finished — routing to $target (lockOn=$lockOn hasUser=$hasUser)"
+                        )
+                        navController.navigate(target) {
                             popUpTo(Screen.SPLASH) { inclusive = true }
                         }
                     }
                 )
             }
 
+            composable(Screen.BIOMETRIC_GATE) {
+                com.example.fithub.ui.screens.biometric.BiometricGateScreen(
+                    onAuthenticated = {
+                        navController.navigate(Screen.DASHBOARD) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                    onUsePassword = {
+                        navController.navigate(Screen.LOGIN) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
 
             composable(Screen.LANDING) {
                 com.example.fithub.ui.screens.landing.LandingScreen(
@@ -227,11 +269,19 @@ fun FitHubNavGraph(
                 )
             }
 
+            composable(Screen.BARCODE_SCANNER) {
+                com.example.fithub.ui.screens.food.scanner.BarcodeScannerScreen(
+                    onBack = { navController.navigateUp() },
+                    // FIXED: The screen actually uses `onBarcodeDetected` and
+                    // expects a typed String parameter, not `onFoodResolved`.
+                    onBarcodeDetected = { foodId: String ->
+                        navController.navigate(Screen.foodDetails(foodId)) {
+                            popUpTo(Screen.BARCODE_SCANNER) { inclusive = true }
+                        }
+                    }
+                )
+            }
 
-
-
-
-            // Simple food details (used from Add Meal / Food List)
             composable(
                 route = Screen.FOOD_DETAILS,
                 arguments = listOf(navArgument("foodId") { type = NavType.StringType })
@@ -244,7 +294,6 @@ fun FitHubNavGraph(
                 )
             }
 
-            // Contextual food details (used from Journal, with qty + meal prefilled)
             composable(
                 route = Screen.FOOD_DETAILS_WITH_CONTEXT,
                 arguments = listOf(
@@ -256,7 +305,6 @@ fun FitHubNavGraph(
                 com.example.fithub.ui.screens.food.details.FoodDetailsScreen(
                     onBack = { navController.navigateUp() },
                     onAdded = {
-                        // After adding, close details and stay on Journal
                         navController.popBackStack()
                     }
                 )
@@ -281,8 +329,6 @@ fun FitHubNavGraph(
                     }
                 )
             }
-
-
 
             // ========================
             // WORKOUTS
@@ -342,7 +388,6 @@ fun FitHubNavGraph(
                     onBack = { navController.navigateUp() },
                     onCancelAll = { navController.navigateUp() },
                     onCreated = {
-                        // Pop back to Plans
                         navController.navigate(Screen.PLANS) {
                             popUpTo(Screen.PLANS) { inclusive = true }
                         }
@@ -381,7 +426,6 @@ fun FitHubNavGraph(
                 )
             }
 
-
             composable(Screen.WORKOUT_GOALS) {
                 com.example.fithub.ui.screens.goals.workout.WorkoutGoalsScreen(
                     onBack = { navController.navigateUp() },
@@ -416,14 +460,11 @@ fun FitHubNavGraph(
             // ========================
             // ACHIEVEMENTS
             // ========================
-
             composable(Screen.ACHIEVEMENTS) {
                 com.example.fithub.ui.screens.achievements.AchievementsScreen(
                     onBack = { navController.navigateUp() }
                 )
             }
-
-
         }
     }
 }

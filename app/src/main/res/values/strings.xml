@@ -1,3 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FitHub</string>
+
+    <!-- Phase 1 : Biometric gate -->
+    <string name="biometric_gate_title">Unlock FitHub</string>
+    <string name="biometric_gate_subtitle">Confirm it\'s you to continue.</string>
+    <string name="biometric_gate_prompt">Use fingerprint</string>
+    <string name="biometric_gate_fallback">Use password instead</string>
+    <string name="biometric_gate_cancel">Cancel</string>
+    <string name="biometric_gate_not_available">Biometric login isn\'t available on this device.</string>
+    <string name="biometric_gate_not_enrolled">No fingerprint or face is enrolled. Add one in system settings to use biometric login.</string>
+    <string name="biometric_gate_error_generic">Couldn\'t verify. Please try again.</string>
+    <string name="biometric_gate_error_lockout">Too many attempts. Try again in a moment.</string>
+    <string name="biometric_gate_error_lockout_permanent">Biometric login is locked. Unlock your device to re-enable it.</string>
+    <string name="biometric_gate_go_to_settings">Open settings</string>
+
+    <!-- Phase 1 : SessionManager logs (do not show to users) -->
+    <string name="session_logged_out">Logged out.</string>
+
+    <!-- Phase 1 : Generic -->
+    <string name="generic_back">Back</string>
 </resources>

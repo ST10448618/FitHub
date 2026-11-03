@@ -10,6 +10,8 @@ object Screen {
     const val SPLASH = "splash"
     const val LANDING = "landing"
     const val LOGIN = "login"
+    /** Phase 1: biometric unlock screen shown on cold start when lock is on. */
+    const val BIOMETRIC_GATE = "biometric_gate"
 
     const val ONBOARDING_USER_DETAILS = "onboarding/user_details"
     const val ONBOARDING_BIOMETRIC = "onboarding/biometric"
@@ -43,10 +45,8 @@ object Screen {
     const val LIST_FOOD = "list_food/{category}"
     const val FOOD_DETAILS = "food_details/{foodId}"
     const val BARCODE_SCANNER = "barcode_scanner"
-    // Route for the list of the day's logged foods
     const val LIST_FOOD_LOGS = "list_food_logs/{date}"
 
-    // Route pattern for food details with pre-filled context
     const val FOOD_DETAILS_WITH_CONTEXT =
         "food_details/{foodId}?qty={qty}&meal={meal}"
 
@@ -104,8 +104,8 @@ object Screen {
         ADD_MEAL,
         VERIFIED_PLANS,
         PROFILE, EDIT_PROFILE, SETTINGS,
-        ACHIEVEMENTS
-
+        ACHIEVEMENTS,
+        BARCODE_SCANNER
     )
 
     /** Main bottom-nav tab routes only. */

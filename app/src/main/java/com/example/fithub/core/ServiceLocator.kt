@@ -50,6 +50,10 @@ object ServiceLocator {
 
     val seedManager: SeedManager by lazy { SeedManager(database, exerciseRepository) }
 
+    /** Phase 1: process-wide connectivity signal used by sync + UI. */
+    val connectivityMonitor: ConnectivityMonitor by lazy {
+        ConnectivityMonitor(appContext)
+    }
 
     val foodRepository: com.example.fithub.domain.repository.FoodRepository by lazy {
         com.example.fithub.data.repository.FoodRepositoryImpl(
@@ -57,7 +61,6 @@ object ServiceLocator {
             com.example.fithub.data.remote.api.OpenFoodFactsDataSource()
         )
     }
-
 
     fun init(context: Context) {
         appContext = context.applicationContext

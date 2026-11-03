@@ -2,6 +2,7 @@ package com.example.fithub.ui.screens.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.core.PostLoginSync
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.domain.repository.AuthRepository
@@ -55,15 +56,8 @@ class LoginViewModel(
             val result = auth.login(state.identifier.trim(), state.password)
             when (result) {
                 is Resource.Success -> {
-                    // Firebase Auth now holds the session.
-                    // Pull the fresh profile from Firestore so Room is populated.
-                    ServiceLocator.userRepository.syncFromRemote(result.data)
-                    ServiceLocator.weightRepository.syncFromRemote(result.data)
-                    ServiceLocator.goalRepository.syncFromRemote(result.data)
-                    ServiceLocator.nutritionGoalsRepository.syncFromRemote(result.data)
-                    ServiceLocator.workoutGoalsRepository.syncFromRemote(result.data)
-                    ServiceLocator.checkpointRepository.syncFromRemote(result.data)
-
+                    // Phase 1: single reused hydration path (also used by BiometricGateScreen).
+                    PostLoginSync.run(result.data)
                     _uiState.update {
                         it.copy(isLoading = false, successUserId = result.data)
                     }

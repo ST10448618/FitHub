@@ -86,6 +86,9 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    // PHASE 1 ADDED — needed in Phase 4 (FCM); included now so the catalog and
+    // gradle are in sync and CI exercises the same dependency graph we ship.
+    implementation(libs.firebase.messaging)
 
     // Room
     implementation(libs.androidx.room.runtime)
@@ -120,12 +123,18 @@ dependencies {
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
 
+    // PHASE 1 ADDED — Google SSO via Credential Manager (used in Phase 2)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     // TensorFlow Lite
     implementation("org.tensorflow:tensorflow-lite:2.16.1")
 
     // Testing
     testImplementation(libs.junit)
+    // PHASE 1 ADDED — enables runTest for SyncManager/StreakCalculator tests later
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)

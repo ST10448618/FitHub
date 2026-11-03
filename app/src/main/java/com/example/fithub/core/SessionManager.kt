@@ -1,13 +1,11 @@
 package com.example.fithub.core
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 
 /**
  * Single source of truth for the current user's UID.
  * Reads directly from Firebase Auth so it always matches the real session.
- *
- * DO NOT hard-code a demo UID here — screens will silently query for the
- * wrong user and appear empty or corrupt.
  */
 object SessionManager {
 
@@ -20,9 +18,10 @@ object SessionManager {
     fun isLoggedIn(): Boolean = currentUser != null
 
     fun logout() {
+        Log.i(LogTags.AUTH, "Explicit logout requested; signing out Firebase Auth")
         auth.signOut()
+        Log.i(LogTags.AUTH, "Firebase Auth signed out; currentUser=${auth.currentUser?.uid ?: "null"}")
     }
-
 
     private val currentUser get() = auth.currentUser
 }
