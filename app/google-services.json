@@ -12,7 +12,20 @@
           "package_name": "com.example.fithub"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "352246304513-beplkkvh6749ue42lohmbqniq49q43qa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fithub",
+            "certificate_hash": "8fc72aaebf28a35b971fec52df18688693754308"
+          }
+        },
+        {
+          "client_id": "352246304513-pbtgmameni13cokm71rrjcu3b23up58k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDqs5C-cxd6EbvUrLIIEXI3AbmxnyQilFs"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352246304513-pbtgmameni13cokm71rrjcu3b23up58k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

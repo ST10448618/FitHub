@@ -117,10 +117,4 @@
     <string name="notif_disabled_message">Notifications disabled. You can re-enable them any time.</string>
     <string name="notif_permission_denied_message">Notification permission denied. Enable it in system settings to receive reminders.</string>
 
-    <!-- temp till we fix google-services.json -->
-    <string name="default_web_client_id" translatable="false">STUB_REPLACE_AFTER_GOOGLE_PROVIDER_ENABLED</string>
-
-
-
-
 </resources>
