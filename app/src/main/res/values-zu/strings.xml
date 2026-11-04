@@ -302,6 +302,10 @@
     <string name="food_card_kcal_format">%1$d kcal</string>
     <string name="food_card_grams_format">%1$dg</string>
     <string name="food_details_grams_over_target_format">%1$d/%2$dg</string>
+    <string name="food_details_macro_protein">Iprotheyini</string>
+    <string name="food_details_macro_carbs">Ama-carbohydrate</string>
+    <string name="food_details_macro_fats">Amafutha</string>
+    <string name="food_log_row_calories_format">%1$d cal</string>
 
     <string name="journal_body_title">Umzimba Nesisindo</string>
     <string name="journal_body_action">bona imininingwane</string>
@@ -706,8 +710,46 @@
     <string name="session_completed_particles_format">%1$d ama-Particles Engeziwe</string>
     <string name="session_completed_tap_to_continue">Thepha noma kuphi ukuze uqhubeke</string>
 
-    <!-- Phase 5 Batch E PART 2 : Rewards + Catalog content -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH E PART 1 : Profile + Achievements -->
+    <!-- ========================================== -->
+    <string name="profile_title">Iphrofayela</string>
+    <string name="profile_your_details">Imininingwane Yakho</string>
+    <string name="profile_label_username">Igama lomsebenzisi :</string>
+    <string name="profile_label_email">Ikheli le-imeyili :</string>
+    <string name="profile_label_age">Iminyaka :</string>
+    <string name="profile_label_height">Ubude :</string>
+    <string name="profile_label_gender">Ubulili :</string>
+    <string name="profile_label_lifestyle">Indlela yokuphila :</string>
+    <string name="profile_error_no_session">Ayikho iseshini esebenzayo. Sicela ungene futhi.</string>
 
+    <string name="edit_profile_title">Hlela Iphrofayela</string>
+    <string name="edit_profile_account_details">Imininingwane ye-akhawunti</string>
+    <string name="edit_profile_username">Igama lomsebenzisi</string>
+    <string name="edit_profile_email">Ikheli le-imeyili</string>
+    <string name="edit_profile_physical_details">Imininingwane yomzimba</string>
+    <string name="edit_profile_height">Ubude</string>
+    <string name="edit_profile_age">Iminyaka</string>
+    <string name="edit_profile_gender">Ubulili</string>
+    <string name="edit_profile_lifestyle">Indlela yokuphila</string>
+    <string name="edit_profile_saving">Kuyagcinwa…</string>
+    <string name="edit_profile_save">Gcina Izinguquko</string>
+    <string name="edit_profile_error_not_found">Iphrofayela ayitholakalanga. Sicela uqedele ukuqalisa.</string>
+
+    <string name="achievements_title">Izimpumelelo</string>
+    <string name="achievements_trophy_desc">Indondo</string>
+    <string name="achievements_current_level">Izinga lamanje</string>
+    <string name="achievements_level_format">Izinga %1$d</string>
+    <string name="achievements_next_level_format">Thola %1$d ✨ ezingeni elilandelayo</string>
+    <string name="achievements_nutrition_section">Izimpumelelo Zokudla Okunomsoco</string>
+    <string name="achievements_workout_section">Izimpumelelo Zokuzivocavoca</string>
+    <string name="achievements_claimed">Kufunyenwe ✓</string>
+    <string name="achievements_claim_format">Funa ✨ %1$d</string>
+    <string name="achievements_progress_format">%1$d/%2$d  ✨ %3$d</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH E PART 2 : Rewards + Catalog content -->
+    <!-- ========================================== -->
     <string name="rewards_title">Imiklomelo</string>
     <string name="rewards_trophy_desc">Imiklomelo</string>
     <string name="rewards_current_particles">Ama-Particles amanje:</string>
