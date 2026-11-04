@@ -259,9 +259,7 @@
     <string name="food_details_nutritional_info">Voedingsinligting</string>
     <string name="food_details_calories_format">%1$d cal</string>
     <string name="food_details_grams_format">%1$d g</string>
-    <string name="food_details_macro_protein">Proteïen</string>
-    <string name="food_details_macro_carbs">Koolhidrate</string>
-    <string name="food_details_macro_fats">Vette</string>
+
     <string name="food_details_meal_target_progress">%1$d / %2$d cal</string>
     <string name="food_details_description_title">Beskrywing</string>
     <string name="food_details_add_meal_button">Voeg %1$s-maaltyd by</string>
@@ -274,7 +272,6 @@
     <string name="food_log_list_title_format">Voeding · %1$s</string>
     <string name="food_log_list_empty_title">Geen maaltye aangeteken nie</string>
     <string name="food_log_list_empty_body">Niks vir hierdie dag aangeteken nie.</string>
-    <string name="food_log_row_calories_format">%1$d cal</string>
 
     <string name="food_scanner_title">Skandeer streepkode</string>
     <string name="food_scanner_permission_required">Kamermagting is nodig.</string>

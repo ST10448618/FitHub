@@ -420,9 +420,7 @@
     <string name="food_details_nutritional_info">Nutritional Information</string>
     <string name="food_details_calories_format">%1$d cal</string>
     <string name="food_details_grams_format">%1$d g</string>
-    <string name="food_details_macro_protein">Protein</string>
-    <string name="food_details_macro_carbs">Carbs</string>
-    <string name="food_details_macro_fats">Fats</string>
+
     <string name="food_details_meal_target_progress">%1$d / %2$d cal</string>
     <string name="food_details_description_title">Description</string>
     <string name="food_details_add_meal_button">Add %1$s Meal</string>
@@ -435,7 +433,6 @@
     <string name="food_log_list_title_format">Nutrition · %1$s</string>
     <string name="food_log_list_empty_title">No meals logged</string>
     <string name="food_log_list_empty_body">Nothing recorded for this day.</string>
-    <string name="food_log_row_calories_format">%1$d cal</string>
 
     <string name="food_scanner_title">Scan Barcode</string>
     <string name="food_scanner_permission_required">Camera permission required.</string>
