@@ -5,4 +5,18 @@
     <string name="settings_language_current">Okwamanje : %1$s</string>
     <string name="settings_language_change">Shintsha &gt;</string>
     <string name="settings_language_dialog_title">Khetha ulimi lwakho</string>
+
+    <!-- Phase 5 Batch A : Components -->
+    <string name="common_back">Emuva</string>
+    <string name="common_error_title">Kukhona okungahambanga kahle</string>
+    <string name="common_try_again">Zama futhi</string>
+    <string name="common_password_placeholder">Faka iphasiwedi yakho</string>
+    <string name="common_password_show">Khombisa</string>
+    <string name="common_password_hide">Fihla</string>
+
+    <string name="nav_home">Ikhaya</string>
+    <string name="nav_journal">Ijenali</string>
+    <string name="nav_plans">Izinhlelo</string>
+    <string name="nav_goals">Izinhloso</string>
+    <string name="nav_rewards">Imiklomelo</string>
 </resources>

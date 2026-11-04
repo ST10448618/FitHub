@@ -29,15 +29,10 @@ import com.example.fithub.ui.theme.FitHubLightBlue
 import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.SuccessGreen
 import com.example.fithub.ui.theme.TextSecondary
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 
-/**
- * Reference: https://developer.android.com/topic/architecture/data-layer/offline-first
- * (accessed February 2026)
- */
 @Composable
 fun SyncStatusBanner(
     modifier: Modifier = Modifier
@@ -50,8 +45,6 @@ fun SyncStatusBanner(
     val pending by pendingCountFlow.collectAsStateWithLifecycle(initialValue = 0)
     val online by ServiceLocator.connectivityMonitor.isOnline.collectAsStateWithLifecycle()
 
-    // Hold the "just synced" state for 2.5 s after pending drops from >0 to 0
-    // while online.
     var showSyncedTick by remember { mutableStateOf(false) }
     val previousPending = remember { MutableStateFlow(pending) }
     LaunchedEffect(pending, online) {

@@ -132,4 +132,20 @@
       re-download google-services.json. -->
     <string name="default_web_client_id" translatable="false">STUB_REPLACE_AFTER_GOOGLE_PROVIDER_ENABLED</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH A : Components               -->
+    <!-- ========================================== -->
+    <string name="common_back">Back</string>
+    <string name="common_error_title">Something went wrong</string>
+    <string name="common_try_again">Try again</string>
+    <string name="common_password_placeholder">Enter your password</string>
+    <string name="common_password_show">Show</string>
+    <string name="common_password_hide">Hide</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_journal">Journal</string>
+    <string name="nav_plans">Plans</string>
+    <string name="nav_goals">Goals</string>
+    <string name="nav_rewards">Rewards</string>
+
 </resources>

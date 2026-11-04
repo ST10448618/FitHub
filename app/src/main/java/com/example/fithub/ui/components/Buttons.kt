@@ -12,9 +12,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.fithub.ui.theme.*
 
+/**
+ * Shared button primitives. All [text] parameters are already localised by the
+ * caller (via `stringResource(...)`), so this file contains no user-visible
+ * literals of its own and is locale-agnostic by construction.
+ */
 @Composable
 fun PrimaryButton(
     text: String,
@@ -156,6 +160,3 @@ fun SmallActionButton(
         )
     }
 }
-
-
-

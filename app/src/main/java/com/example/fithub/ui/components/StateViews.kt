@@ -7,9 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.ui.theme.ErrorRed
 import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.TextSecondary
@@ -74,7 +76,7 @@ fun ErrorState(
         Text("⚠️", style = MaterialTheme.typography.displayLarge)
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Something went wrong",
+            text = stringResource(R.string.common_error_title),
             style = MaterialTheme.typography.titleMedium,
             color = ErrorRed,
             fontWeight = FontWeight.Bold
@@ -88,7 +90,7 @@ fun ErrorState(
         )
         if (onRetry != null) {
             Spacer(modifier = Modifier.height(16.dp))
-            SmallActionButton(text = "Try again", onClick = onRetry)
+            SmallActionButton(text = stringResource(R.string.common_try_again), onClick = onRetry)
         }
     }
 }

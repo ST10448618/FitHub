@@ -5,4 +5,18 @@
     <string name="settings_language_current">Huidig : %1$s</string>
     <string name="settings_language_change">Verander &gt;</string>
     <string name="settings_language_dialog_title">Kies jou taal</string>
+
+    <!-- Phase 5 Batch A : Components -->
+    <string name="common_back">Terug</string>
+    <string name="common_error_title">Iets het verkeerd geloop</string>
+    <string name="common_try_again">Probeer weer</string>
+    <string name="common_password_placeholder">Voer jou wagwoord in</string>
+    <string name="common_password_show">Wys</string>
+    <string name="common_password_hide">Versteek</string>
+
+    <string name="nav_home">Tuis</string>
+    <string name="nav_journal">Joernaal</string>
+    <string name="nav_plans">Planne</string>
+    <string name="nav_goals">Doelwitte</string>
+    <string name="nav_rewards">Belonings</string>
 </resources>
