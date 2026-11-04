@@ -18,13 +18,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
+import com.example.fithub.domain.model.ActivityLevel
+import com.example.fithub.domain.model.Gender
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
-import androidx.compose.ui.text.input.KeyboardType
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun EditProfileScreen(
@@ -43,7 +48,7 @@ fun EditProfileScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Edit Profile", onBack = onBack)
+        AppHeader(title = stringResource(R.string.edit_profile_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -80,7 +85,7 @@ fun EditProfileScreen(
             Spacer(Modifier.height(16.dp))
 
             Text(
-                "Account Details",
+                stringResource(R.string.edit_profile_account_details),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -90,20 +95,20 @@ fun EditProfileScreen(
             FitHubTextField(
                 value = state.username,
                 onValueChange = viewModel::onUsernameChange,
-                label = "Username"
+                label = stringResource(R.string.edit_profile_username)
             )
             Spacer(Modifier.height(12.dp))
             FitHubTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
-                label = "Email Address",
+                label = stringResource(R.string.edit_profile_email),
                 keyboardType = KeyboardType.Email
             )
 
             Spacer(Modifier.height(20.dp))
 
             Text(
-                "Physical Details",
+                stringResource(R.string.edit_profile_physical_details),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -113,50 +118,49 @@ fun EditProfileScreen(
             FitHubTextField(
                 value = state.heightCm,
                 onValueChange = viewModel::onHeightChange,
-                label = "Height",
+                label = stringResource(R.string.edit_profile_height),
                 keyboardType = KeyboardType.Number
             )
             Spacer(Modifier.height(12.dp))
             FitHubTextField(
                 value = state.age,
                 onValueChange = viewModel::onAgeChange,
-                label = "Age",
+                label = stringResource(R.string.edit_profile_age),
                 keyboardType = KeyboardType.Number
             )
 
             Spacer(Modifier.height(12.dp))
 
+            val genderEntries = Gender.entries
+            val genderLabels = genderEntries.map { it.localized() }
             DropdownField(
-                label = "Gender",
-                current = state.gender.name.lowercase().replaceFirstChar { it.uppercase() },
-                options = listOf("Male", "Female", "Other"),
+                label = stringResource(R.string.edit_profile_gender),
+                current = state.gender.localized(),
+                options = genderLabels,
                 onSelect = { selected ->
-                    val gender = when (selected) {
-                        "Male" -> com.example.fithub.domain.model.Gender.MALE
-                        "Female" -> com.example.fithub.domain.model.Gender.FEMALE
-                        else -> com.example.fithub.domain.model.Gender.OTHER
-                    }
-                    viewModel.onGenderChange(gender)
+                    val idx = genderLabels.indexOf(selected)
+                    if (idx >= 0) viewModel.onGenderChange(genderEntries[idx])
                 }
             )
 
             Spacer(Modifier.height(12.dp))
 
+            val activityEntries = ActivityLevel.entries
+            val activityLabels = activityEntries.map { it.localized() }
             DropdownField(
-                label = "Lifestyle",
-                current = state.activityLevel.label,
-                options = com.example.fithub.domain.model.ActivityLevel.entries.map { it.label },
+                label = stringResource(R.string.edit_profile_lifestyle),
+                current = state.activityLevel.localized(),
+                options = activityLabels,
                 onSelect = { selected ->
-                    val level = com.example.fithub.domain.model.ActivityLevel.entries
-                        .firstOrNull { it.label == selected } ?: state.activityLevel
-                    viewModel.onActivityChange(level)
+                    val idx = activityLabels.indexOf(selected)
+                    if (idx >= 0) viewModel.onActivityChange(activityEntries[idx])
                 }
             )
 
-            if (state.errorMessage != null) {
+            state.errorMessage?.let { err ->
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    state.errorMessage!!,
+                    err,
                     style = MaterialTheme.typography.labelSmall,
                     color = ErrorRed
                 )
@@ -166,12 +170,15 @@ fun EditProfileScreen(
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 SecondaryButton(
-                    text = "Cancel",
+                    text = stringResource(R.string.generic_cancel),
                     onClick = onBack,
                     modifier = Modifier.weight(1f)
                 )
                 PrimaryButton(
-                    text = if (state.isSaving) "Saving..." else "Save Changes",
+                    text = stringResource(
+                        if (state.isSaving) R.string.edit_profile_saving
+                        else R.string.edit_profile_save
+                    ),
                     onClick = viewModel::save,
                     enabled = !state.isSaving,
                     modifier = Modifier.weight(1f)

@@ -717,6 +717,49 @@
     <string name="session_completed_tap_to_continue">Tap anywhere to continue</string>
 
     <!-- ========================================== -->
+    <!-- PHASE 5 BATCH E PART 1 : Profile + Achievements -->
+    <!-- ========================================== -->
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_your_details">Your Details</string>
+    <string name="profile_label_username">Username :</string>
+    <string name="profile_label_email">Email Address :</string>
+    <string name="profile_label_age">Age :</string>
+    <string name="profile_label_height">Height :</string>
+    <string name="profile_label_gender">Gender :</string>
+    <string name="profile_label_lifestyle">Lifestyle :</string>
+    <string name="profile_error_no_session">No active session. Please log in again.</string>
+
+    <!-- Edit Profile -->
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="edit_profile_account_details">Account Details</string>
+    <string name="edit_profile_username">Username</string>
+    <string name="edit_profile_email">Email Address</string>
+    <string name="edit_profile_physical_details">Physical Details</string>
+    <string name="edit_profile_height">Height</string>
+    <string name="edit_profile_age">Age</string>
+    <string name="edit_profile_gender">Gender</string>
+    <string name="edit_profile_lifestyle">Lifestyle</string>
+    <string name="edit_profile_saving">Saving…</string>
+    <string name="edit_profile_save">Save Changes</string>
+    <string name="edit_profile_error_not_found">Profile not found. Please complete onboarding.</string>
+
+    <!-- Achievements chrome -->
+    <string name="achievements_title">Achievements</string>
+    <string name="achievements_trophy_desc">Trophy</string>
+    <string name="achievements_current_level">Current Level</string>
+    <string name="achievements_level_format">Level %1$d</string>
+    <string name="achievements_next_level_format">Receive %1$d ✨ on next Level Up</string>
+    <string name="achievements_nutrition_section">Nutrition Achievements</string>
+    <string name="achievements_workout_section">Workout Achievements</string>
+    <string name="achievements_claimed">Claimed ✓</string>
+    <string name="achievements_claim_format">Claim ✨ %1$d</string>
+    <string name="achievements_progress_format">%1$d/%2$d  ✨ %3$d</string>
+
+
+
+    <!-- ========================================== -->
     <!-- PHASE 5 BATCH E PART 2 : Rewards + Catalog content -->
     <!-- ========================================== -->
 

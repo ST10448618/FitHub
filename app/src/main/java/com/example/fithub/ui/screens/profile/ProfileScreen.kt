@@ -35,6 +35,7 @@ import com.example.fithub.ui.components.PrimaryButton
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SecondaryButton
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,7 +55,7 @@ fun ProfileScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Profile", onBack = onBack)
+        AppHeader(title = stringResource(R.string.profile_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -83,7 +84,6 @@ fun ProfileScreen(
         ) {
             Spacer(Modifier.height(8.dp))
 
-            // Avatar
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
@@ -110,7 +110,7 @@ fun ProfileScreen(
 
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Your Details",
+                    stringResource(R.string.profile_your_details),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
@@ -121,34 +121,35 @@ fun ProfileScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
-                DetailRow("Username :", state.profile?.firstName ?: "—")
-                DetailRow("Email Address :", state.profile?.email ?: "—")
+                DetailRow(stringResource(R.string.profile_label_username), state.profile?.firstName ?: stringResource(R.string.common_dash))
+                DetailRow(stringResource(R.string.profile_label_email), state.profile?.email ?: stringResource(R.string.common_dash))
 
                 Spacer(Modifier.height(8.dp))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     DetailColumn(
-                        label = "Age :",
-                        value = state.profile?.age?.toString() ?: "—",
+                        label = stringResource(R.string.profile_label_age),
+                        value = state.profile?.age?.toString() ?: stringResource(R.string.common_dash),
                         modifier = Modifier.weight(1f)
                     )
                     DetailColumn(
-                        label = "Height :",
-                        value = state.profile?.heightCm?.let { "${it.toInt()} cm" } ?: "—",
+                        label = stringResource(R.string.profile_label_height),
+                        value = state.profile?.heightCm?.let {
+                            stringResource(R.string.nutrition_goals_cm_format, it.toInt())
+                        } ?: stringResource(R.string.common_dash),
                         modifier = Modifier.weight(1f)
                     )
                 }
                 Spacer(Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     DetailColumn(
-                        label = "Gender :",
-                        value = state.profile?.gender?.name?.lowercase()
-                            ?.replaceFirstChar { it.uppercase() } ?: "—",
+                        label = stringResource(R.string.profile_label_gender),
+                        value = state.profile?.gender?.localized() ?: stringResource(R.string.common_dash),
                         modifier = Modifier.weight(1f)
                     )
                     DetailColumn(
-                        label = "Lifestyle :",
-                        value = state.profile?.activityLevel?.label ?: "—",
+                        label = stringResource(R.string.profile_label_lifestyle),
+                        value = state.profile?.activityLevel?.localized() ?: stringResource(R.string.common_dash),
                         modifier = Modifier.weight(1f)
                     )
                 }

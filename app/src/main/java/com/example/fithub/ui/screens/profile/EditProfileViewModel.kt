@@ -2,6 +2,7 @@ package com.example.fithub.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
@@ -34,15 +35,20 @@ class EditProfileViewModel : ViewModel() {
     val uiState: StateFlow<EditProfileUiState> = _uiState.asStateFlow()
 
     private val userRepo = ServiceLocator.userRepository
+
     init {
-        val uid = SessionManager.currentUserId
-        if (uid == null) {
+        val id = SessionManager.currentUserId
+        if (id == null) {
             _uiState.update {
-                it.copy(isLoading = false, errorMessage = "No active session. Please log in again.")
+                it.copy(
+                    isLoading = false,
+                    errorMessage = ServiceLocator.appContext()
+                        .getString(R.string.profile_error_no_session)
+                )
             }
         } else {
             viewModelScope.launch {
-                userRepo.observeProfile(uid).collect { profile ->
+                userRepo.observeProfile(id).collect { profile ->
                     if (profile != null) {
                         _uiState.update {
                             it.copy(
@@ -59,7 +65,8 @@ class EditProfileViewModel : ViewModel() {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = "Profile not found. Please complete onboarding."
+                                errorMessage = ServiceLocator.appContext()
+                                    .getString(R.string.edit_profile_error_not_found)
                             )
                         }
                     }
@@ -80,11 +87,7 @@ class EditProfileViewModel : ViewModel() {
 
         viewModelScope.launch {
             _uiState.update {
-                it.copy(
-                    isSaving = true,
-                    errorMessage = null,
-                    savedSuccessfully = false
-                )
+                it.copy(isSaving = true, errorMessage = null, savedSuccessfully = false)
             }
 
             val userId = uid
@@ -92,19 +95,20 @@ class EditProfileViewModel : ViewModel() {
                 _uiState.update {
                     it.copy(
                         isSaving = false,
-                        errorMessage = "No active session. Please log in again."
+                        errorMessage = ServiceLocator.appContext()
+                            .getString(R.string.profile_error_no_session)
                     )
                 }
                 return@launch
             }
 
             val existing = userRepo.getProfile(userId)
-
             if (existing == null) {
                 _uiState.update {
                     it.copy(
                         isSaving = false,
-                        errorMessage = "Profile not found."
+                        errorMessage = ServiceLocator.appContext()
+                            .getString(R.string.edit_profile_error_not_found)
                     )
                 }
                 return@launch
@@ -121,28 +125,13 @@ class EditProfileViewModel : ViewModel() {
 
             when (val result = userRepo.updateProfile(updated)) {
                 is Resource.Success -> {
-                    _uiState.update {
-                        it.copy(
-                            isSaving = false,
-                            savedSuccessfully = true
-                        )
-                    }
+                    _uiState.update { it.copy(isSaving = false, savedSuccessfully = true) }
                 }
-
                 is Resource.Error -> {
-                    _uiState.update {
-                        it.copy(
-                            isSaving = false,
-                            errorMessage = result.message
-                        )
-                    }
+                    _uiState.update { it.copy(isSaving = false, errorMessage = result.message) }
                 }
-
-                Resource.Loading -> {
-                    // Nothing to do
-                }
+                Resource.Loading -> Unit
             }
         }
     }
-
 }

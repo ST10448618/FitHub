@@ -1,7 +1,9 @@
 package com.example.fithub.ui.screens.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
 import com.example.fithub.core.LogTags
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
@@ -11,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import android.util.Log
 
 data class ProfileUiState(
     val isLoading: Boolean = true,
@@ -34,7 +35,8 @@ class ProfileViewModel : ViewModel() {
             Log.w(LogTags.AUTH, "ProfileViewModel: no active session")
             _uiState.value = ProfileUiState(
                 isLoading = false,
-                errorMessage = "No active session. Please log in again."
+                errorMessage = ServiceLocator.appContext()
+                    .getString(R.string.profile_error_no_session)
             )
         } else {
             observeProfile(id)

@@ -465,5 +465,43 @@
     <string name="achievement_monthly_milestone_title">Maandelikse mylpaal</string>
     <string name="achievement_monthly_milestone_desc">Maandelikse aktiwiteitsdoel bereik.</string>
 
+    <!-- Phase 5 Batch E PART 1 : Profile + Achievements -->
+
+    <string name="profile_title">Profiel</string>
+    <string name="profile_your_details">Jou besonderhede</string>
+    <string name="profile_label_username">Gebruikersnaam :</string>
+    <string name="profile_label_email">E-posadres :</string>
+    <string name="profile_label_age">Ouderdom :</string>
+    <string name="profile_label_height">Lengte :</string>
+    <string name="profile_label_gender">Geslag :</string>
+    <string name="profile_label_lifestyle">Lewenstyl :</string>
+    <string name="profile_error_no_session">Geen aktiewe sessie nie. Meld asseblief weer aan.</string>
+
+    <string name="edit_profile_title">Wysig profiel</string>
+    <string name="edit_profile_account_details">Rekeningbesonderhede</string>
+    <string name="edit_profile_username">Gebruikersnaam</string>
+    <string name="edit_profile_email">E-posadres</string>
+    <string name="edit_profile_physical_details">Fisiese besonderhede</string>
+    <string name="edit_profile_height">Lengte</string>
+    <string name="edit_profile_age">Ouderdom</string>
+    <string name="edit_profile_gender">Geslag</string>
+    <string name="edit_profile_lifestyle">Lewenstyl</string>
+    <string name="edit_profile_saving">Stoor tans…</string>
+    <string name="edit_profile_save">Stoor veranderinge</string>
+    <string name="edit_profile_error_not_found">Profiel nie gevind nie. Voltooi asseblief die aanboordproses.</string>
+
+    <string name="achievements_title">Prestasies</string>
+    <string name="achievements_trophy_desc">Trofee</string>
+    <string name="achievements_current_level">Huidige vlak</string>
+    <string name="achievements_level_format">Vlak %1$d</string>
+    <string name="achievements_next_level_format">Ontvang %1$d ✨ op volgende vlak</string>
+    <string name="achievements_nutrition_section">Voedingsprestasies</string>
+    <string name="achievements_workout_section">Oefenprestasies</string>
+    <string name="achievements_claimed">Geëis ✓</string>
+    <string name="achievements_claim_format">Eis ✨ %1$d</string>
+    <string name="achievements_progress_format">%1$d/%2$d  ✨ %3$d</string>
+
+
+
 
 </resources>
