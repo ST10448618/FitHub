@@ -19,4 +19,11 @@
     <string name="nav_plans">Izinhlelo</string>
     <string name="nav_goals">Izinhloso</string>
     <string name="nav_rewards">Imiklomelo</string>
+
+    <!-- Phase 5 Batch A2 : Screens -->
+    <string name="landing_register">BHALISA</string>
+
+    <string name="settings_push_title">Izaziso Ezicindezelayo</string>
+    <string name="settings_push_subtitle_on">Okwamanje : KUVULIWE</string>
+    <string name="settings_push_subtitle_off">Okwamanje : KUVALIWE</string>
 </resources>

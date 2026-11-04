@@ -19,4 +19,11 @@
     <string name="nav_plans">Planne</string>
     <string name="nav_goals">Doelwitte</string>
     <string name="nav_rewards">Belonings</string>
+
+    <!-- Phase 5 Batch A2 : Screens -->
+    <string name="landing_register">REGISTREER</string>
+
+    <string name="settings_push_title">Push-kennisgewings</string>
+    <string name="settings_push_subtitle_on">Huidig : GEAAKTIWEER</string>
+    <string name="settings_push_subtitle_off">Huidig : GEDEAAKTIWEER</string>
 </resources>

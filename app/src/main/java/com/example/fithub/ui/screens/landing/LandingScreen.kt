@@ -78,7 +78,7 @@ fun LandingScreen(
             Spacer(Modifier.height(14.dp))
 
             SecondaryButton(
-                text = "REGISTER",
+                text = stringResource(R.string.landing_register),
                 onClick = onRegisterClick,
                 borderColor = Color.White,
                 contentColor = Color.White

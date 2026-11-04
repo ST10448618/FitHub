@@ -1,4 +1,3 @@
-
 package com.example.fithub.ui.screens.biometric
 
 import android.util.Log
@@ -44,7 +43,6 @@ fun BiometricGateScreen(
 
     LaunchedEffect(Unit) {
         Log.d(LogTags.BIOMETRIC, "BiometricGateScreen composed; evaluating availability")
-        // ADDED: Availability.Available branch to make the 'when' exhaustive
         when (checkAvailability(context)) {
             Availability.Available -> launchPrompt(activity) { viewModel.onBiometricSuccess() }
             Availability.NoneEnrolled -> viewModel.setError(R.string.biometric_gate_not_enrolled)
@@ -103,7 +101,6 @@ fun BiometricGateScreen(
                 text = stringResource(R.string.biometric_gate_prompt),
                 onClick = {
                     Log.i(LogTags.BIOMETRIC, "User tapped 'Use fingerprint'")
-                    // ADDED: Actually launch the prompt when the button is tapped
                     launchPrompt(activity) { viewModel.onBiometricSuccess() }
                 },
                 enabled = !state.isSyncing

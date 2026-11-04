@@ -1,11 +1,12 @@
 package com.example.fithub.ui.screens.biometric
 
+import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fithub.core.LogTags
 import com.example.fithub.core.PostLoginSync
 import com.example.fithub.core.SessionManager
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 data class BiometricGateUiState(
     val authenticated: Boolean = false,
     val isSyncing: Boolean = false,
-    val errorMessageResId: Int? = null
+    @param:StringRes val errorMessageResId: Int? = null
 )
 
 class BiometricGateViewModel : ViewModel() {
@@ -24,10 +25,6 @@ class BiometricGateViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(BiometricGateUiState())
     val uiState: StateFlow<BiometricGateUiState> = _uiState.asStateFlow()
 
-    /**
-     * Called by [BiometricGateScreen] after `BiometricPrompt` reports success.
-     * Runs [PostLoginSync] for the currently signed-in UID then flips state.
-     */
     fun onBiometricSuccess() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid == null) {
@@ -44,14 +41,12 @@ class BiometricGateViewModel : ViewModel() {
         }
     }
 
-    /** User chose "Use password instead" — sign out so the login screen starts clean. */
     fun onUsePassword() {
         Log.i(LogTags.BIOMETRIC, "User chose password fallback — signing out")
         SessionManager.logout()
     }
 
-    /** Sets a resource-id error to display (never a raw English string). */
-    fun setError(resId: Int) {
+    fun setError(@StringRes resId: Int) {
         _uiState.update { it.copy(errorMessageResId = resId) }
     }
 }

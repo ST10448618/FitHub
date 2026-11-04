@@ -82,8 +82,11 @@ fun SettingsScreen(
             // Push notifications
             SettingsRow(
                 icon = { Icon(Icons.Filled.Notifications, contentDescription = null, tint = FitHubPrimary) },
-                title = "Push Notifications",
-                subtitle = "Current : ${if (state.pushNotifications) "ENABLED" else "DISABLED"}",
+                title = stringResource(R.string.settings_push_title),
+                subtitle = stringResource(
+                    if (state.pushNotifications) R.string.settings_push_subtitle_on
+                    else R.string.settings_push_subtitle_off
+                ),
                 trailing = {
                     Switch(
                         checked = state.pushNotifications,
@@ -109,7 +112,7 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // Language row — Phase 5
+            // Language
             SettingsRow(
                 icon = { Icon(Icons.Filled.Language, contentDescription = null, tint = FitHubPrimary) },
                 title = stringResource(R.string.settings_language_title),
@@ -177,7 +180,7 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // Diagnostics
+            // Diagnostics card
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     stringResource(R.string.notif_diag_title),

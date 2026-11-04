@@ -19,10 +19,9 @@ import com.example.fithub.ui.theme.FitHubSecondary
 import kotlinx.coroutines.delay
 
 /**
- * Two-second branded splash. Phase 1: [onFinished] no longer hard-codes the
- * next destination — the caller in [com.example.fithub.ui.navigation.FitHubNavGraph]
- * decides between [com.example.fithub.ui.navigation.Screen.BIOMETRIC_GATE] and
- * [com.example.fithub.ui.navigation.Screen.LANDING] based on biometric state.
+ * Two-second branded splash. `onFinished` fires with no navigation baked in —
+ * `FitHubNavGraph` decides between BIOMETRIC_GATE and LANDING based on
+ * biometric state (see Phase 1 §19).
  */
 @Composable
 fun SplashScreen(

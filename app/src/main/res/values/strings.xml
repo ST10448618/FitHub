@@ -148,4 +148,13 @@
     <string name="nav_goals">Goals</string>
     <string name="nav_rewards">Rewards</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH A2 : Screens                 -->
+    <!-- ========================================== -->
+    <string name="landing_register">REGISTER</string>
+
+    <string name="settings_push_title">Push Notifications</string>
+    <string name="settings_push_subtitle_on">Current : ENABLED</string>
+    <string name="settings_push_subtitle_off">Current : DISABLED</string>
+
 </resources>

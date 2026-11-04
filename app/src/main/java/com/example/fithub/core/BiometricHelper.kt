@@ -17,25 +17,15 @@ sealed interface BiometricResult {
     data class Error(val kind: ErrorKind) : BiometricResult
 
     enum class ErrorKind {
-        /** User tapped Cancel. */
         CANCELLED,
-        /** Too many attempts; device temporarily locked. */
         LOCKOUT,
-        /** Too many attempts; biometric is disabled in system settings. */
         LOCKOUT_PERMANENT,
-        /** No fingerprint/face enrolled (hardware exists). */
         NO_BIOMETRICS,
-        /** No biometric hardware. */
         HARDWARE_UNAVAILABLE,
-        /** Any other transient failure (finger mismatch is NOT an error — see [BiometricResult.Failed]). */
         UNKNOWN
     }
 }
 
-/**
- * Typed availability probe so the UI can show "Enrol a fingerprint" vs
- * "Not available on this device" instead of a generic boolean.
- */
 sealed interface BiometricAvailability {
     data object Available : BiometricAvailability
     data object NoneEnrolled : BiometricAvailability
@@ -43,18 +33,8 @@ sealed interface BiometricAvailability {
     data object Unavailable : BiometricAvailability
 }
 
-/**
- * Central biometric wrapper — typed, resource-aware, and logged.
- *
- * Never touches Firebase, preferences, or navigation — callers own those.
- *
- * Reference: https://developer.android.com/training/sign-in/biometric-auth
- *            https://developer.android.com/reference/androidx/biometric/BiometricPrompt#constants_1
- * (accessed February 2026)
- */
 object BiometricHelper {
 
-    /** Compatible with all supported API levels (26+) — strong OR weak. */
     private val allowedAuthenticators: Int =
         BiometricManager.Authenticators.BIOMETRIC_STRONG or
                 BiometricManager.Authenticators.BIOMETRIC_WEAK
@@ -69,14 +49,14 @@ object BiometricHelper {
         }
     }
 
-    /** Legacy boolean for backwards compatibility with old call-sites. */
     fun isAvailable(context: Context): Boolean =
         canAuthenticate(context) == BiometricAvailability.Available
 
     /**
-     * Shows the system prompt. [onResult] is called on the main thread with a
-     * typed outcome — never with a raw string, so no UI layer has to translate
-     * error codes.
+     * Shows the system biometric prompt.
+     *
+     * Note: `@param:` is only valid on primary-constructor parameters, so these
+     * three annotations are plain `@StringRes` — no target prefix.
      */
     fun authenticate(
         activity: FragmentActivity,
@@ -102,7 +82,6 @@ object BiometricHelper {
                 }
 
                 override fun onAuthenticationFailed() {
-                    // Finger mismatch — do NOT terminate; system re-prompts.
                     Log.w(LogTags.BIOMETRIC, "Biometric fingerprint mismatch — retrying")
                 }
             }
@@ -136,13 +115,6 @@ object BiometricHelper {
         else -> BiometricResult.ErrorKind.UNKNOWN
     }
 
-    /**
-     * Opens the correct system settings screen so the user can enrol a
-     * fingerprint. Falls back gracefully on API < 30.
-     *
-     * Reference: https://developer.android.com/reference/android/provider/Settings#ACTION_BIOMETRIC_ENROLL
-     * (accessed February 2026)
-     */
     fun openBiometricSettings(activity: FragmentActivity) {
         val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {

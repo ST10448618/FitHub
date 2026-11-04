@@ -42,7 +42,6 @@ import com.example.fithub.ui.screens.auth.GoogleSignInOutcome
 import com.example.fithub.ui.screens.auth.GoogleSignInViewModel
 import com.example.fithub.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun LoginScreen(
