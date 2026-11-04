@@ -13,20 +13,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.fithub.R
 import com.example.fithub.domain.model.FoodLog
 import com.example.fithub.domain.model.MealType
 import com.example.fithub.ui.components.EmptyState
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SectionHeader
 import com.example.fithub.ui.theme.*
+import com.example.fithub.util.localized
 
-// ============================================================
-// OWNER: Track A (Perez) — nutrition
-// ============================================================
 @Composable
 fun JournalNutritionCard(
     foodLogs: List<FoodLog>,
@@ -35,19 +36,18 @@ fun JournalNutritionCard(
 ) {
     RoundedCard(modifier = Modifier.fillMaxWidth()) {
         SectionHeader(
-            title = "Nutrition Journal",
-            actionText = "view all",
+            title = stringResource(R.string.journal_nutrition_title),
+            actionText = stringResource(R.string.common_view_all),
             onAction = onViewAllClick
         )
 
         if (foodLogs.isEmpty()) {
             EmptyState(
-                title = "No meals logged",
-                message = "Tap Add Meal from the Dashboard to log your first meal.",
+                title = stringResource(R.string.journal_nutrition_empty_title),
+                message = stringResource(R.string.journal_nutrition_empty_body),
                 emoji = "🍽"
             )
         } else {
-            // Show at most the first 4 tiles in a 2-column grid (no nested scroll)
             val visible = foodLogs.take(4)
             visible.chunked(2).forEach { rowItems ->
                 Row(
@@ -69,15 +69,17 @@ fun JournalNutritionCard(
                 }
             }
 
-            // If there were more than 4, prompt for the rest
             if (foodLogs.size > 4) {
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "+ ${foodLogs.size - 4} more — tap View All",
+                    stringResource(
+                        R.string.journal_nutrition_more_format,
+                        foodLogs.size - 4
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextSecondary,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -103,7 +105,6 @@ private fun FoodLogTile(
             .background(CardWhite)
             .clickable(onClick = onClick)
     ) {
-        // Image header
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -129,7 +130,6 @@ private fun FoodLogTile(
                 }
             }
 
-            // Meal-type pill overlay
             Box(
                 modifier = Modifier
                     .padding(8.dp)
@@ -138,7 +138,7 @@ private fun FoodLogTile(
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = log.mealType.name.lowercase().replaceFirstChar { it.uppercase() },
+                    text = log.mealType.localized(),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -146,7 +146,6 @@ private fun FoodLogTile(
             }
         }
 
-        // Content
         Column(modifier = Modifier.padding(10.dp)) {
             Text(
                 text = log.foodName,
@@ -158,7 +157,7 @@ private fun FoodLogTile(
             )
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "${log.calories.toInt()} cal",
+                text = stringResource(R.string.food_log_row_calories_format, log.calories.toInt()),
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary,
                 fontWeight = FontWeight.Medium

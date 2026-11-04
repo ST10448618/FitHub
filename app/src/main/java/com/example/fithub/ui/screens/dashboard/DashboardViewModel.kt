@@ -13,6 +13,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+/**
+ * ### Locale note (Phase 5)
+ * Weekly calorie bars now carry only the [DailyCalorieBar.date]; the visible
+ * label (e.g. "Mon") is computed inside `CalorieIntakeChartSection` using
+ * `DateTimeFormatter.ofLocalizedDate(...)` so it renders in the user's
+ * language. The previous English-only `dayLabel: String` field was removed.
+ */
 class DashboardViewModel : ViewModel() {
 
     private val uid: String = SessionManager.currentUserId ?: ""
@@ -38,7 +45,6 @@ class DashboardViewModel : ViewModel() {
         observeWeeklyCalories()
     }
 
-
     private fun observeWeeklyCalories() {
         val today = LocalDate.now()
         val start = today.minusDays(6)
@@ -55,13 +61,10 @@ class DashboardViewModel : ViewModel() {
 
                 val bars = (0..6).map { offset ->
                     val date = start.plusDays(offset.toLong())
-                    val cals = byDay[date] ?: 0
                     DailyCalorieBar(
                         date = date,
-                        dayLabel = date.dayOfWeek.name.take(3)
-                            .lowercase().replaceFirstChar { it.uppercase() },
-                        calories = cals,
-                        isOverTarget = target > 0 && cals > target
+                        calories = byDay[date] ?: 0,
+                        isOverTarget = target > 0 && (byDay[date] ?: 0) > target
                     )
                 }
                 _uiState.update {
@@ -95,7 +98,6 @@ class DashboardViewModel : ViewModel() {
     private fun observeNutrition() {
         val today = LocalDate.now()
         viewModelScope.launch {
-            // Ensure NutritionGoals exist — create default if missing
             var goals = nutritionGoalsRepo.getCurrent(uid)
             if (goals == null) {
                 val profile = userRepo.getProfile(uid)
@@ -164,9 +166,6 @@ class DashboardViewModel : ViewModel() {
 
     private fun loadRecommendations() {
         viewModelScope.launch {
-            // TODO(Track B): real recommendations based on goal/history
-            val verified = mutableListOf<com.example.fithub.domain.model.WorkoutPlan>()
-            // Fallback: pull from repo (first few verified plans)
             ServiceLocator.workoutPlanRepository
                 .observeVerified()
                 .collect { plans ->

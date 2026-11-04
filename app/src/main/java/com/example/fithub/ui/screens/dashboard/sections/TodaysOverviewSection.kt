@@ -2,7 +2,6 @@ package com.example.fithub.ui.screens.dashboard.sections
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.*
@@ -10,17 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.domain.calculator.NutritionProgressCalculator
 import com.example.fithub.ui.charts.DonutProgress
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.theme.*
 
-// ============================================================
-// OWNER: Track A (Perez) — Nutrition metrics & Add Meal button
-// SHARED: Add Workout button belongs to Track B
-// ============================================================
 @Composable
 fun TodaysOverviewSection(
     snapshot: NutritionProgressCalculator.DashboardNutrition?,
@@ -29,7 +26,7 @@ fun TodaysOverviewSection(
 ) {
     RoundedCard(modifier = Modifier.fillMaxWidth()) {
         Text(
-            "Today's Overview",
+            stringResource(R.string.dashboard_overview_title),
             style = MaterialTheme.typography.titleMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold
@@ -37,9 +34,8 @@ fun TodaysOverviewSection(
         Spacer(Modifier.height(12.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Calories donut placeholder (uses current/remaining)
             val consumed = snapshot?.consumedCalories ?: 0.0
-            val target = (consumed + (snapshot?.remainingCalories ?: 0.0))
+            val target = consumed + (snapshot?.remainingCalories ?: 0.0)
             val progress = if (target > 0) (consumed / target).toFloat() else 0f
 
             Box(modifier = Modifier.size(120.dp)) {
@@ -47,8 +43,11 @@ fun TodaysOverviewSection(
                     progress = progress,
                     size = 120.dp,
                     strokeWidth = 16.dp,
-                    centerValue = "${consumed.toInt()}",
-                    centerLabel = "of ${target.toInt()} kcal"
+                    centerValue = consumed.toInt().toString(),
+                    centerLabel = stringResource(
+                        R.string.dashboard_donut_label_format,
+                        target.toInt()
+                    )
                 )
             }
 
@@ -57,15 +56,15 @@ fun TodaysOverviewSection(
             Column {
                 MetricRow(
                     icon = "🔥",
-                    label = "Estimated Burnt",
-                    value = "0 kcal",
+                    label = stringResource(R.string.dashboard_estimated_burnt),
+                    value = stringResource(R.string.dashboard_kcal_zero),
                     color = ErrorRed
                 )
                 Spacer(Modifier.height(8.dp))
                 MetricRow(
                     icon = "🍽",
-                    label = "Consumed",
-                    value = "${consumed.toInt()} kcal",
+                    label = stringResource(R.string.dashboard_consumed),
+                    value = stringResource(R.string.dashboard_kcal_format, consumed.toInt()),
                     color = MealDinner
                 )
             }
@@ -73,24 +72,23 @@ fun TodaysOverviewSection(
 
         Spacer(Modifier.height(16.dp))
 
-        // Macro bars
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             MacroMiniBar(
-                label = "Protein",
+                label = stringResource(R.string.food_details_macro_protein),
                 actual = snapshot?.consumedProtein ?: 0.0,
                 target = snapshot?.proteinTargetG ?: 0,
                 color = MacroProtein,
                 modifier = Modifier.weight(1f)
             )
             MacroMiniBar(
-                label = "Carbs",
+                label = stringResource(R.string.food_details_macro_carbs),
                 actual = snapshot?.consumedCarbs ?: 0.0,
                 target = snapshot?.carbsTargetG ?: 0,
                 color = MacroCarbs,
                 modifier = Modifier.weight(1f)
             )
             MacroMiniBar(
-                label = "Fats",
+                label = stringResource(R.string.food_details_macro_fats),
                 actual = snapshot?.consumedFat ?: 0.0,
                 target = snapshot?.fatTargetG ?: 0,
                 color = MacroFats,
@@ -112,7 +110,10 @@ fun TodaysOverviewSection(
             ) {
                 Icon(Icons.Filled.Restaurant, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("Add Meal", fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.dashboard_add_meal),
+                    fontWeight = FontWeight.Bold
+                )
             }
             Button(
                 onClick = onAddWorkoutClick,
@@ -125,7 +126,10 @@ fun TodaysOverviewSection(
             ) {
                 Icon(Icons.Filled.FitnessCenter, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("Add Workout", fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.dashboard_add_workout),
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -163,7 +167,7 @@ private fun MacroMiniBar(
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            "${actual.toInt()}/${target}g",
+            stringResource(R.string.food_details_grams_over_target_format, actual.toInt(), target),
             style = MaterialTheme.typography.labelSmall,
             color = color,
             fontWeight = FontWeight.Bold

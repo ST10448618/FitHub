@@ -16,10 +16,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.fithub.R
 import com.example.fithub.domain.model.WorkoutPlan
 import com.example.fithub.ui.theme.*
 
@@ -69,7 +71,6 @@ fun WorkoutCardHorizontal(
             }
         }
 
-        // Gradient scrim for legibility
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,7 +96,11 @@ fun WorkoutCardHorizontal(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                "${plan.exercises.size} exercises • ${plan.estimatedDurationMinutes} min",
+                stringResource(
+                    R.string.workout_card_exercises_min_format,
+                    plan.exercises.size,
+                    plan.estimatedDurationMinutes
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White.copy(alpha = 0.9f)
             )
@@ -109,7 +114,7 @@ fun WorkoutCardHorizontal(
                 )
                 Spacer(Modifier.width(3.dp))
                 Text(
-                    "${plan.estimatedActivityKcal} kcal",
+                    stringResource(R.string.workout_card_kcal_format, plan.estimatedActivityKcal),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White
                 )
@@ -126,7 +131,7 @@ fun WorkoutCardHorizontal(
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
-                    "Verified",
+                    stringResource(R.string.workout_card_verified),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -195,14 +200,14 @@ fun WorkoutCardRow(
             )
             Spacer(Modifier.height(2.dp))
             Text(
-                "${plan.estimatedDurationMinutes} minutes",
+                stringResource(R.string.workout_card_minutes_format, plan.estimatedDurationMinutes),
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
         }
 
         Text(
-            "${plan.estimatedActivityKcal} kcal",
+            stringResource(R.string.workout_card_kcal_format, plan.estimatedActivityKcal),
             style = MaterialTheme.typography.titleSmall,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold

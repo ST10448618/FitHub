@@ -8,16 +8,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.core.WorkoutImageMapper
 import com.example.fithub.domain.model.WorkoutPlan
 import com.example.fithub.ui.components.SectionHeader
 import com.example.fithub.ui.components.WorkoutCardHorizontal
 import com.example.fithub.ui.theme.TextSecondary
 
-// ============================================================
-// OWNER: Track B (Muhammad Akeel / Perez Seth Roy)
-// ============================================================
 @Composable
 fun RecommendedActivitiesSection(
     plans: List<WorkoutPlan>,
@@ -28,13 +27,13 @@ fun RecommendedActivitiesSection(
 
     Column {
         SectionHeader(
-            title = "Recommended Activities",
-            actionText = "view plans",
+            title = stringResource(R.string.dashboard_recommended_title),
+            actionText = stringResource(R.string.dashboard_recommended_action),
             onAction = onViewPlansClick
         )
         if (plans.isEmpty()) {
             Text(
-                "No recommendations yet — browse verified plans.",
+                stringResource(R.string.dashboard_recommended_empty),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 modifier = Modifier.padding(vertical = 8.dp)

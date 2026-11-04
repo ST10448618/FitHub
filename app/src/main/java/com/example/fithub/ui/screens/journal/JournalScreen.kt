@@ -54,7 +54,6 @@ fun JournalScreen(
         JournalNutritionCard(
             foodLogs = state.foodLogs,
             onViewAllClick = {
-                // Open a list of all food logs for this date
                 onNavigate(Screen.listFoodLogs(state.selectedDate.toString()))
             },
             onLogClick = { log ->

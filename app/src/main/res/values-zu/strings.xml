@@ -131,6 +131,71 @@
     <string name="enum_ach_cat_nutrition">Ukudla okunomsoco</string>
     <string name="enum_ach_cat_workout">Ukuvivinya umzimba</string>
 
+    <!-- Phase 5 Batch C PART 1 : Dashboard & Journal -->
+    <string name="common_view_more">bona okwengeziwe</string>
+    <string name="common_view_all">bona konke</string>
+
+    <string name="dashboard_greeting_morning">Sawubona,</string>
+    <string name="dashboard_user_fallback">Umsebenzisi</string>
+    <string name="dashboard_profile_desc">Iphrofayela</string>
+
+    <string name="dashboard_overview_title">Uhlolojikelele lwanamuhla</string>
+    <string name="dashboard_estimated_burnt">Amakhalori ashisiwe</string>
+    <string name="dashboard_consumed">Kudliwe</string>
+    <string name="dashboard_kcal_zero">0 kcal</string>
+    <string name="dashboard_kcal_format">%1$d kcal</string>
+    <string name="dashboard_donut_label_format">kwangama-%1$d kcal</string>
+    <string name="dashboard_add_meal">Engeza Isidlo</string>
+    <string name="dashboard_add_workout">Engeza Ukuzivocavoca</string>
+
+    <string name="dashboard_recommended_title">Imisebenzi Enconywayo</string>
+    <string name="dashboard_recommended_action">bona izinhlelo</string>
+    <string name="dashboard_recommended_empty">Azikho izincomo okwamanje — phewula izinhlelo eziqinisekisiwe.</string>
+
+    <string name="dashboard_calorie_intake_title">Ukudla Kwakho Kwama-kcal</string>
+    <string name="dashboard_legend_achieved">Inani Elifinyelelwe</string>
+    <string name="dashboard_legend_goal">Inani Lenhloso</string>
+    <string name="dashboard_legend_exceeded">Kweqile</string>
+    <string name="dashboard_daily_goal_format">Inhloso yansuku: %1$d kcal</string>
+
+    <string name="dashboard_meals_title">Izidlo zanamuhla</string>
+
+    <string name="dashboard_weekly_workout_title">Inhloso Yeviki Lokuzivocavoca</string>
+    <string name="dashboard_weekly_workout_sessions_format">%1$d / %2$d amaseshini aqediwe</string>
+    <string name="dashboard_percent_format">%1$d%%</string>
+    <string name="dashboard_weekly_workout_hint">Qhubeka — wakha ukuvumelana.</string>
+
+    <string name="workout_card_verified">Kuqinisekisiwe</string>
+    <string name="workout_card_exercises_min_format">%1$d ukuzivocavoca • %2$d min</string>
+    <string name="workout_card_minutes_format">%1$d imizuzu</string>
+    <string name="workout_card_kcal_format">%1$d kcal</string>
+    <string name="food_card_kcal_format">%1$d kcal</string>
+    <string name="food_card_grams_format">%1$dg</string>
+    <string name="food_details_grams_over_target_format">%1$d/%2$dg</string>
+    <string name="food_details_macro_protein">Iprotheyini</string>
+    <string name="food_details_macro_carbs">Ama-carbohydrate</string>
+    <string name="food_details_macro_fats">Amafutha</string>
+    <string name="food_log_row_calories_format">%1$d cal</string>
+
+    <string name="journal_body_title">Umzimba Nesisindo</string>
+    <string name="journal_body_action">bona imininingwane</string>
+    <string name="journal_body_recent_weight">Isisindo sakamuva</string>
+    <string name="journal_body_next_checkpoint">Isikhathi esilandelayo</string>
+    <string name="journal_body_goal_label">INHLOSO: </string>
+    <string name="journal_body_kg_upper_format">%1$d KG</string>
+
+    <string name="journal_nutrition_title">Ijenali Yokudla Okunomsoco</string>
+    <string name="journal_nutrition_empty_title">Akukho kudla okulotshiwe</string>
+    <string name="journal_nutrition_empty_body">Cindezela u-Engeza Isidlo ku-Dashboard ukuze ulothe isidlo sakho sokuqala.</string>
+    <string name="journal_nutrition_more_format">+%1$d okwengeziwe — cindezela u-Bona Konke</string>
+
+    <string name="journal_workouts_title">Ukuzivocavoca Okuqediwe</string>
+    <string name="journal_workouts_empty_title">Akukho kuzivocavoca okwamanje</string>
+    <string name="journal_workouts_empty_body">Amaseshini akho aqediwe azovela lapha.</string>
+    <string name="journal_workouts_exercises_minutes_format">%1$d ukuzivocavoca • %2$d imizuzu</string>
+    <string name="journal_workouts_kcal_format">%1$d kcal elinganiselwe</string>
+
+
 
 
 

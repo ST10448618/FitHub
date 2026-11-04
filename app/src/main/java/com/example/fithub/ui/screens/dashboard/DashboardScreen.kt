@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fithub.R
-import com.example.fithub.core.LogTags
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.notifications.NotificationPermissionHelper
 import com.example.fithub.ui.navigation.Screen

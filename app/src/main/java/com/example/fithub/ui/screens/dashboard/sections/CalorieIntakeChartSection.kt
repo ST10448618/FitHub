@@ -10,14 +10,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.ui.charts.BarEntry
 import com.example.fithub.ui.charts.SimpleBarChart
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SectionHeader
 import com.example.fithub.ui.screens.dashboard.DailyCalorieBar
 import com.example.fithub.ui.theme.*
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @Composable
 fun CalorieIntakeChartSection(
@@ -25,26 +29,29 @@ fun CalorieIntakeChartSection(
     dailyTarget: Int,
     onViewMoreClick: () -> Unit
 ) {
+    // Localised short-day formatter (e.g. "Mon", "Mo", "Ma" per locale).
+    val dayFormatter = DateTimeFormatter
+        .ofLocalizedDate(FormatStyle.SHORT)
+        .withLocale(Locale.getDefault())
+
     RoundedCard(modifier = Modifier.fillMaxWidth()) {
         SectionHeader(
-            title = "Your Calorie Intake",
-            actionText = "view more",
+            title = stringResource(R.string.dashboard_calorie_intake_title),
+            actionText = stringResource(R.string.common_view_more),
             onAction = onViewMoreClick
         )
 
-        // Legend
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            LegendDot("Achieved Amount", FitHubPrimary)
-            LegendDot("Goal Amount", FitHubLightBlue)
-            LegendDot("Exceeded", ErrorRed)
+            LegendDot(stringResource(R.string.dashboard_legend_achieved), FitHubPrimary)
+            LegendDot(stringResource(R.string.dashboard_legend_goal), FitHubLightBlue)
+            LegendDot(stringResource(R.string.dashboard_legend_exceeded), ErrorRed)
         }
 
         Spacer(Modifier.height(14.dp))
 
-        // Build bars — use max(daily target, highest bar) as scale
         val maxValue = maxOf(
             dailyTarget.toFloat(),
             weeklyCalories.maxOfOrNull { it.calories.toFloat() } ?: 0f
@@ -52,7 +59,7 @@ fun CalorieIntakeChartSection(
 
         val entries = weeklyCalories.map { bar ->
             BarEntry(
-                label = bar.dayLabel,
+                label = bar.date.format(dayFormatter),
                 value = bar.calories.toFloat(),
                 overrideColor = if (bar.isOverTarget) ErrorRed else null
             )
@@ -68,7 +75,7 @@ fun CalorieIntakeChartSection(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            "Daily goal: $dailyTarget kcal",
+            stringResource(R.string.dashboard_daily_goal_format, dailyTarget),
             style = MaterialTheme.typography.labelSmall,
             color = TextSecondary
         )

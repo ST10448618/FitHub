@@ -12,10 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.fithub.R
 import com.example.fithub.domain.model.Food
 import com.example.fithub.ui.theme.*
 
@@ -83,7 +85,7 @@ fun FoodCardHorizontal(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = "${food.caloriesPer100g?.toInt() ?: 0} kcal",
+            text = stringResource(R.string.food_card_kcal_format, food.caloriesPer100g?.toInt() ?: 0),
             style = MaterialTheme.typography.titleSmall,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold
@@ -101,7 +103,7 @@ private fun MacroTag(label: String, value: Int, color: Color) {
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "${value}g",
+            text = stringResource(R.string.food_card_grams_format, value),
             style = MaterialTheme.typography.labelSmall,
             color = color
         )

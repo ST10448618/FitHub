@@ -1,3 +1,4 @@
+
 package com.example.fithub.ui.screens.journal.sections
 
 import androidx.compose.foundation.background
@@ -20,14 +21,22 @@ import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.FitHubSecondary
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @Composable
 fun JournalDateHeader(
     selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit
 ) {
+    val locale = Locale.getDefault()
+    val longDateFormatter = DateTimeFormatter
+        .ofLocalizedDate(FormatStyle.FULL)
+        .withLocale(locale)
+    val dayOfWeekFormatter = DateTimeFormatter
+        .ofPattern("EEEE", locale)
+
     Column {
-        // Big date banner
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -41,15 +50,12 @@ fun JournalDateHeader(
         ) {
             Column {
                 Text(
-                    text = selectedDate.dayOfWeek.name.lowercase()
-                        .replaceFirstChar { it.uppercase() },
+                    text = selectedDate.format(dayOfWeekFormatter),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.85f)
                 )
                 Text(
-                    text = selectedDate.format(
-                        DateTimeFormatter.ofPattern("d MMMM yyyy")
-                    ),
+                    text = selectedDate.format(longDateFormatter),
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -59,8 +65,9 @@ fun JournalDateHeader(
 
         Spacer(Modifier.height(12.dp))
 
-        // Date strip
         val days: List<LocalDate> = (-3..3).map { selectedDate.plusDays(it.toLong()) }
+        val shortDayFormatter = DateTimeFormatter
+            .ofPattern("EEE", locale)
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(days) { day ->
@@ -77,15 +84,16 @@ fun JournalDateHeader(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = day.dayOfWeek.name.take(3).lowercase()
-                            .replaceFirstChar { it.uppercase() },
+                        text = day.format(shortDayFormatter),
                         style = MaterialTheme.typography.labelSmall,
-                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
+                        color = if (isSelected) Color.White
+                        else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = day.dayOfMonth.toString(),
                         style = MaterialTheme.typography.titleMedium,
-                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
+                        color = if (isSelected) Color.White
+                        else MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                 }

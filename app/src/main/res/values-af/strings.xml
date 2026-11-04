@@ -131,6 +131,71 @@
     <string name="enum_ach_cat_nutrition">Voeding</string>
     <string name="enum_ach_cat_workout">Oefening</string>
 
+    <!-- Phase 5 Batch C PART 1 : Dashboard & Journal -->
+    <string name="common_view_more">sien meer</string>
+    <string name="common_view_all">sien alles</string>
+
+    <string name="dashboard_greeting_morning">Goeiemôre,</string>
+    <string name="dashboard_user_fallback">Gebruiker</string>
+    <string name="dashboard_profile_desc">Profiel</string>
+
+    <string name="dashboard_overview_title">Vandag se oorsig</string>
+    <string name="dashboard_estimated_burnt">Geskatte verbrande</string>
+    <string name="dashboard_consumed">Verbruik</string>
+    <string name="dashboard_kcal_zero">0 kcal</string>
+    <string name="dashboard_kcal_format">%1$d kcal</string>
+    <string name="dashboard_donut_label_format">van %1$d kcal</string>
+    <string name="dashboard_add_meal">Voeg maaltyd by</string>
+    <string name="dashboard_add_workout">Voeg oefening by</string>
+
+    <string name="dashboard_recommended_title">Aanbevole aktiwiteite</string>
+    <string name="dashboard_recommended_action">sien planne</string>
+    <string name="dashboard_recommended_empty">Nog geen aanbevelings nie — blaai deur geverifieerde planne.</string>
+
+    <string name="dashboard_calorie_intake_title">Jou kalorie-inname</string>
+    <string name="dashboard_legend_achieved">Bereikte bedrag</string>
+    <string name="dashboard_legend_goal">Doelbedrag</string>
+    <string name="dashboard_legend_exceeded">Oorskry</string>
+    <string name="dashboard_daily_goal_format">Daaglikse doelwit: %1$d kcal</string>
+
+    <string name="dashboard_meals_title">Vandag se maaltye</string>
+
+    <string name="dashboard_weekly_workout_title">Weeklikse oefendoelwit</string>
+    <string name="dashboard_weekly_workout_sessions_format">%1$d / %2$d sessies voltooi</string>
+    <string name="dashboard_percent_format">%1$d%%</string>
+    <string name="dashboard_weekly_workout_hint">Hou aan — jy bou konsekwentheid.</string>
+
+    <string name="workout_card_verified">Geverifieer</string>
+    <string name="workout_card_exercises_min_format">%1$d oefeninge • %2$d min</string>
+    <string name="workout_card_minutes_format">%1$d minute</string>
+    <string name="workout_card_kcal_format">%1$d kcal</string>
+    <string name="food_card_kcal_format">%1$d kcal</string>
+    <string name="food_card_grams_format">%1$dg</string>
+    <string name="food_details_grams_over_target_format">%1$d/%2$dg</string>
+    <string name="food_details_macro_protein">Proteïen</string>
+    <string name="food_details_macro_carbs">Koolhidrate</string>
+    <string name="food_details_macro_fats">Vette</string>
+    <string name="food_log_row_calories_format">%1$d cal</string>
+
+
+    <string name="journal_body_title">Liggaam &amp; gewig</string>
+    <string name="journal_body_action">sien besonderhede</string>
+    <string name="journal_body_recent_weight">Mees onlangse gewig</string>
+    <string name="journal_body_next_checkpoint">Volgende kontrolepunt</string>
+    <string name="journal_body_goal_label">DOELWIT: </string>
+    <string name="journal_body_kg_upper_format">%1$d KG</string>
+
+    <string name="journal_nutrition_title">Voedingsjoernaal</string>
+    <string name="journal_nutrition_empty_title">Geen maaltye aangeteken nie</string>
+    <string name="journal_nutrition_empty_body">Tik Voeg maaltyd by op die paneelbord om jou eerste maaltyd aan te teken.</string>
+    <string name="journal_nutrition_more_format">+%1$d meer — tik Sien alles</string>
+
+    <string name="journal_workouts_title">Voltooide oefeninge</string>
+    <string name="journal_workouts_empty_title">Nog geen oefeninge nie</string>
+    <string name="journal_workouts_empty_body">Jou voltooide sessies sal hier verskyn.</string>
+    <string name="journal_workouts_exercises_minutes_format">%1$d oefeninge • %2$d minute</string>
+    <string name="journal_workouts_kcal_format">%1$d kcal geskat</string>
+
 
 
 

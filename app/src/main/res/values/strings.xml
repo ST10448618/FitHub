@@ -274,6 +274,79 @@
     <string name="enum_ach_cat_nutrition">Nutrition</string>
     <string name="enum_ach_cat_workout">Workout</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH C PART 1 : Dashboard & Journal -->
+    <!-- ========================================== -->
+    <string name="common_view_more">view more</string>
+    <string name="common_view_all">view all</string>
+
+    <!-- Dashboard Hero -->
+    <string name="dashboard_greeting_morning">Good Morning,</string>
+    <string name="dashboard_user_fallback">User</string>
+    <string name="dashboard_profile_desc">Profile</string>
+
+    <!-- Dashboard Overview -->
+    <string name="dashboard_overview_title">Today\'s Overview</string>
+    <string name="dashboard_estimated_burnt">Estimated Burnt</string>
+    <string name="dashboard_consumed">Consumed</string>
+    <string name="dashboard_kcal_zero">0 kcal</string>
+    <string name="dashboard_kcal_format">%1$d kcal</string>
+    <string name="dashboard_donut_label_format">of %1$d kcal</string>
+    <string name="dashboard_add_meal">Add Meal</string>
+    <string name="dashboard_add_workout">Add Workout</string>
+
+    <!-- Dashboard Recommendations -->
+    <string name="dashboard_recommended_title">Recommended Activities</string>
+    <string name="dashboard_recommended_action">view plans</string>
+    <string name="dashboard_recommended_empty">No recommendations yet — browse verified plans.</string>
+
+    <!-- Dashboard Calorie chart -->
+    <string name="dashboard_calorie_intake_title">Your Calorie Intake</string>
+    <string name="dashboard_legend_achieved">Achieved Amount</string>
+    <string name="dashboard_legend_goal">Goal Amount</string>
+    <string name="dashboard_legend_exceeded">Exceeded</string>
+    <string name="dashboard_daily_goal_format">Daily goal: %1$d kcal</string>
+
+    <!-- Dashboard Meals -->
+    <string name="dashboard_meals_title">Today\'s Meals</string>
+
+    <!-- Dashboard Weekly workout -->
+    <string name="dashboard_weekly_workout_title">Weekly Workout Goal</string>
+    <string name="dashboard_weekly_workout_sessions_format">%1$d / %2$d sessions completed</string>
+    <string name="dashboard_percent_format">%1$d%%</string>
+    <string name="dashboard_weekly_workout_hint">Keep going — you\'re building consistency.</string>
+
+    <!-- Workout card / food card -->
+    <string name="workout_card_verified">Verified</string>
+    <string name="workout_card_exercises_min_format">%1$d exercises • %2$d min</string>
+    <string name="workout_card_minutes_format">%1$d minutes</string>
+    <string name="workout_card_kcal_format">%1$d kcal</string>
+    <string name="food_card_kcal_format">%1$d kcal</string>
+    <string name="food_card_grams_format">%1$dg</string>
+    <string name="food_details_grams_over_target_format">%1$d/%2$dg</string>
+    <string name="food_details_macro_protein">Protein</string>
+    <string name="food_details_macro_carbs">Carbs</string>
+    <string name="food_details_macro_fats">Fats</string>
+    <string name="food_log_row_calories_format">%1$d cal</string>
+
+    <!-- Journal -->
+    <string name="journal_body_title">Body &amp; Weight</string>
+    <string name="journal_body_action">view details</string>
+    <string name="journal_body_recent_weight">Most Recent Weight</string>
+    <string name="journal_body_next_checkpoint">Next Checkpoint</string>
+    <string name="journal_body_goal_label">GOAL: </string>
+    <string name="journal_body_kg_upper_format">%1$d KG</string>
+
+    <string name="journal_nutrition_title">Nutrition Journal</string>
+    <string name="journal_nutrition_empty_title">No meals logged</string>
+    <string name="journal_nutrition_empty_body">Tap Add Meal from the Dashboard to log your first meal.</string>
+    <string name="journal_nutrition_more_format">+%1$d more — tap View All</string>
+
+    <string name="journal_workouts_title">Completed Workouts</string>
+    <string name="journal_workouts_empty_title">No workouts yet</string>
+    <string name="journal_workouts_empty_body">Your completed sessions will show up here.</string>
+    <string name="journal_workouts_exercises_minutes_format">%1$d exercises • %2$d minutes</string>
+    <string name="journal_workouts_kcal_format">%1$d kcal estimated</string>
 
 
 
