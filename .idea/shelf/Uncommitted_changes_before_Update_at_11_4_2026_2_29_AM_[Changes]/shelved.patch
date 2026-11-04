@@ -1,0 +1,1219 @@
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    alias(libs.plugins.android.application)\r\n    alias(libs.plugins.kotlin.compose)\r\n    alias(libs.plugins.kotlin.serialization)\r\n    alias(libs.plugins.google.services)\r\n    alias(libs.plugins.ksp)\r\n\r\n}\r\n\r\nandroid {\r\n    namespace = \"com.example.fithub\"\r\n    compileSdk = 37\r\n\r\n    defaultConfig {\r\n        applicationId = \"com.example.fithub\"\r\n        minSdk = 26\r\n        targetSdk = 37\r\n        versionCode = 1\r\n        versionName = \"1.0\"\r\n\r\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables { useSupportLibrary = true }\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            isMinifyEnabled = false\r\n            proguardFiles(\r\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\r\n                \"proguard-rules.pro\"\r\n            )\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility = JavaVersion.VERSION_17\r\n        targetCompatibility = JavaVersion.VERSION_17\r\n    }\r\n\r\n\r\n    buildFeatures {\r\n        compose = true\r\n    }\r\n    packaging {\r\n        resources {\r\n            excludes += \"/META-INF/{AL2.0,LGPL2.1}\"\r\n        }\r\n    }\r\n\r\n    configurations.all {\r\n        // ML Kit pulls in Google's Litert which duplicates TFLite classes.\r\n        // We only use org.tensorflow:tensorflow-lite, so exclude Litert globally.\r\n        exclude(group = \"com.google.ai.edge.litert\", module = \"litert-api\")\r\n        exclude(group = \"com.google.ai.edge.litert\", module = \"litert\")\r\n        exclude(group = \"com.google.ai.edge.litert\", module = \"litert-gpu\")\r\n        exclude(group = \"com.google.ai.edge.litert\", module = \"litert-support\")\r\n    }\r\n\r\n\r\n}\r\n\r\n/*jvm tool\r\nkotlin {\r\n    jvmToolchain(17)\r\n}*/\r\n\r\ndependencies {\r\n    // Core\r\n    implementation(libs.androidx.core.ktx)\r\n    implementation(libs.androidx.lifecycle.runtime.ktx)\r\n    implementation(libs.androidx.lifecycle.viewmodel.compose)\r\n    implementation(libs.androidx.lifecycle.runtime.compose)\r\n    implementation(libs.androidx.fragment.ktx)\r\n\r\n    // Compose\r\n    implementation(platform(libs.androidx.compose.bom))\r\n    implementation(libs.androidx.activity.compose)\r\n    implementation(libs.androidx.compose.ui)\r\n    implementation(libs.androidx.compose.ui.graphics)\r\n    implementation(libs.androidx.compose.ui.tooling.preview)\r\n    implementation(libs.androidx.compose.material3)\r\n    implementation(libs.androidx.compose.material.icons.extended)\r\n    implementation(libs.androidx.navigation.compose)\r\n\r\n    // Firebase\r\n    implementation(platform(libs.firebase.bom))\r\n    implementation(libs.firebase.auth)\r\n    implementation(libs.firebase.firestore)\r\n    implementation(libs.firebase.messaging)\r\n    implementation(libs.firebase.storage)\r\n\r\n    // Room\r\n    implementation(libs.androidx.room.runtime)\r\n    implementation(libs.androidx.room.ktx)\r\n    ksp(libs.androidx.room.compiler)\r\n\r\n    // Networking\r\n    implementation(libs.retrofit)\r\n    implementation(libs.retrofit.kotlinx.serialization)\r\n    implementation(libs.okhttp)\r\n    implementation(libs.okhttp.logging)\r\n    implementation(libs.kotlinx.serialization.json)\r\n\r\n    // ML Kit Barcode\r\n    implementation(libs.mlkit.barcode)\r\n\r\n    // CameraX\r\n    implementation(libs.camera.core)\r\n    implementation(libs.camera.camera2)\r\n    implementation(libs.camera.lifecycle)\r\n    implementation(libs.camera.view)\r\n\r\n    // Biometric\r\n    implementation(libs.androidx.biometric)\r\n\r\n    // Coil\r\n    implementation(libs.coil.compose)\r\n\r\n    // DataStore\r\n    implementation(libs.androidx.datastore.preferences)\r\n\r\n    // WorkManager\r\n    implementation(libs.androidx.work.runtime.ktx)\r\n\r\n\r\n    // TensorFlow Lite\r\n    implementation(\"org.tensorflow:tensorflow-lite:2.16.1\")\r\n\r\n    // Testing\r\n    testImplementation(libs.junit)\r\n    androidTestImplementation(platform(libs.androidx.compose.bom))\r\n    androidTestImplementation(libs.androidx.compose.ui.test.junit4)\r\n    androidTestImplementation(libs.androidx.espresso.core)\r\n    androidTestImplementation(libs.androidx.junit)\r\n    debugImplementation(libs.androidx.compose.ui.test.manifest)\r\n    debugImplementation(libs.androidx.compose.ui.tooling)\r\n\r\n    // PHASE 2 ADDED — Google SSO via Credential Manager\r\n    implementation(libs.androidx.credentials)\r\n    implementation(libs.androidx.credentials.play.services.auth)\r\n    implementation(libs.googleid)\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/build.gradle.kts	(date 1793751549859)
+@@ -138,4 +138,7 @@
+     implementation(libs.androidx.credentials)
+     implementation(libs.androidx.credentials.play.services.auth)
+     implementation(libs.googleid)
++
++    testImplementation(libs.junit)
++    testImplementation(libs.kotlinx.coroutines.test)
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/fithub/core/PreferencesManager.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fithub.core\r\n\r\nimport android.content.Context\r\nimport android.util.Log\r\nimport androidx.datastore.preferences.core.booleanPreferencesKey\r\nimport androidx.datastore.preferences.core.edit\r\nimport androidx.datastore.preferences.core.stringPreferencesKey\r\nimport androidx.datastore.preferences.preferencesDataStore\r\nimport kotlinx.coroutines.flow.Flow\r\nimport kotlinx.coroutines.flow.map\r\n\r\nprivate val Context.dataStore by preferencesDataStore(name = \"fithub_prefs\")\r\n\r\nclass PreferencesManager(private val context: Context) {\r\n\r\n    private object Keys {\r\n        val PUSH_NOTIFICATIONS = booleanPreferencesKey(\"push_notifications\")\r\n        val LANGUAGE = stringPreferencesKey(\"language\")\r\n        val BIOMETRIC_ENABLED = booleanPreferencesKey(\"biometric_enabled\")\r\n        val CLAIMED_REWARDS = stringPreferencesKey(\"claimed_rewards\")\r\n        // Phase 4\r\n        val FCM_TOKEN = stringPreferencesKey(\"fcm_token\")\r\n        val NOTIFICATION_RATIONALE_SHOWN = booleanPreferencesKey(\"notification_rationale_shown\")\r\n    }\r\n\r\n    private val securityPrefs = context.applicationContext\r\n        .getSharedPreferences(SECURITY_PREFS_NAME, Context.MODE_PRIVATE)\r\n\r\n    val claimedRewards: Flow<Set<String>> = context.dataStore.data.map { prefs ->\r\n        prefs[Keys.CLAIMED_REWARDS]\r\n            ?.split(\",\")\r\n            ?.filter { it.isNotBlank() }\r\n            ?.toSet()\r\n            ?: emptySet()\r\n    }\r\n\r\n    suspend fun addClaimedReward(rewardId: String) {\r\n        context.dataStore.edit { prefs ->\r\n            val current = prefs[Keys.CLAIMED_REWARDS]\r\n                ?.split(\",\")\r\n                ?.filter { it.isNotBlank() }\r\n                .orEmpty()\r\n            val updated = (current + rewardId).distinct()\r\n            prefs[Keys.CLAIMED_REWARDS] = updated.joinToString(\",\")\r\n        }\r\n    }\r\n\r\n    val pushNotificationsEnabled: Flow<Boolean> =\r\n        context.dataStore.data.map { it[Keys.PUSH_NOTIFICATIONS] ?: true }\r\n\r\n    val language: Flow<String> =\r\n        context.dataStore.data.map { it[Keys.LANGUAGE] ?: \"ENGLISH\" }\r\n\r\n    val biometricEnabled: Flow<Boolean> =\r\n        context.dataStore.data.map { it[Keys.BIOMETRIC_ENABLED] ?: false }\r\n\r\n    // Phase 4\r\n    val fcmToken: Flow<String?> =\r\n        context.dataStore.data.map { it[Keys.FCM_TOKEN] }\r\n\r\n    val notificationRationaleShown: Flow<Boolean> =\r\n        context.dataStore.data.map { it[Keys.NOTIFICATION_RATIONALE_SHOWN] ?: false }\r\n\r\n    suspend fun setPushNotifications(enabled: Boolean) {\r\n        context.dataStore.edit { it[Keys.PUSH_NOTIFICATIONS] = enabled }\r\n    }\r\n\r\n    suspend fun setLanguage(language: String) {\r\n        context.dataStore.edit { it[Keys.LANGUAGE] = language }\r\n    }\r\n\r\n    suspend fun setBiometric(enabled: Boolean) {\r\n        context.dataStore.edit { it[Keys.BIOMETRIC_ENABLED] = enabled }\r\n        securityPrefs.edit().putBoolean(SECURITY_KEY_BIOMETRIC_LOCK, enabled).commit()\r\n        Log.i(LogTags.BIOMETRIC, \"Biometric preference saved: enabled=$enabled\")\r\n    }\r\n\r\n    fun isBiometricLockEnabledSync(): Boolean =\r\n        securityPrefs.getBoolean(SECURITY_KEY_BIOMETRIC_LOCK, false)\r\n\r\n    suspend fun setFcmToken(token: String) {\r\n        context.dataStore.edit { it[Keys.FCM_TOKEN] = token }\r\n    }\r\n\r\n    suspend fun setNotificationRationaleShown(shown: Boolean) {\r\n        context.dataStore.edit { it[Keys.NOTIFICATION_RATIONALE_SHOWN] = shown }\r\n    }\r\n\r\n    companion object {\r\n        private const val SECURITY_PREFS_NAME = \"fithub_security\"\r\n        private const val SECURITY_KEY_BIOMETRIC_LOCK = \"biometric_lock_enabled\"\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/core/PreferencesManager.kt b/app/src/main/java/com/example/fithub/core/PreferencesManager.kt
+--- a/app/src/main/java/com/example/fithub/core/PreferencesManager.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/core/PreferencesManager.kt	(date 1793750030812)
+@@ -6,6 +6,8 @@
+ import androidx.datastore.preferences.core.edit
+ import androidx.datastore.preferences.core.stringPreferencesKey
+ import androidx.datastore.preferences.preferencesDataStore
++import com.example.fithub.core.i18n.LocaleCodes
++import com.example.fithub.core.i18n.LocaleManager
+ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.flow.map
+ 
+@@ -18,7 +20,6 @@
+         val LANGUAGE = stringPreferencesKey("language")
+         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
+         val CLAIMED_REWARDS = stringPreferencesKey("claimed_rewards")
+-        // Phase 4
+         val FCM_TOKEN = stringPreferencesKey("fcm_token")
+         val NOTIFICATION_RATIONALE_SHOWN = booleanPreferencesKey("notification_rationale_shown")
+     }
+@@ -27,19 +28,12 @@
+         .getSharedPreferences(SECURITY_PREFS_NAME, Context.MODE_PRIVATE)
+ 
+     val claimedRewards: Flow<Set<String>> = context.dataStore.data.map { prefs ->
+-        prefs[Keys.CLAIMED_REWARDS]
+-            ?.split(",")
+-            ?.filter { it.isNotBlank() }
+-            ?.toSet()
+-            ?: emptySet()
++        prefs[Keys.CLAIMED_REWARDS]?.split(",")?.filter { it.isNotBlank() }?.toSet() ?: emptySet()
+     }
+ 
+     suspend fun addClaimedReward(rewardId: String) {
+         context.dataStore.edit { prefs ->
+-            val current = prefs[Keys.CLAIMED_REWARDS]
+-                ?.split(",")
+-                ?.filter { it.isNotBlank() }
+-                .orEmpty()
++            val current = prefs[Keys.CLAIMED_REWARDS]?.split(",")?.filter { it.isNotBlank() }.orEmpty()
+             val updated = (current + rewardId).distinct()
+             prefs[Keys.CLAIMED_REWARDS] = updated.joinToString(",")
+         }
+@@ -48,13 +42,21 @@
+     val pushNotificationsEnabled: Flow<Boolean> =
+         context.dataStore.data.map { it[Keys.PUSH_NOTIFICATIONS] ?: true }
+ 
++    /**
++     * Language as a canonical ISO code (`en`, `zu`, `af`).
++     *
++     * Reads from DataStore (source of truth) but the value is normalised so
++     * that callers never see legacy `"ENGLISH"`/`"ZULU"`/`"AFRIKAANS"` values.
++     * New writes via [setLanguage] always store the canonical form.
++     */
+     val language: Flow<String> =
+-        context.dataStore.data.map { it[Keys.LANGUAGE] ?: "ENGLISH" }
++        context.dataStore.data.map {
++            LocaleCodes.normalise(it[Keys.LANGUAGE])
++        }
+ 
+     val biometricEnabled: Flow<Boolean> =
+         context.dataStore.data.map { it[Keys.BIOMETRIC_ENABLED] ?: false }
+ 
+-    // Phase 4
+     val fcmToken: Flow<String?> =
+         context.dataStore.data.map { it[Keys.FCM_TOKEN] }
+ 
+@@ -65,8 +67,21 @@
+         context.dataStore.edit { it[Keys.PUSH_NOTIFICATIONS] = enabled }
+     }
+ 
++    /**
++     * Persists the language to DataStore AND to the synchronous mirror read
++     * by [LocaleManager.wrap] inside `attachBaseContext`.
++     *
++     * The mirror write is synchronous (`apply()` — cheap, asynchronous disk
++     * flush) so the **next** cold start picks up the new language even if the
++     * DataStore actor hasn't fully committed. Order matters: mirror first so a
++     * crash between the two still leaves the app in the correct language on
++     * restart.
++     */
+     suspend fun setLanguage(language: String) {
+-        context.dataStore.edit { it[Keys.LANGUAGE] = language }
++        val normalised = LocaleCodes.normalise(language)
++        LocaleManager.persistSync(context, normalised)
++        context.dataStore.edit { it[Keys.LANGUAGE] = normalised }
++        Log.i(LogTags.LOCALE, "PreferencesManager.setLanguage($normalised)")
+     }
+ 
+     suspend fun setBiometric(enabled: Boolean) {
+Index: app/src/main/java/com/example/fithub/FitHubApplication.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fithub\r\n\r\nimport android.app.Application\r\nimport android.util.Log\r\nimport com.example.fithub.core.LogTags\r\nimport com.example.fithub.core.ServiceLocator\r\nimport com.example.fithub.core.SessionManager\r\nimport com.example.fithub.core.notifications.NotificationHelper\r\nimport com.example.fithub.core.sync.SyncWorker\r\nimport com.google.firebase.FirebaseApp\r\nimport com.google.firebase.auth.FirebaseAuth\r\nimport com.google.firebase.firestore.FirebaseFirestore\r\nimport com.google.firebase.firestore.FirebaseFirestoreSettings\r\nimport com.google.firebase.messaging.FirebaseMessaging\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.Dispatchers\r\nimport kotlinx.coroutines.SupervisorJob\r\nimport kotlinx.coroutines.flow.collectLatest\r\nimport kotlinx.coroutines.flow.first\r\nimport kotlinx.coroutines.launch\r\n\r\nclass FitHubApplication : Application() {\r\n\r\n    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)\r\n\r\n    override fun onCreate() {\r\n        super.onCreate()\r\n        Log.i(LogTags.APP, \"Application.onCreate — process start\")\r\n\r\n        FirebaseApp.initializeApp(this)\r\n        ServiceLocator.init(this)\r\n\r\n        // Phase 4: create notification channels early so FCM can use them\r\n        NotificationHelper.createChannels(this)\r\n\r\n        // Session policy\r\n        val lockEnabled = ServiceLocator.preferencesManager.isBiometricLockEnabledSync()\r\n        val existingUid = FirebaseAuth.getInstance().currentUser?.uid\r\n        if (lockEnabled && existingUid != null) {\r\n            Log.i(LogTags.AUTH, \"Cold start with biometric lock enabled — keeping session\")\r\n        } else {\r\n            Log.i(LogTags.AUTH, \"Cold start with lockEnabled=$lockEnabled — signing out\")\r\n            FirebaseAuth.getInstance().signOut()\r\n        }\r\n\r\n        val settings = FirebaseFirestoreSettings.Builder()\r\n            .setPersistenceEnabled(true)\r\n            .build()\r\n        FirebaseFirestore.getInstance().firestoreSettings = settings\r\n\r\n        appScope.launch {\r\n            ServiceLocator.seedManager.seedIfNeeded()\r\n            ServiceLocator.seedManager.seedFoodsIfNeeded()\r\n\r\n            startPhase3SyncTriggers()\r\n\r\n            // Phase 4: ensure topics are subscribed if the user opted in\r\n            if (ServiceLocator.preferencesManager.pushNotificationsEnabled.first()) {\r\n                val lang = ServiceLocator.preferencesManager.language.first()\r\n                val langCode = if (lang.lowercase().startsWith(\"english\")) \"en\" else lang.lowercase().take(2)\r\n                FirebaseMessaging.getInstance().subscribeToTopic(\"fithub_all\")\r\n                FirebaseMessaging.getInstance().subscribeToTopic(\"lang_$langCode\")\r\n                Log.i(LogTags.PUSH, \"Cold start subscribed to topics fithub_all, lang_$langCode\")\r\n            }\r\n        }\r\n    }\r\n\r\n    private fun startPhase3SyncTriggers() {\r\n        val uid = SessionManager.currentUserId\r\n        if (uid != null) {\r\n            SyncWorker.enqueue(this)\r\n            appScope.launch {\r\n                runCatching { ServiceLocator.syncManager.flush(uid) }\r\n                    .onFailure { Log.e(LogTags.SYNC, \"Cold-start flush threw\", it) }\r\n            }\r\n        }\r\n\r\n        appScope.launch {\r\n            var first = true\r\n            var lastOnline: Boolean? = null\r\n            ServiceLocator.connectivityMonitor.isOnline.collectLatest { online ->\r\n                val previous = lastOnline\r\n                lastOnline = online\r\n                if (first) { first = false; return@collectLatest }\r\n                if (previous != online && online) {\r\n                    val currentUid = SessionManager.currentUserId ?: return@collectLatest\r\n                    runCatching { ServiceLocator.syncManager.flush(currentUid) }\r\n                        .onFailure { Log.e(LogTags.SYNC, \"Connectivity flush threw\", it) }\r\n                }\r\n            }\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/FitHubApplication.kt b/app/src/main/java/com/example/fithub/FitHubApplication.kt
+--- a/app/src/main/java/com/example/fithub/FitHubApplication.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/FitHubApplication.kt	(date 1793750005938)
+@@ -1,10 +1,13 @@
+ package com.example.fithub
+ 
+ import android.app.Application
++import android.content.Context
+ import android.util.Log
+ import com.example.fithub.core.LogTags
+ import com.example.fithub.core.ServiceLocator
+ import com.example.fithub.core.SessionManager
++import com.example.fithub.core.i18n.LocaleCodes
++import com.example.fithub.core.i18n.LocaleManager
+ import com.example.fithub.core.notifications.NotificationHelper
+ import com.example.fithub.core.sync.SyncWorker
+ import com.google.firebase.FirebaseApp
+@@ -23,6 +26,17 @@
+ 
+     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+ 
++    /**
++     * Phase 5: apply the user's chosen language to the application context so
++     * that [getString] inside services and workers (notifications, channel
++     * names, reminder text) uses the correct locale. Runs before `onCreate`,
++     * which is essential — `NotificationHelper.createChannels` in `onCreate`
++     * reads channel names from the resources.
++     */
++    override fun attachBaseContext(base: Context) {
++        super.attachBaseContext(LocaleManager.wrap(base))
++    }
++
+     override fun onCreate() {
+         super.onCreate()
+         Log.i(LogTags.APP, "Application.onCreate — process start")
+@@ -30,10 +44,15 @@
+         FirebaseApp.initializeApp(this)
+         ServiceLocator.init(this)
+ 
+-        // Phase 4: create notification channels early so FCM can use them
++        // Phase 5: seed the sync mirror for the language if this is the first
++        // launch after upgrade. Guarded internally; runs at most once.
++        LocaleManager.migrateOnFirstRun(this) {
++            ServiceLocator.preferencesManager.language.first()
++        }
++        Log.i(LogTags.LOCALE, "Current app locale = ${LocaleManager.currentCode(this)}")
++
+         NotificationHelper.createChannels(this)
+ 
+-        // Session policy
+         val lockEnabled = ServiceLocator.preferencesManager.isBiometricLockEnabledSync()
+         val existingUid = FirebaseAuth.getInstance().currentUser?.uid
+         if (lockEnabled && existingUid != null) {
+@@ -54,10 +73,12 @@
+ 
+             startPhase3SyncTriggers()
+ 
+-            // Phase 4: ensure topics are subscribed if the user opted in
++            // Phase 4: topics (language code now uses LocaleCodes, not the raw
++            // DataStore value — keeps topics aligned with the current locale).
+             if (ServiceLocator.preferencesManager.pushNotificationsEnabled.first()) {
+-                val lang = ServiceLocator.preferencesManager.language.first()
+-                val langCode = if (lang.lowercase().startsWith("english")) "en" else lang.lowercase().take(2)
++                val langCode = LocaleCodes.normalise(
++                    LocaleManager.currentCode(this@FitHubApplication)
++                )
+                 FirebaseMessaging.getInstance().subscribeToTopic("fithub_all")
+                 FirebaseMessaging.getInstance().subscribeToTopic("lang_$langCode")
+                 Log.i(LogTags.PUSH, "Cold start subscribed to topics fithub_all, lang_$langCode")
+Index: app/src/main/java/com/example/fithub/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fithub\r\n\r\nimport android.content.Intent\r\nimport android.os.Bundle\r\nimport android.util.Log\r\nimport androidx.activity.compose.setContent\r\nimport androidx.activity.enableEdgeToEdge\r\nimport androidx.compose.foundation.layout.fillMaxSize\r\nimport androidx.compose.material3.Surface\r\nimport androidx.compose.ui.Modifier\r\nimport androidx.navigation.compose.rememberNavController\r\nimport com.example.fithub.core.LogTags\r\nimport com.example.fithub.core.notifications.NotificationHelper\r\nimport com.example.fithub.core.notifications.PendingRoute\r\nimport com.example.fithub.ui.navigation.FitHubNavGraph\r\nimport com.example.fithub.ui.navigation.Screen\r\nimport com.example.fithub.ui.theme.FitHubTheme\r\n\r\nclass MainActivity : androidx.fragment.app.FragmentActivity() {\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        Log.i(LogTags.APP, \"MainActivity.onCreate\")\r\n        handleIntent(intent)\r\n        enableEdgeToEdge()\r\n        setContent {\r\n            FitHubTheme {\r\n                Surface(modifier = Modifier.fillMaxSize()) {\r\n                    val navController = rememberNavController()\r\n                    FitHubNavGraph(\r\n                        navController = navController,\r\n                        startDestination = Screen.SPLASH\r\n                    )\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    override fun onNewIntent(intent: Intent) {\r\n        super.onNewIntent(intent)\r\n        setIntent(intent)\r\n        handleIntent(intent)\r\n    }\r\n\r\n    private fun handleIntent(intent: Intent?) {\r\n        val route = intent?.getStringExtra(NotificationHelper.EXTRA_ROUTE)\r\n        if (route != null) {\r\n            Log.d(LogTags.PUSH, \"MainActivity received notification deep link: $route\")\r\n            PendingRoute.set(route)\r\n        }\r\n    }\r\n\r\n    override fun onStart() { super.onStart(); Log.d(LogTags.APP, \"MainActivity.onStart\") }\r\n    override fun onResume() { super.onResume(); Log.d(LogTags.APP, \"MainActivity.onResume\") }\r\n    override fun onPause() { super.onPause(); Log.d(LogTags.APP, \"MainActivity.onPause\") }\r\n    override fun onDestroy() { super.onDestroy(); Log.d(LogTags.APP, \"MainActivity.onDestroy\") }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/MainActivity.kt b/app/src/main/java/com/example/fithub/MainActivity.kt
+--- a/app/src/main/java/com/example/fithub/MainActivity.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/MainActivity.kt	(date 1793749981432)
+@@ -1,5 +1,6 @@
+ package com.example.fithub
+ 
++import android.content.Context
+ import android.content.Intent
+ import android.os.Bundle
+ import android.util.Log
+@@ -10,14 +11,27 @@
+ import androidx.compose.ui.Modifier
+ import androidx.navigation.compose.rememberNavController
+ import com.example.fithub.core.LogTags
++import com.example.fithub.core.i18n.LocaleManager
+ import com.example.fithub.core.notifications.NotificationHelper
+ import com.example.fithub.core.notifications.PendingRoute
+ import com.example.fithub.ui.navigation.FitHubNavGraph
+ import com.example.fithub.ui.navigation.Screen
+ import com.example.fithub.ui.theme.FitHubTheme
+ 
++/**
++ * Reference: https://developer.android.com/guide/topics/resources/app-languages#app-specific-languages
++ * (accessed February 2026)
++ */
+ class MainActivity : androidx.fragment.app.FragmentActivity() {
+ 
++    override fun attachBaseContext(newBase: Context) {
++        // Wraps the base context with the current language BEFORE onCreate.
++        // If this file is ever changed to AppCompat, delete this override — the
++        // AppCompatDelegate handles it there.
++        super.attachBaseContext(LocaleManager.wrap(newBase))
++        Log.d(LogTags.LOCALE, "MainActivity.attachBaseContext applied")
++    }
++
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         Log.i(LogTags.APP, "MainActivity.onCreate")
+Index: app/src/main/java/com/example/fithub/ui/screens/settings/SettingsScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fithub.ui.screens.settings\r\n\r\nimport android.Manifest\r\nimport android.content.ClipData\r\nimport android.content.ClipboardManager\r\nimport android.content.Context\r\nimport android.content.pm.PackageManager\r\nimport android.os.Build\r\nimport android.util.Log\r\nimport android.widget.Toast\r\nimport androidx.activity.compose.rememberLauncherForActivityResult\r\nimport androidx.activity.result.contract.ActivityResultContracts\r\nimport androidx.compose.foundation.background\r\nimport androidx.compose.foundation.clickable\r\nimport androidx.compose.foundation.layout.*\r\nimport androidx.compose.foundation.rememberScrollState\r\nimport androidx.compose.foundation.shape.RoundedCornerShape\r\nimport androidx.compose.foundation.verticalScroll\r\nimport androidx.compose.material.icons.Icons\r\nimport androidx.compose.material.icons.filled.Fingerprint\r\nimport androidx.compose.material.icons.filled.Language\r\nimport androidx.compose.material.icons.filled.Notifications\r\nimport androidx.compose.material3.*\r\nimport androidx.compose.runtime.Composable\r\nimport androidx.compose.runtime.LaunchedEffect\r\nimport androidx.compose.runtime.getValue\r\nimport androidx.compose.runtime.mutableStateOf\r\nimport androidx.compose.runtime.remember\r\nimport androidx.compose.runtime.setValue\r\nimport androidx.compose.ui.Alignment\r\nimport androidx.compose.ui.Modifier\r\nimport androidx.compose.ui.draw.clip\r\nimport androidx.compose.ui.platform.LocalContext\r\nimport androidx.compose.ui.res.stringResource\r\nimport androidx.compose.ui.text.font.FontWeight\r\nimport androidx.compose.ui.unit.dp\r\nimport androidx.core.content.ContextCompat\r\nimport androidx.fragment.app.FragmentActivity\r\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\r\nimport androidx.lifecycle.viewmodel.compose.viewModel\r\nimport com.example.fithub.R\r\nimport com.example.fithub.core.BiometricHelper\r\nimport com.example.fithub.core.BiometricResult\r\nimport com.example.fithub.core.LogTags\r\nimport com.example.fithub.ui.components.AppHeader\r\nimport com.example.fithub.ui.components.RoundedCard\r\nimport com.example.fithub.ui.components.SmallActionButton\r\nimport com.example.fithub.ui.theme.*\r\n\r\n@Composable\r\nfun SettingsScreen(\r\n    onBack: () -> Unit,\r\n    viewModel: SettingsViewModel = viewModel()\r\n) {\r\n    val state by viewModel.uiState.collectAsStateWithLifecycle()\r\n    val context = LocalContext.current\r\n    var showUnavailableDialog by remember { mutableStateOf(false) }\r\n\r\n    val notificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->\r\n        if (isGranted) {\r\n            viewModel.toggleNotifications(true)\r\n        } else {\r\n            viewModel.toggleNotifications(false)\r\n        }\r\n    }\r\n\r\n    LaunchedEffect(Unit) { viewModel.refreshAvailability(context) }\r\n\r\n    Column(\r\n        modifier = Modifier\r\n            .fillMaxSize()\r\n            .background(BackgroundGray)\r\n    ) {\r\n        AppHeader(title = stringResource(R.string.settings_title), onBack = onBack)\r\n\r\n        Column(\r\n            modifier = Modifier\r\n                .fillMaxSize()\r\n                .verticalScroll(rememberScrollState())\r\n                .padding(horizontal = 20.dp)\r\n        ) {\r\n            Spacer(Modifier.height(8.dp))\r\n\r\n            // Push notifications\r\n            SettingsRow(\r\n                icon = { Icon(Icons.Filled.Notifications, contentDescription = null, tint = FitHubPrimary) },\r\n                title = \"Push Notifications\",\r\n                subtitle = \"Current : ${if (state.pushNotifications) \"ENABLED\" else \"DISABLED\"}\",\r\n                trailing = {\r\n                    Switch(\r\n                        checked = state.pushNotifications,\r\n                        onCheckedChange = { shouldEnable ->\r\n                            if (shouldEnable) {\r\n                                if (Build.VERSION.SDK_INT >= 33 &&\r\n                                    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {\r\n                                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)\r\n                                } else {\r\n                                    viewModel.toggleNotifications(true)\r\n                                }\r\n                            } else {\r\n                                viewModel.toggleNotifications(false)\r\n                            }\r\n                        },\r\n                        colors = SwitchDefaults.colors(\r\n                            checkedThumbColor = FitHubPrimary,\r\n                            checkedTrackColor = FitHubLightBlue\r\n                        )\r\n                    )\r\n                }\r\n            )\r\n\r\n            Spacer(Modifier.height(12.dp))\r\n\r\n            // Language (Phase 5 will implement)\r\n            SettingsRow(\r\n                icon = { Icon(Icons.Filled.Language, contentDescription = null, tint = FitHubPrimary) },\r\n                title = \"Language\",\r\n                subtitle = \"Current : ${state.language}\",\r\n                trailing = {\r\n                    Text(\r\n                        \"Change >\",\r\n                        style = MaterialTheme.typography.labelLarge,\r\n                        color = FitHubPrimary,\r\n                        fontWeight = FontWeight.Bold\r\n                    )\r\n                },\r\n                onClick = { /* TODO(Phase 5) */ }\r\n            )\r\n\r\n            Spacer(Modifier.height(12.dp))\r\n\r\n            // Fingerprint login\r\n            SettingsRow(\r\n                icon = { Icon(Icons.Filled.Fingerprint, contentDescription = null, tint = FitHubPrimary) },\r\n                title = stringResource(R.string.settings_fingerprint_title),\r\n                subtitle = stringResource(\r\n                    if (state.biometricEnabled) R.string.settings_fingerprint_subtitle_on\r\n                    else R.string.settings_fingerprint_subtitle_off\r\n                ),\r\n                trailing = {\r\n                    Switch(\r\n                        checked = state.biometricEnabled,\r\n                        onCheckedChange = { shouldEnable ->\r\n                            Log.i(LogTags.BIOMETRIC, \"Settings: fingerprint toggle → $shouldEnable\")\r\n                            if (!shouldEnable) {\r\n                                viewModel.setBiometric(false)\r\n                                return@Switch\r\n                            }\r\n                            val activity = context as? FragmentActivity\r\n                            if (activity == null) return@Switch\r\n\r\n                            when (BiometricHelper.canAuthenticate(context)) {\r\n                                com.example.fithub.core.BiometricAvailability.Available -> {\r\n                                    BiometricHelper.authenticate(\r\n                                        activity = activity,\r\n                                        titleRes = R.string.settings_fingerprint_enable_title,\r\n                                        subtitleRes = R.string.settings_fingerprint_enable_subtitle,\r\n                                        negativeRes = R.string.generic_cancel\r\n                                    ) { result ->\r\n                                        when (result) {\r\n                                            BiometricResult.Success -> viewModel.setBiometric(true)\r\n                                            is BiometricResult.Error -> Log.w(LogTags.BIOMETRIC, \"Enable aborted\")\r\n                                        }\r\n                                    }\r\n                                }\r\n                                else -> showUnavailableDialog = true\r\n                            }\r\n                        },\r\n                        colors = SwitchDefaults.colors(\r\n                            checkedThumbColor = FitHubPrimary,\r\n                            checkedTrackColor = FitHubLightBlue\r\n                        )\r\n                    )\r\n                }\r\n            )\r\n\r\n            Spacer(Modifier.height(14.dp))\r\n\r\n            // Phase 4: Diagnostics Card\r\n            RoundedCard(modifier = Modifier.fillMaxWidth()) {\r\n                Text(\r\n                    stringResource(R.string.notif_diag_title),\r\n                    style = MaterialTheme.typography.titleSmall,\r\n                    color = FitHubPrimary,\r\n                    fontWeight = FontWeight.Bold\r\n                )\r\n                Spacer(Modifier.height(8.dp))\r\n                Row(\r\n                    modifier = Modifier\r\n                        .fillMaxWidth()\r\n                        .clickable {\r\n                            val token = state.fcmToken\r\n                            if (!token.isNullOrBlank()) {\r\n                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager\r\n                                clipboard.setPrimaryClip(ClipData.newPlainText(\"FCM Token\", token))\r\n                                Toast.makeText(context, R.string.notif_diag_token_copied, Toast.LENGTH_SHORT).show()\r\n                            } else {\r\n                                Toast.makeText(context, R.string.notif_diag_token_missing, Toast.LENGTH_SHORT).show()\r\n                            }\r\n                        }\r\n                        .padding(vertical = 8.dp),\r\n                    verticalAlignment = Alignment.CenterVertically\r\n                ) {\r\n                    Text(\r\n                        text = stringResource(R.string.notif_diag_token_label) + \": \" + (state.fcmToken?.take(8) ?: \"—\") + \"...\",\r\n                        style = MaterialTheme.typography.bodyMedium,\r\n                        color = TextPrimary,\r\n                        modifier = Modifier.weight(1f)\r\n                    )\r\n                    Text(\r\n                        text = stringResource(R.string.notif_diag_token_hint),\r\n                        style = MaterialTheme.typography.labelSmall,\r\n                        color = FitHubPrimary\r\n                    )\r\n                }\r\n                Spacer(Modifier.height(8.dp))\r\n                SmallActionButton(\r\n                    text = stringResource(R.string.notif_diag_send_test),\r\n                    onClick = { viewModel.sendTestNotification(context) },\r\n                    modifier = Modifier.fillMaxWidth()\r\n                )\r\n            }\r\n\r\n            Spacer(Modifier.height(24.dp))\r\n        }\r\n    }\r\n\r\n    if (showUnavailableDialog) {\r\n        AlertDialog(\r\n            onDismissRequest = { showUnavailableDialog = false },\r\n            title = { Text(stringResource(R.string.settings_fingerprint_unavailable_title)) },\r\n            text = { Text(stringResource(R.string.settings_fingerprint_unavailable_body)) },\r\n            confirmButton = {\r\n                TextButton(onClick = {\r\n                    showUnavailableDialog = false\r\n                    (context as? FragmentActivity)?.let { BiometricHelper.openBiometricSettings(it) }\r\n                }) { Text(stringResource(R.string.settings_fingerprint_open_settings)) }\r\n            },\r\n            dismissButton = {\r\n                TextButton(onClick = { showUnavailableDialog = false }) { Text(stringResource(R.string.generic_cancel)) }\r\n            }\r\n        )\r\n    }\r\n}\r\n\r\n@Composable\r\nprivate fun SettingsRow(\r\n    icon: @Composable () -> Unit,\r\n    title: String,\r\n    subtitle: String,\r\n    trailing: @Composable () -> Unit,\r\n    onClick: (() -> Unit)? = null\r\n) {\r\n    RoundedCard(\r\n        modifier = Modifier\r\n            .fillMaxWidth()\r\n            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)\r\n    ) {\r\n        Row(\r\n            modifier = Modifier.fillMaxWidth(),\r\n            verticalAlignment = Alignment.CenterVertically\r\n        ) {\r\n            Box(\r\n                modifier = Modifier\r\n                    .size(44.dp)\r\n                    .clip(RoundedCornerShape(12.dp))\r\n                    .background(FitHubLightBlue),\r\n                contentAlignment = Alignment.Center\r\n            ) { icon() }\r\n            Spacer(Modifier.width(14.dp))\r\n            Column(modifier = Modifier.weight(1f)) {\r\n                Text(title, style = MaterialTheme.typography.titleSmall, color = FitHubPrimary, fontWeight = FontWeight.Bold)\r\n                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = TextSecondary)\r\n            }\r\n            trailing()\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsScreen.kt b/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsScreen.kt
+--- a/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsScreen.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsScreen.kt	(date 1793750099720)
+@@ -42,6 +42,7 @@
+ import com.example.fithub.core.BiometricHelper
+ import com.example.fithub.core.BiometricResult
+ import com.example.fithub.core.LogTags
++import com.example.fithub.core.i18n.LocaleCodes
+ import com.example.fithub.ui.components.AppHeader
+ import com.example.fithub.ui.components.RoundedCard
+ import com.example.fithub.ui.components.SmallActionButton
+@@ -55,13 +56,10 @@
+     val state by viewModel.uiState.collectAsStateWithLifecycle()
+     val context = LocalContext.current
+     var showUnavailableDialog by remember { mutableStateOf(false) }
++    var showLanguageDialog by remember { mutableStateOf(false) }
+ 
+     val notificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+-        if (isGranted) {
+-            viewModel.toggleNotifications(true)
+-        } else {
+-            viewModel.toggleNotifications(false)
+-        }
++        viewModel.toggleNotifications(isGranted)
+     }
+ 
+     LaunchedEffect(Unit) { viewModel.refreshAvailability(context) }
+@@ -111,25 +109,28 @@
+ 
+             Spacer(Modifier.height(12.dp))
+ 
+-            // Language (Phase 5 will implement)
++            // Language row — Phase 5
+             SettingsRow(
+                 icon = { Icon(Icons.Filled.Language, contentDescription = null, tint = FitHubPrimary) },
+-                title = "Language",
+-                subtitle = "Current : ${state.language}",
++                title = stringResource(R.string.settings_language_title),
++                subtitle = stringResource(R.string.settings_language_current, state.languageNativeName),
+                 trailing = {
+                     Text(
+-                        "Change >",
++                        stringResource(R.string.settings_language_change),
+                         style = MaterialTheme.typography.labelLarge,
+                         color = FitHubPrimary,
+                         fontWeight = FontWeight.Bold
+                     )
+                 },
+-                onClick = { /* TODO(Phase 5) */ }
++                onClick = {
++                    Log.i(LogTags.LOCALE, "Settings: language picker opened (current=${state.language})")
++                    showLanguageDialog = true
++                }
+             )
+ 
+             Spacer(Modifier.height(12.dp))
+ 
+-            // Fingerprint login
++            // Fingerprint
+             SettingsRow(
+                 icon = { Icon(Icons.Filled.Fingerprint, contentDescription = null, tint = FitHubPrimary) },
+                 title = stringResource(R.string.settings_fingerprint_title),
+@@ -176,7 +177,7 @@
+ 
+             Spacer(Modifier.height(14.dp))
+ 
+-            // Phase 4: Diagnostics Card
++            // Diagnostics
+             RoundedCard(modifier = Modifier.fillMaxWidth()) {
+                 Text(
+                     stringResource(R.string.notif_diag_title),
+@@ -241,6 +242,61 @@
+             }
+         )
+     }
++
++    if (showLanguageDialog) {
++        LanguagePickerDialog(
++            currentCode = state.language,
++            onDismiss = { showLanguageDialog = false },
++            onSelect = { code ->
++                showLanguageDialog = false
++                val activity = context as? FragmentActivity
++                if (activity != null) {
++                    viewModel.applyLocale(activity, code)
++                } else {
++                    Log.w(LogTags.LOCALE, "Language select: no FragmentActivity host")
++                }
++            }
++        )
++    }
++}
++
++@Composable
++private fun LanguagePickerDialog(
++    currentCode: String,
++    onDismiss: () -> Unit,
++    onSelect: (String) -> Unit
++) {
++    AlertDialog(
++        onDismissRequest = onDismiss,
++        title = { Text(stringResource(R.string.settings_language_dialog_title)) },
++        text = {
++            Column {
++                LocaleCodes.SUPPORTED.forEach { entry ->
++                    Row(
++                        modifier = Modifier
++                            .fillMaxWidth()
++                            .clickable { onSelect(entry.code) }
++                            .padding(vertical = 10.dp),
++                        verticalAlignment = Alignment.CenterVertically
++                    ) {
++                        RadioButton(
++                            selected = currentCode == entry.code,
++                            onClick = { onSelect(entry.code) }
++                        )
++                        Spacer(Modifier.width(8.dp))
++                        Text(
++                            text = entry.nativeName,
++                            style = MaterialTheme.typography.bodyLarge,
++                            color = TextPrimary
++                        )
++                    }
++                }
++            }
++        },
++        confirmButton = {
++            TextButton(onClick = onDismiss) { Text(stringResource(R.string.generic_cancel)) }
++        }
++    )
+ }
+ 
+ @Composable
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_21\" default=\"true\" project-jdk-name=\"temurin-21\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/.idea/misc.xml	(date 1793741888090)
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="temurin-21" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: app/src/main/java/com/example/fithub/core/i18n/LocaleCodesTest.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/core/i18n/LocaleCodesTest.kt b/app/src/main/java/com/example/fithub/core/i18n/LocaleCodesTest.kt
+new file mode 100644
+--- /dev/null	(date 1793749841808)
++++ b/app/src/main/java/com/example/fithub/core/i18n/LocaleCodesTest.kt	(date 1793749841808)
+@@ -0,0 +1,72 @@
++package com.example.fithub.core.i18n
++
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertTrue
++import org.junit.Test
++
++class LocaleCodesTest {
++
++    @Test fun supportedContainsEnZuAfInOrder() {
++        assertEquals(listOf("en", "zu", "af"), LocaleCodes.SUPPORTED.map { it.code })
++    }
++
++    @Test fun defaultIsEnglish() {
++        assertEquals("en", LocaleCodes.DEFAULT)
++    }
++
++    @Test fun normaliseLegacyEnglish() {
++        assertEquals("en", LocaleCodes.normalise("ENGLISH"))
++        assertEquals("en", LocaleCodes.normalise("English"))
++        assertEquals("en", LocaleCodes.normalise("en"))
++    }
++
++    @Test fun normaliseLegacyZulu() {
++        assertEquals("zu", LocaleCodes.normalise("ZULU"))
++        assertEquals("zu", LocaleCodes.normalise("isiZulu"))
++        assertEquals("zu", LocaleCodes.normalise("zu"))
++        assertEquals("zu", LocaleCodes.normalise("ZUL"))
++    }
++
++    @Test fun normaliseLegacyAfrikaans() {
++        assertEquals("af", LocaleCodes.normalise("AFRIKAANS"))
++        assertEquals("af", LocaleCodes.normalise("Afrikaans"))
++        assertEquals("af", LocaleCodes.normalise("AFR"))
++    }
++
++    @Test fun normaliseBcp47RegionSuffix() {
++        assertEquals("zu", LocaleCodes.normalise("zu-ZA"))
++        assertEquals("af", LocaleCodes.normalise("af_ZA"))
++    }
++
++    @Test fun normaliseUnknownFallsBackToDefault() {
++        assertEquals("en", LocaleCodes.normalise(null))
++        assertEquals("en", LocaleCodes.normalise(""))
++        assertEquals("en", LocaleCodes.normalise("xx"))
++        assertEquals("en", LocaleCodes.normalise("klingon"))
++    }
++
++    @Test fun isSupported() {
++        assertTrue(LocaleCodes.isSupported("en"))
++        assertTrue(LocaleCodes.isSupported("zu"))
++        assertTrue(LocaleCodes.isSupported("af"))
++        assertFalse(LocaleCodes.isSupported(null))
++        assertFalse(LocaleCodes.isSupported("fr"))
++    }
++
++    @Test fun nativeNameForEach() {
++        assertEquals("English", LocaleCodes.nativeName("en"))
++        assertEquals("isiZulu", LocaleCodes.nativeName("zu"))
++        assertEquals("Afrikaans", LocaleCodes.nativeName("af"))
++    }
++
++    @Test fun nativeNameUnknownFallsBack() {
++        assertEquals("English", LocaleCodes.nativeName("xx"))
++    }
++
++    @Test fun englishNameMatchesNativeForTheseThree() {
++        assertEquals("English", LocaleCodes.englishName("en"))
++        assertEquals("isiZulu", LocaleCodes.englishName("zu"))
++        assertEquals("Afrikaans", LocaleCodes.englishName("af"))
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/fithub/core/i18n/LocaleManager.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/core/i18n/LocaleManager.kt b/app/src/main/java/com/example/fithub/core/i18n/LocaleManager.kt
+new file mode 100644
+--- /dev/null	(date 1793749886182)
++++ b/app/src/main/java/com/example/fithub/core/i18n/LocaleManager.kt	(date 1793749886182)
+@@ -0,0 +1,125 @@
++package com.example.fithub.core.i18n
++
++import android.content.Context
++import android.content.res.Configuration
++import android.os.Build
++import android.os.LocaleList
++import android.util.Log
++import androidx.fragment.app.FragmentActivity
++import com.example.fithub.core.LogTags
++import java.util.Locale
++import kotlinx.coroutines.flow.first
++import kotlinx.coroutines.runBlocking
++
++/**
++ * References:
++ *  • https://developer.android.com/guide/topics/resources/app-languages
++ *  • https://developer.android.com/reference/android/content/Context#createConfigurationContext(android.content.res.Configuration)
++ * (accessed February 2026)
++ */
++object LocaleManager {
++
++    private const val PREFS_NAME = "fithub_locale"
++    private const val KEY_CURRENT = "current_language"
++    private const val KEY_MIGRATED = "locale_migrated_v1"
++
++    // ---- Synchronous mirror ----
++
++    private fun prefs(context: Context) =
++        context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
++
++    /**
++     * Current language code, guaranteed to be one of
++     * [LocaleCodes.SUPPORTED]. Reads only the sync mirror — never blocks on
++     * DataStore, safe to call from `attachBaseContext`.
++     */
++    fun currentCode(context: Context): String {
++        val raw = prefs(context).getString(KEY_CURRENT, null)
++        return LocaleCodes.normalise(raw)
++    }
++
++    /** Persist the code into both stores. Safe to call from any thread. */
++    fun persistSync(context: Context, code: String) {
++        val normalised = LocaleCodes.normalise(code)
++        prefs(context).edit().putString(KEY_CURRENT, normalised).apply()
++        Log.i(LogTags.LOCALE, "Locale persisted synchronously: $normalised")
++    }
++
++    // ---- Context wrapping ----
++
++    /**
++     * Wraps [base] with a [Configuration] whose primary Locale is the current
++     * language. Call from `attachBaseContext` in Activities, Workers, Services.
++     */
++    fun wrap(base: Context): Context {
++        val code = currentCode(base)
++        val locale = Locale.forLanguageTag(code)
++        val config = Configuration(base.resources.configuration).apply {
++            setLocale(locale)
++            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
++                setLocales(LocaleList(locale))
++            }
++        }
++        return base.createConfigurationContext(config)
++    }
++
++    /**
++     * Applies [code] to the activity's resources and recreates it so the new
++     * strings take effect. Persists to both stores first, then logs, then
++     * recreates — the order matters: if recreation happened first, the new
++     * activity's `attachBaseContext` would read the old mirror.
++     */
++    fun apply(activity: FragmentActivity, code: String) {
++        val normalised = LocaleCodes.normalise(code)
++        persistSync(activity, normalised)
++        Log.i(LogTags.LOCALE, "applyLocale → $normalised; recreating activity")
++        activity.recreate()
++    }
++
++    /**
++     * Called once from [com.example.fithub.FitHubApplication.onCreate].
++     *
++     * If the mirror is empty (fresh install or upgrade from a pre-Phase-5
++     * build), seed it from:
++     *  1. the legacy DataStore `language` value if it's anything other than
++     *     the default (`"ENGLISH"` is mapped to `en`, `"ZULU"` → `zu`,
++     *     `"AFRIKAANS"` → `af`);
++     *  2. otherwise the system Locale if it's one of the supported three;
++     *  3. otherwise [LocaleCodes.DEFAULT].
++     *
++     * The DataStore read is done via a single `runBlocking` — this only runs
++     * on the very first cold start after upgrade and is guarded by a sync
++     * flag, so we never pay the cost again.
++     */
++    fun migrateOnFirstRun(context: Context, dataStoreLanguage: suspend () -> String) {
++        val p = prefs(context)
++        if (p.getBoolean(KEY_MIGRATED, false)) {
++            Log.d(LogTags.LOCALE, "migrateOnFirstRun: already migrated; current=${currentCode(context)}")
++            return
++        }
++        val currentMirror = p.getString(KEY_CURRENT, null)
++        if (!currentMirror.isNullOrBlank()) {
++            // Already seeded (e.g. user toggled before migration guard ran).
++            p.edit().putBoolean(KEY_MIGRATED, true).apply()
++            Log.d(LogTags.LOCALE, "migrateOnFirstRun: mirror already set to $currentMirror")
++            return
++        }
++        val dataStoreValue = runCatching { runBlocking { dataStoreLanguage() } }
++            .getOrElse { "ENGLISH" }
++        val systemLocale = Locale.getDefault().language
++        val chosen = when {
++            !dataStoreValue.isNullOrBlank() && !dataStoreValue.equals("ENGLISH", true) ->
++                LocaleCodes.normalise(dataStoreValue)
++            LocaleCodes.isSupported(systemLocale) -> systemLocale
++            else -> LocaleCodes.DEFAULT
++        }
++        p.edit()
++            .putString(KEY_CURRENT, chosen)
++            .putBoolean(KEY_MIGRATED, true)
++            .apply()
++        Log.i(
++            LogTags.LOCALE,
++            "migrateOnFirstRun: dataStore='$dataStoreValue' system='$systemLocale' → '$chosen'"
++        )
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/xml/locales_config.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/xml/locales_config.xml b/app/src/main/res/xml/locales_config.xml
+new file mode 100644
+--- /dev/null	(date 1793749930296)
++++ b/app/src/main/res/xml/locales_config.xml	(date 1793749930296)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
++    <locale android:name="en" />
++    <locale android:name="zu" />
++    <locale android:name="af" />
++</locale-config>
+\ No newline at end of file
+Index: app/src/main/java/com/example/fithub/core/notifications/CheckpointReminderWorker.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fithub.core.notifications\r\n\r\nimport android.content.Context\r\nimport android.util.Log\r\nimport androidx.work.Constraints\r\nimport androidx.work.CoroutineWorker\r\nimport androidx.work.ExistingPeriodicWorkPolicy\r\nimport androidx.work.NetworkType\r\nimport androidx.work.PeriodicWorkRequestBuilder\r\nimport androidx.work.WorkManager\r\nimport androidx.work.WorkerParameters\r\nimport com.example.fithub.R\r\nimport com.example.fithub.core.LogTags\r\nimport com.example.fithub.core.SessionManager\r\nimport com.example.fithub.core.ServiceLocator\r\nimport com.example.fithub.domain.model.CheckpointSchedule\r\nimport kotlinx.coroutines.flow.first\r\nimport java.time.LocalDate\r\nimport java.util.concurrent.TimeUnit\r\n\r\n/**\r\n * Daily worker that fires the \"weigh-in due\" reminder once the schedule says\r\n * a checkpoint is due. Only runs when a checkpoint reminder is enabled **and**\r\n * push notifications are on in-app.\r\n *\r\n * Scheduling policy: this worker is a **periodic daily check**. Repetition is\r\n * suppressed by comparing `schedule.nextCheckpointDate` to today and by only\r\n * posting a notification when the date has been reached (or passed).\r\n *\r\n * Reference: https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started\r\n * (accessed February 2026)\r\n */\r\nclass CheckpointReminderWorker(\r\n    appContext: Context,\r\n    params: WorkerParameters\r\n) : CoroutineWorker(appContext, params) {\r\n\r\n    override suspend fun doWork(): Result {\r\n        val uid = SessionManager.currentUserId\r\n        if (uid == null) {\r\n            Log.d(LogTags.PUSH, \"CheckpointReminder: no session — success (nothing to do)\")\r\n            return Result.success()\r\n        }\r\n        val schedule = runCatching { ServiceLocator.checkpointRepository.get(uid) }\r\n            .onFailure { Log.e(LogTags.PUSH, \"CheckpointReminder: read failed\", it) }\r\n            .getOrNull()\r\n        if (schedule == null) {\r\n            Log.d(LogTags.PUSH, \"CheckpointReminder: no schedule — success\")\r\n            return Result.success()\r\n        }\r\n        if (!schedule.remindersEnabled) {\r\n            Log.d(LogTags.PUSH, \"CheckpointReminder: reminders disabled — success\")\r\n            return Result.success()\r\n        }\r\n        val pushEnabled = runCatching {\r\n            ServiceLocator.preferencesManager.pushNotificationsEnabled.first()\r\n        }.getOrDefault(true)\r\n        if (!pushEnabled) {\r\n            Log.d(LogTags.PUSH, \"CheckpointReminder: push disabled in-app — success\")\r\n            return Result.success()\r\n        }\r\n        val today = LocalDate.now()\r\n        if (schedule.nextCheckpointDate.isAfter(today)) {\r\n            Log.d(LogTags.PUSH, \"CheckpointReminder: next=${schedule.nextCheckpointDate} future — success\")\r\n            return Result.success()\r\n        }\r\n        NotificationHelper.showNotification(\r\n            context = applicationContext,\r\n            channelId = NotificationChannels.REMINDERS,\r\n            notificationId = NOTIFICATION_ID,\r\n            title = applicationContext.getString(R.string.notif_checkpoint_title),\r\n            body = applicationContext.getString(R.string.notif_checkpoint_body),\r\n            route = com.example.fithub.ui.navigation.Screen.BODY_WEIGHT\r\n        )\r\n        Log.i(LogTags.PUSH, \"CheckpointReminder posted for ${schedule.nextCheckpointDate}\")\r\n        return Result.success()\r\n    }\r\n\r\n    companion object {\r\n        private const val UNIQUE_NAME = \"fithub_checkpoint_reminder\"\r\n        private const val NOTIFICATION_ID = 3001\r\n        private const val INTERVAL_HOURS = 24L\r\n\r\n        /**\r\n         * Schedule daily when reminders are enabled. Idempotent: called on\r\n         * every `save(...)` and on cold start. `UPDATE` replaces the existing\r\n         * work if the constraints haven't changed, no extra worker spawns.\r\n         */\r\n        fun schedule(context: Context) {\r\n            val request = PeriodicWorkRequestBuilder<CheckpointReminderWorker>(\r\n                INTERVAL_HOURS, TimeUnit.HOURS\r\n            )\r\n                .setConstraints(\r\n                    Constraints.Builder()\r\n                        .setRequiredNetworkType(NetworkType.NOT_REQUIRED)\r\n                        .build()\r\n                )\r\n                .build()\r\n            WorkManager.getInstance(context).enqueueUniquePeriodicWork(\r\n                UNIQUE_NAME,\r\n                ExistingPeriodicWorkPolicy.UPDATE,\r\n                request\r\n            )\r\n            Log.d(LogTags.PUSH, \"CheckpointReminderWorker scheduled (unique=$UNIQUE_NAME)\")\r\n        }\r\n\r\n        /** Cancel when reminders are disabled so the platform stops waking us. */\r\n        fun cancel(context: Context) {\r\n            WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_NAME)\r\n            Log.d(LogTags.PUSH, \"CheckpointReminderWorker cancelled (unique=$UNIQUE_NAME)\")\r\n        }\r\n\r\n        /**\r\n         * Convenience: `schedule` if [scheduleConfig.remindersEnabled], else `cancel`.\r\n         * Called from [com.example.fithub.data.repository.CheckpointRepositoryImpl.save].\r\n         */\r\n        fun reschedule(context: Context, scheduleConfig: CheckpointSchedule) {\r\n            if (scheduleConfig.remindersEnabled) schedule(context) else cancel(context)\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/core/notifications/CheckpointReminderWorker.kt b/app/src/main/java/com/example/fithub/core/notifications/CheckpointReminderWorker.kt
+--- a/app/src/main/java/com/example/fithub/core/notifications/CheckpointReminderWorker.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/core/notifications/CheckpointReminderWorker.kt	(date 1793751622225)
+@@ -13,20 +13,13 @@
+ import com.example.fithub.core.LogTags
+ import com.example.fithub.core.SessionManager
+ import com.example.fithub.core.ServiceLocator
++import com.example.fithub.core.i18n.LocaleManager
+ import com.example.fithub.domain.model.CheckpointSchedule
+ import kotlinx.coroutines.flow.first
+ import java.time.LocalDate
+ import java.util.concurrent.TimeUnit
+ 
+ /**
+- * Daily worker that fires the "weigh-in due" reminder once the schedule says
+- * a checkpoint is due. Only runs when a checkpoint reminder is enabled **and**
+- * push notifications are on in-app.
+- *
+- * Scheduling policy: this worker is a **periodic daily check**. Repetition is
+- * suppressed by comparing `schedule.nextCheckpointDate` to today and by only
+- * posting a notification when the date has been reached (or passed).
+- *
+  * Reference: https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started
+  * (accessed February 2026)
+  */
+@@ -64,12 +57,16 @@
+             Log.d(LogTags.PUSH, "CheckpointReminder: next=${schedule.nextCheckpointDate} future — success")
+             return Result.success()
+         }
++
++        // Localised strings via a wrapped context — safe inside a worker.
++        val localisedContext = LocaleManager.wrap(applicationContext)
++
+         NotificationHelper.showNotification(
+-            context = applicationContext,
++            context = localisedContext,
+             channelId = NotificationChannels.REMINDERS,
+             notificationId = NOTIFICATION_ID,
+-            title = applicationContext.getString(R.string.notif_checkpoint_title),
+-            body = applicationContext.getString(R.string.notif_checkpoint_body),
++            title = localisedContext.getString(R.string.notif_checkpoint_title),
++            body = localisedContext.getString(R.string.notif_checkpoint_body),
+             route = com.example.fithub.ui.navigation.Screen.BODY_WEIGHT
+         )
+         Log.i(LogTags.PUSH, "CheckpointReminder posted for ${schedule.nextCheckpointDate}")
+@@ -81,11 +78,6 @@
+         private const val NOTIFICATION_ID = 3001
+         private const val INTERVAL_HOURS = 24L
+ 
+-        /**
+-         * Schedule daily when reminders are enabled. Idempotent: called on
+-         * every `save(...)` and on cold start. `UPDATE` replaces the existing
+-         * work if the constraints haven't changed, no extra worker spawns.
+-         */
+         fun schedule(context: Context) {
+             val request = PeriodicWorkRequestBuilder<CheckpointReminderWorker>(
+                 INTERVAL_HOURS, TimeUnit.HOURS
+@@ -104,16 +96,11 @@
+             Log.d(LogTags.PUSH, "CheckpointReminderWorker scheduled (unique=$UNIQUE_NAME)")
+         }
+ 
+-        /** Cancel when reminders are disabled so the platform stops waking us. */
+         fun cancel(context: Context) {
+             WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_NAME)
+             Log.d(LogTags.PUSH, "CheckpointReminderWorker cancelled (unique=$UNIQUE_NAME)")
+         }
+ 
+-        /**
+-         * Convenience: `schedule` if [scheduleConfig.remindersEnabled], else `cancel`.
+-         * Called from [com.example.fithub.data.repository.CheckpointRepositoryImpl.save].
+-         */
+         fun reschedule(context: Context, scheduleConfig: CheckpointSchedule) {
+             if (scheduleConfig.remindersEnabled) schedule(context) else cancel(context)
+         }
+Index: app/src/main/java/com/example/fithub/core/notifications/FitHubMessagingService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\npackage com.example.fithub.core.notifications\r\n\r\nimport android.util.Log\r\nimport com.example.fithub.R\r\nimport com.example.fithub.core.LogTags\r\nimport com.example.fithub.core.SessionManager\r\nimport com.example.fithub.core.ServiceLocator\r\nimport com.example.fithub.data.remote.FirestorePaths\r\nimport com.google.firebase.auth.FirebaseAuth\r\nimport com.google.firebase.firestore.FieldValue\r\nimport com.google.firebase.firestore.SetOptions\r\nimport com.google.firebase.messaging.FirebaseMessagingService\r\nimport com.google.firebase.messaging.RemoteMessage\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.Dispatchers\r\nimport kotlinx.coroutines.SupervisorJob\r\nimport kotlinx.coroutines.cancel\r\nimport kotlinx.coroutines.flow.first\r\nimport kotlinx.coroutines.launch\r\n\r\nclass FitHubMessagingService : FirebaseMessagingService() {\r\n\r\n    private val serviceJob = SupervisorJob()\r\n\r\n    private val serviceScope =\r\n        CoroutineScope(serviceJob + Dispatchers.IO)\r\n\r\n    override fun onNewToken(token: String) {\r\n        super.onNewToken(token)\r\n\r\n        Log.i(\r\n            LogTags.PUSH,\r\n            \"onNewToken received token=${token.take(8)}…\"\r\n        )\r\n\r\n        serviceScope.launch {\r\n\r\n            // Save token locally.\r\n            runCatching {\r\n                ServiceLocator.preferencesManager.setFcmToken(token)\r\n            }.onFailure {\r\n                Log.e(\r\n                    LogTags.PUSH,\r\n                    \"Saving FCM token locally failed\",\r\n                    it\r\n                )\r\n            }\r\n\r\n            val uid = FirebaseAuth.getInstance().currentUser?.uid\r\n                ?: SessionManager.currentUserId\r\n\r\n            if (uid == null) {\r\n                Log.d(\r\n                    LogTags.PUSH,\r\n                    \"No active session — token saved locally only\"\r\n                )\r\n                return@launch\r\n            }\r\n\r\n            // Mirror token to Firestore.\r\n            runCatching {\r\n                val language = languageCodeForUser()\r\n\r\n                FirestorePaths.user(uid).set(\r\n                    mapOf(\r\n                        \"fcmToken\" to token,\r\n                        \"fcmTokenUpdatedAt\" to FieldValue.serverTimestamp(),\r\n                        \"language\" to language\r\n                    ),\r\n                    SetOptions.merge()\r\n                )\r\n\r\n                Log.i(\r\n                    LogTags.PUSH,\r\n                    \"FCM token mirrored to users/${uid.take(8)}…\"\r\n                )\r\n            }.onFailure {\r\n                Log.e(\r\n                    LogTags.PUSH,\r\n                    \"Firestore token mirror failed\",\r\n                    it\r\n                )\r\n            }\r\n        }\r\n    }\r\n\r\n    override fun onMessageReceived(remoteMessage: RemoteMessage) {\r\n        super.onMessageReceived(remoteMessage)\r\n\r\n        Log.i(\r\n            LogTags.PUSH,\r\n            \"FCM message received \" +\r\n                    \"hasNotification=${remoteMessage.notification != null} \" +\r\n                    \"dataKeys=${remoteMessage.data.keys}\"\r\n        )\r\n\r\n        serviceScope.launch {\r\n\r\n            val enabled = runCatching {\r\n                ServiceLocator.preferencesManager\r\n                    .pushNotificationsEnabled\r\n                    .first()\r\n            }.getOrDefault(true)\r\n\r\n            if (!enabled) {\r\n                Log.i(\r\n                    LogTags.PUSH,\r\n                    \"Notification ignored — push disabled\"\r\n                )\r\n                return@launch\r\n            }\r\n\r\n            // Avoid posting duplicate notifications.\r\n            if (remoteMessage.notification != null) {\r\n                Log.d(\r\n                    LogTags.PUSH,\r\n                    \"Notification payload already handled by FCM\"\r\n                )\r\n                return@launch\r\n            }\r\n\r\n            val title = remoteMessage.data[\"title\"]\r\n                ?: getString(R.string.notif_fallback_title)\r\n\r\n            val body = remoteMessage.data[\"body\"]\r\n                ?: getString(R.string.notif_fallback_body)\r\n\r\n            val route = remoteMessage.data[\"route\"]\r\n            val type = remoteMessage.data[\"type\"]\r\n\r\n            if (type != null) {\r\n                Log.d(\r\n                    LogTags.PUSH,\r\n                    \"Notification type=$type\"\r\n                )\r\n            }\r\n\r\n            NotificationHelper.showNotification(\r\n                context = applicationContext,\r\n                notificationId =\r\n                    (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),\r\n                title = title,\r\n                body = body,\r\n                route = route\r\n            )\r\n        }\r\n    }\r\n\r\n    private suspend fun languageCodeForUser(): String {\r\n        return runCatching {\r\n            ServiceLocator.preferencesManager.language\r\n                .first()\r\n                .lowercase()\r\n                .let { language ->\r\n                    if (language.startsWith(\"english\")) {\r\n                        \"en\"\r\n                    } else {\r\n                        language\r\n                    }\r\n                }\r\n        }.getOrDefault(\"en\")\r\n    }\r\n\r\n    override fun onDestroy() {\r\n        serviceScope.cancel()\r\n        super.onDestroy()\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/core/notifications/FitHubMessagingService.kt b/app/src/main/java/com/example/fithub/core/notifications/FitHubMessagingService.kt
+--- a/app/src/main/java/com/example/fithub/core/notifications/FitHubMessagingService.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/core/notifications/FitHubMessagingService.kt	(date 1793750158158)
+@@ -1,11 +1,12 @@
+-
+ package com.example.fithub.core.notifications
+ 
++import android.content.Context
+ import android.util.Log
+ import com.example.fithub.R
+ import com.example.fithub.core.LogTags
+ import com.example.fithub.core.SessionManager
+ import com.example.fithub.core.ServiceLocator
++import com.example.fithub.core.i18n.LocaleManager
+ import com.example.fithub.data.remote.FirestorePaths
+ import com.google.firebase.auth.FirebaseAuth
+ import com.google.firebase.firestore.FieldValue
+@@ -22,46 +23,34 @@
+ class FitHubMessagingService : FirebaseMessagingService() {
+ 
+     private val serviceJob = SupervisorJob()
++    private val serviceScope = CoroutineScope(serviceJob + Dispatchers.IO)
+ 
+-    private val serviceScope =
+-        CoroutineScope(serviceJob + Dispatchers.IO)
++    /**
++     * Phase 5: apply the current locale so `getString(...)` for fallback
++     * notification text uses the user's language.
++     */
++    override fun attachBaseContext(base: Context) {
++        super.attachBaseContext(LocaleManager.wrap(base))
++    }
+ 
+     override fun onNewToken(token: String) {
+         super.onNewToken(token)
+-
+-        Log.i(
+-            LogTags.PUSH,
+-            "onNewToken received token=${token.take(8)}…"
+-        )
+-
++        Log.i(LogTags.PUSH, "onNewToken received token=${token.take(8)}…")
+         serviceScope.launch {
+-
+-            // Save token locally.
+             runCatching {
+                 ServiceLocator.preferencesManager.setFcmToken(token)
+             }.onFailure {
+-                Log.e(
+-                    LogTags.PUSH,
+-                    "Saving FCM token locally failed",
+-                    it
+-                )
++                Log.e(LogTags.PUSH, "Saving FCM token locally failed", it)
+             }
+ 
+             val uid = FirebaseAuth.getInstance().currentUser?.uid
+                 ?: SessionManager.currentUserId
+-
+             if (uid == null) {
+-                Log.d(
+-                    LogTags.PUSH,
+-                    "No active session — token saved locally only"
+-                )
++                Log.d(LogTags.PUSH, "No active session — token saved locally only")
+                 return@launch
+             }
+-
+-            // Mirror token to Firestore.
+             runCatching {
+                 val language = languageCodeForUser()
+-
+                 FirestorePaths.user(uid).set(
+                     mapOf(
+                         "fcmToken" to token,
+@@ -70,76 +59,41 @@
+                     ),
+                     SetOptions.merge()
+                 )
+-
+-                Log.i(
+-                    LogTags.PUSH,
+-                    "FCM token mirrored to users/${uid.take(8)}…"
+-                )
++                Log.i(LogTags.PUSH, "FCM token mirrored to users/${uid.take(8)}…")
+             }.onFailure {
+-                Log.e(
+-                    LogTags.PUSH,
+-                    "Firestore token mirror failed",
+-                    it
+-                )
++                Log.e(LogTags.PUSH, "Firestore token mirror failed", it)
+             }
+         }
+     }
+ 
+     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+         super.onMessageReceived(remoteMessage)
+-
+         Log.i(
+             LogTags.PUSH,
+-            "FCM message received " +
+-                    "hasNotification=${remoteMessage.notification != null} " +
+-                    "dataKeys=${remoteMessage.data.keys}"
++            "FCM message received hasNotification=${remoteMessage.notification != null} dataKeys=${remoteMessage.data.keys}"
+         )
+-
+         serviceScope.launch {
+-
+             val enabled = runCatching {
+-                ServiceLocator.preferencesManager
+-                    .pushNotificationsEnabled
+-                    .first()
++                ServiceLocator.preferencesManager.pushNotificationsEnabled.first()
+             }.getOrDefault(true)
+-
+             if (!enabled) {
+-                Log.i(
+-                    LogTags.PUSH,
+-                    "Notification ignored — push disabled"
+-                )
++                Log.i(LogTags.PUSH, "Notification ignored — push disabled")
+                 return@launch
+             }
+-
+-            // Avoid posting duplicate notifications.
+             if (remoteMessage.notification != null) {
+-                Log.d(
+-                    LogTags.PUSH,
+-                    "Notification payload already handled by FCM"
+-                )
++                Log.d(LogTags.PUSH, "Notification payload already handled by FCM")
+                 return@launch
+             }
+-
+-            val title = remoteMessage.data["title"]
+-                ?: getString(R.string.notif_fallback_title)
+-
+-            val body = remoteMessage.data["body"]
+-                ?: getString(R.string.notif_fallback_body)
+-
++            val title = remoteMessage.data["title"] ?: getString(R.string.notif_fallback_title)
++            val body = remoteMessage.data["body"] ?: getString(R.string.notif_fallback_body)
+             val route = remoteMessage.data["route"]
+             val type = remoteMessage.data["type"]
+-
+             if (type != null) {
+-                Log.d(
+-                    LogTags.PUSH,
+-                    "Notification type=$type"
+-                )
++                Log.d(LogTags.PUSH, "Notification type=$type")
+             }
+-
+             NotificationHelper.showNotification(
+                 context = applicationContext,
+-                notificationId =
+-                    (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
++                notificationId = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),
+                 title = title,
+                 body = body,
+                 route = route
+@@ -149,16 +103,7 @@
+ 
+     private suspend fun languageCodeForUser(): String {
+         return runCatching {
+-            ServiceLocator.preferencesManager.language
+-                .first()
+-                .lowercase()
+-                .let { language ->
+-                    if (language.startsWith("english")) {
+-                        "en"
+-                    } else {
+-                        language
+-                    }
+-                }
++            ServiceLocator.preferencesManager.language.first()
+         }.getOrDefault("en")
+     }
+ 
+@@ -166,4 +111,4 @@
+         serviceScope.cancel()
+         super.onDestroy()
+     }
+-}
++}
+\ No newline at end of file
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetSelector\">\r\n    <selectionStates>\r\n      <SelectionState runConfigName=\"app\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"unitTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"androidTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"main\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DialogSelection />\r\n      </SelectionState>\r\n    </selectionStates>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+--- a/.idea/deploymentTargetSelector.xml	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/.idea/deploymentTargetSelector.xml	(date 1793741069158)
+@@ -6,18 +6,6 @@
+         <option name="selectionMode" value="DROPDOWN" />
+         <DialogSelection />
+       </SelectionState>
+-      <SelectionState runConfigName="unitTest">
+-        <option name="selectionMode" value="DROPDOWN" />
+-        <DialogSelection />
+-      </SelectionState>
+-      <SelectionState runConfigName="androidTest">
+-        <option name="selectionMode" value="DROPDOWN" />
+-        <DialogSelection />
+-      </SelectionState>
+-      <SelectionState runConfigName="main">
+-        <option name="selectionMode" value="DROPDOWN" />
+-        <DialogSelection />
+-      </SelectionState>
+     </selectionStates>
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <string name=\"app_name\">FitHub</string>\r\n\r\n    <!-- ========================================== -->\r\n    <!-- PHASE 1 : Biometric gate & Generic         -->\r\n    <!-- ========================================== -->\r\n    <string name=\"biometric_gate_title\">Unlock FitHub</string>\r\n    <string name=\"biometric_gate_subtitle\">Confirm it\\'s you to continue.</string>\r\n    <string name=\"biometric_gate_prompt\">Use fingerprint</string>\r\n    <string name=\"biometric_gate_fallback\">Use password instead</string>\r\n    <string name=\"biometric_gate_cancel\">Cancel</string>\r\n    <string name=\"biometric_gate_not_available\">Biometric login isn\\'t available on this device.</string>\r\n    <string name=\"biometric_gate_not_enrolled\">No fingerprint or face is enrolled. Add one in system settings to use biometric login.</string>\r\n    <string name=\"biometric_gate_error_generic\">Couldn\\'t verify. Please try again.</string>\r\n    <string name=\"biometric_gate_error_lockout\">Too many attempts. Try again in a moment.</string>\r\n    <string name=\"biometric_gate_error_lockout_permanent\">Biometric login is locked. Unlock your device to re-enable it.</string>\r\n    <string name=\"biometric_gate_go_to_settings\">Open settings</string>\r\n    <string name=\"session_logged_out\">Logged out.</string>\r\n    <string name=\"generic_back\">Back</string>\r\n    <string name=\"generic_cancel\">Cancel</string>\r\n    <string name=\"generic_ok\">OK</string>\r\n    <string name=\"generic_continue\">Continue</string>\r\n    <string name=\"generic_try_again\">Try again</string>\r\n\r\n    <!-- ========================================== -->\r\n    <!-- PHASE 2 : Google SSO & Settings/Onboarding -->\r\n    <!-- ========================================== -->\r\n    <string name=\"auth_continue_with_google\">Continue with Google</string>\r\n    <string name=\"auth_google_error_generic\">Google sign-in failed. Please try again.</string>\r\n    <string name=\"auth_google_error_cancelled\">Sign-in cancelled.</string>\r\n    <string name=\"auth_google_error_no_account\">No Google account found on this device.</string>\r\n    <string name=\"auth_google_error_network\">Network error — check your connection.</string>\r\n    <string name=\"auth_google_error_no_client_id\">Google Sign-In isn\\'t configured for this build.</string>\r\n    <string name=\"auth_google_progress\">Signing in with Google…</string>\r\n    <string name=\"auth_or_divider\">OR</string>\r\n\r\n    <string name=\"onboarding_google_welcome_title\">Welcome, %1$s</string>\r\n    <string name=\"onboarding_google_welcome_body\">We\\'ve filled in your name and email from Google. You can edit them below.</string>\r\n    <string name=\"onboarding_username_label\">USERNAME</string>\r\n    <string name=\"onboarding_username_placeholder\">Enter your Username</string>\r\n    <string name=\"onboarding_email_label\">EMAIL ADDRESS</string>\r\n    <string name=\"onboarding_email_placeholder\">Enter your Email Address</string>\r\n    <string name=\"onboarding_missing_details\">Some onboarding details are missing.</string>\r\n\r\n    <string name=\"settings_title\">Settings</string>\r\n    <string name=\"settings_fingerprint_title\">Fingerprint Login</string>\r\n    <string name=\"settings_fingerprint_subtitle_on\">Current : ENABLED</string>\r\n    <string name=\"settings_fingerprint_subtitle_off\">Current : DISABLED</string>\r\n    <string name=\"settings_fingerprint_enable_title\">Enable Fingerprint Login</string>\r\n    <string name=\"settings_fingerprint_enable_subtitle\">Confirm your identity to enable biometric login.</string>\r\n    <string name=\"settings_fingerprint_unavailable_title\">Fingerprint unavailable</string>\r\n    <string name=\"settings_fingerprint_unavailable_body\">This device has no biometric hardware, or no fingerprint is enrolled in system settings.</string>\r\n    <string name=\"settings_fingerprint_open_settings\">Open system settings</string>\r\n    <string name=\"settings_fingerprint_saved_ok\">Fingerprint login enabled.</string>\r\n    <string name=\"settings_fingerprint_saved_off\">Fingerprint login disabled.</string>\r\n\r\n    <string name=\"login_welcome_back\">Welcome Back!</string>\r\n    <string name=\"login_email_label\">Email</string>\r\n    <string name=\"login_email_placeholder\">Enter your Email Address</string>\r\n    <string name=\"login_button\">LOGIN</string>\r\n    <string name=\"login_button_loading\">Logging in…</string>\r\n    <string name=\"login_fingerprint_title\">FitHub Login</string>\r\n    <string name=\"login_fingerprint_subtitle\">Authenticate to continue</string>\r\n    <string name=\"login_fingerprint_section_title\">Sign - In with Fingerprint</string>\r\n    <string name=\"login_fingerprint_content_desc\">Fingerprint login</string>\r\n    <string name=\"login_biometric_unavailable\">Biometric not available on this device.</string>\r\n    <string name=\"login_biometric_need_first_login\">Please log in with your password once before using fingerprint.</string>\r\n    <string name=\"login_missing_credentials\">Please enter your username and password.</string>\r\n\r\n    <string name=\"profile_edit_details\">Edit Details</string>\r\n    <string name=\"profile_settings\">Settings</string>\r\n    <string name=\"profile_logout\">Log out</string>\r\n    <string name=\"profile_logout_confirm_title\">Log out of FitHub?</string>\r\n    <string name=\"profile_logout_confirm_body\">You will need to sign in again next time.</string>\r\n    <string name=\"profile_logout_confirm_yes\">Log out</string>\r\n\r\n    <!-- ========================================== -->\r\n    <!-- PHASE 3 : Sync banner                      -->\r\n    <!-- ========================================== -->\r\n    <string name=\"sync_banner_offline\">You\\'re offline — changes will sync when you reconnect.</string>\r\n    <string name=\"sync_banner_syncing\">Syncing %1$d change(s)…</string>\r\n    <string name=\"sync_banner_done\">All changes synced ✓</string>\r\n\r\n    <!-- ========================================== -->\r\n    <!-- PHASE 4 : Notifications & Diagnostics      -->\r\n    <!-- ========================================== -->\r\n    <string name=\"notif_channel_general_name\">General</string>\r\n    <string name=\"notif_channel_general_desc\">Streak alerts, achievements and general FitHub announcements.</string>\r\n    <string name=\"notif_channel_reminders_name\">Weigh-in reminders</string>\r\n    <string name=\"notif_channel_reminders_desc\">Daily reminder to record your weight when a checkpoint is due.</string>\r\n\r\n    <string name=\"notif_fallback_title\">FitHub</string>\r\n    <string name=\"notif_fallback_body\">You have a new message from FitHub.</string>\r\n\r\n    <string name=\"notif_checkpoint_title\">Weigh-in due</string>\r\n    <string name=\"notif_checkpoint_body\">It\\'s checkpoint day. Record your weight to keep your progress up to date.</string>\r\n\r\n    <string name=\"notif_rationale_title\">Stay on track</string>\r\n    <string name=\"notif_rationale_body\">Enable notifications to get weigh-in reminders, streak alerts and weekly challenge updates.</string>\r\n    <string name=\"notif_rationale_accept\">Enable</string>\r\n    <string name=\"notif_rationale_decline\">Not now</string>\r\n\r\n    <string name=\"notif_diag_title\">Notification diagnostics</string>\r\n    <string name=\"notif_diag_token_label\">FCM token</string>\r\n    <string name=\"notif_diag_token_hint\">Tap to copy</string>\r\n    <string name=\"notif_diag_token_copied\">Copied to clipboard</string>\r\n    <string name=\"notif_diag_token_missing\">Not yet available. Try again in a moment.</string>\r\n    <string name=\"notif_diag_send_test\">Send test notification</string>\r\n    <string name=\"notif_diag_perm_granted\">Permission: granted</string>\r\n    <string name=\"notif_diag_perm_denied\">Permission: denied</string>\r\n    <string name=\"notif_diag_perm_open_settings\">Open notification settings</string>\r\n    <string name=\"notif_diag_test_sent\">Test notification sent</string>\r\n    <string name=\"notif_diag_test_requires_perm\">Grant notification permission first.</string>\r\n\r\n    <string name=\"notif_enabled_message\">Notifications enabled. You may receive reminders and updates.</string>\r\n    <string name=\"notif_disabled_message\">Notifications disabled. You can re-enable them any time.</string>\r\n    <string name=\"notif_permission_denied_message\">Notification permission denied. Enable it in system settings to receive reminders.</string>\r\n\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/res/values/strings.xml	(date 1793750196887)
+@@ -117,4 +117,19 @@
+     <string name="notif_disabled_message">Notifications disabled. You can re-enable them any time.</string>
+     <string name="notif_permission_denied_message">Notification permission denied. Enable it in system settings to receive reminders.</string>
+ 
++    <!-- ========================================== -->
++    <!-- PHASE 5 : Language picker                  -->
++    <!-- ========================================== -->
++    <string name="settings_language_title">Language</string>
++    <string name="settings_language_current">Current : %1$s</string>
++    <string name="settings_language_change">Change &gt;</string>
++    <string name="settings_language_dialog_title">Choose your language</string>
++
++    <!--
++      TEMPORARY STUB — delete after regenerating google-services.json
++      (see Phase 2 manual steps). Only needed while the Google provider is
++      not enabled in Firebase. Delete this comment + the string once you
++      re-download google-services.json. -->
++    <string name="default_web_client_id" translatable="false">STUB_REPLACE_AFTER_GOOGLE_PROVIDER_ENABLED</string>
++
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/com/example/fithub/ui/screens/settings/SettingsViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fithub.ui.screens.settings\r\n\r\nimport android.content.Context\r\nimport android.util.Log\r\nimport androidx.lifecycle.ViewModel\r\nimport androidx.lifecycle.viewModelScope\r\nimport com.example.fithub.core.BiometricAvailability\r\nimport com.example.fithub.core.BiometricHelper\r\nimport com.example.fithub.core.LogTags\r\nimport com.example.fithub.core.ServiceLocator\r\nimport com.example.fithub.core.SessionManager\r\nimport com.example.fithub.core.await\r\nimport com.example.fithub.core.notifications.NotificationHelper\r\nimport com.google.firebase.messaging.FirebaseMessaging\r\nimport kotlinx.coroutines.flow.MutableStateFlow\r\nimport kotlinx.coroutines.flow.StateFlow\r\nimport kotlinx.coroutines.flow.asStateFlow\r\nimport kotlinx.coroutines.flow.first\r\nimport kotlinx.coroutines.launch\r\n\r\ndata class SettingsUiState(\r\n    val pushNotifications: Boolean = true,\r\n    val language: String = \"ENGLISH\",\r\n    val biometricEnabled: Boolean = false,\r\n    val biometricAvailable: Boolean = true,\r\n    val lastActionMessage: String? = null,\r\n    val fcmToken: String? = null\r\n)\r\n\r\nclass SettingsViewModel : ViewModel() {\r\n\r\n    private val prefs = ServiceLocator.preferencesManager\r\n\r\n    private val _uiState = MutableStateFlow(SettingsUiState())\r\n    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()\r\n\r\n    init {\r\n        viewModelScope.launch {\r\n            prefs.pushNotificationsEnabled.collect { enabled ->\r\n                _uiState.value = _uiState.value.copy(pushNotifications = enabled)\r\n            }\r\n        }\r\n        viewModelScope.launch {\r\n            prefs.language.collect { lang ->\r\n                _uiState.value = _uiState.value.copy(language = lang)\r\n            }\r\n        }\r\n        viewModelScope.launch {\r\n            prefs.biometricEnabled.collect { enabled ->\r\n                _uiState.value = _uiState.value.copy(biometricEnabled = enabled)\r\n            }\r\n        }\r\n        viewModelScope.launch {\r\n            prefs.fcmToken.collect { token ->\r\n                _uiState.value = _uiState.value.copy(fcmToken = token)\r\n            }\r\n        }\r\n    }\r\n\r\n    fun refreshAvailability(context: Context) {\r\n        val availability = BiometricHelper.canAuthenticate(context)\r\n        _uiState.value = _uiState.value.copy(\r\n            biometricAvailable = availability == BiometricAvailability.Available\r\n        )\r\n    }\r\n\r\n    fun toggleNotifications(enabled: Boolean) {\r\n        viewModelScope.launch {\r\n            prefs.setPushNotifications(enabled)\r\n            val lang = prefs.language.first()\r\n            val langCode = if (lang.lowercase().startsWith(\"english\")) \"en\" else lang.lowercase().take(2)\r\n            try {\r\n                val messaging = FirebaseMessaging.getInstance()\r\n                if (enabled) {\r\n                    messaging.subscribeToTopic(\"fithub_all\").await()\r\n                    messaging.subscribeToTopic(\"lang_$langCode\").await()\r\n                    Log.i(LogTags.PUSH, \"Subscribed to topics: fithub_all, lang_$langCode\")\r\n                } else {\r\n                    messaging.unsubscribeFromTopic(\"fithub_all\").await()\r\n                    messaging.unsubscribeFromTopic(\"lang_$langCode\").await()\r\n                    Log.i(LogTags.PUSH, \"Unsubscribed from topics\")\r\n                }\r\n            } catch (e: Exception) {\r\n                Log.e(LogTags.PUSH, \"Topic subscription failed\", e)\r\n            }\r\n        }\r\n    }\r\n\r\n    fun setLanguage(language: String) {\r\n        viewModelScope.launch { prefs.setLanguage(language) }\r\n    }\r\n\r\n    fun setBiometric(enabled: Boolean) {\r\n        viewModelScope.launch {\r\n            prefs.setBiometric(enabled)\r\n            val uid = SessionManager.currentUserId\r\n            if (uid != null) {\r\n                val profile = ServiceLocator.userRepository.getProfile(uid)\r\n                if (profile != null) {\r\n                    ServiceLocator.userRepository.updateProfile(profile.copy(biometricEnabled = enabled))\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    fun sendTestNotification(context: Context) {\r\n        NotificationHelper.showNotification(\r\n            context = context,\r\n            notificationId = (System.currentTimeMillis() % Int.MAX_VALUE).toInt(),\r\n            title = \"Test Notification\",\r\n            body = \"This is a test notification from the FitHub diagnostics card.\",\r\n            route = com.example.fithub.ui.navigation.Screen.DASHBOARD\r\n        )\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsViewModel.kt b/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsViewModel.kt
+--- a/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsViewModel.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/ui/screens/settings/SettingsViewModel.kt	(date 1793750079546)
+@@ -2,6 +2,7 @@
+ 
+ import android.content.Context
+ import android.util.Log
++import androidx.fragment.app.FragmentActivity
+ import androidx.lifecycle.ViewModel
+ import androidx.lifecycle.viewModelScope
+ import com.example.fithub.core.BiometricAvailability
+@@ -10,6 +11,8 @@
+ import com.example.fithub.core.ServiceLocator
+ import com.example.fithub.core.SessionManager
+ import com.example.fithub.core.await
++import com.example.fithub.core.i18n.LocaleCodes
++import com.example.fithub.core.i18n.LocaleManager
+ import com.example.fithub.core.notifications.NotificationHelper
+ import com.google.firebase.messaging.FirebaseMessaging
+ import kotlinx.coroutines.flow.MutableStateFlow
+@@ -20,7 +23,8 @@
+ 
+ data class SettingsUiState(
+     val pushNotifications: Boolean = true,
+-    val language: String = "ENGLISH",
++    val language: String = LocaleCodes.DEFAULT,
++    val languageNativeName: String = LocaleCodes.nativeName(LocaleCodes.DEFAULT),
+     val biometricEnabled: Boolean = false,
+     val biometricAvailable: Boolean = true,
+     val lastActionMessage: String? = null,
+@@ -41,8 +45,12 @@
+             }
+         }
+         viewModelScope.launch {
+-            prefs.language.collect { lang ->
+-                _uiState.value = _uiState.value.copy(language = lang)
++            prefs.language.collect { code ->
++                val normalised = LocaleCodes.normalise(code)
++                _uiState.value = _uiState.value.copy(
++                    language = normalised,
++                    languageNativeName = LocaleCodes.nativeName(normalised)
++                )
+             }
+         }
+         viewModelScope.launch {
+@@ -67,8 +75,7 @@
+     fun toggleNotifications(enabled: Boolean) {
+         viewModelScope.launch {
+             prefs.setPushNotifications(enabled)
+-            val lang = prefs.language.first()
+-            val langCode = if (lang.lowercase().startsWith("english")) "en" else lang.lowercase().take(2)
++            val langCode = LocaleCodes.normalise(prefs.language.first())
+             try {
+                 val messaging = FirebaseMessaging.getInstance()
+                 if (enabled) {
+@@ -86,8 +93,14 @@
+         }
+     }
+ 
+-    fun setLanguage(language: String) {
+-        viewModelScope.launch { prefs.setLanguage(language) }
++    /**
++     * Change the app language. Persists synchronously + DataStore asynchronously
++     * (via [LocaleManager.apply]) and then recreates the activity so resources
++     * reload from the new locale.
++     */
++    fun applyLocale(activity: FragmentActivity, code: String) {
++        Log.i(LogTags.LOCALE, "SettingsViewModel.applyLocale($code)")
++        LocaleManager.apply(activity, code)
+     }
+ 
+     fun setBiometric(enabled: Boolean) {
+Index: app/src/main/java/com/example/fithub/core/i18n/LocaleCodes.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/core/i18n/LocaleCodes.kt b/app/src/main/java/com/example/fithub/core/i18n/LocaleCodes.kt
+new file mode 100644
+--- /dev/null	(date 1793749801920)
++++ b/app/src/main/java/com/example/fithub/core/i18n/LocaleCodes.kt	(date 1793749801920)
+@@ -0,0 +1,73 @@
++package com.example.fithub.core.i18n
++
++/**
++ * Reference: https://developer.android.com/guide/topics/resources/localization
++ *            https://tools.ietf.org/html/bcp47
++ * (accessed February 2026)
++ */
++object LocaleCodes {
++
++    /**
++     * Supported language entry.
++     * @param code ISO-639-1 language code, e.g. "en", "zu", "af".
++     * @param englishName shown in the *system* language picker (Android 13+).
++     * @param nativeName shown in the *in-app* picker — always in the language
++     *   itself so users recognise it regardless of the current UI language.
++     */
++    data class SupportedLocale(
++        val code: String,
++        val englishName: String,
++        val nativeName: String
++    )
++
++    /** Ordered list — index 0 is the default fallback. */
++    val SUPPORTED: List<SupportedLocale> = listOf(
++        SupportedLocale(code = "en", englishName = "English", nativeName = "English"),
++        SupportedLocale(code = "zu", englishName = "isiZulu", nativeName = "isiZulu"),
++        SupportedLocale(code = "af", englishName = "Afrikaans", nativeName = "Afrikaans")
++    )
++
++    /** Fallback ISO code. Never empty. */
++    const val DEFAULT: String = "en"
++
++    /** True when [code] is exactly one of the supported ISO codes. */
++    fun isSupported(code: String?): Boolean =
++        code != null && SUPPORTED.any { it.code == code }
++
++    /**
++     * Normalises anything the system or DataStore might hand us into one of
++     * the supported codes.
++     *  • legacy `"ENGLISH"`, `"ZULU"`, `"AFRIKAANS"` (case-insensitive) → en/zu/af
++     *  • 3-letter ISO 639-2 codes → 2-letter forms
++     *  • region suffixes (`zu-ZA`) → base language
++     *  • unknown/blank → [DEFAULT].
++     */
++    fun normalise(raw: String?): String {
++        if (raw.isNullOrBlank()) return DEFAULT
++        val trimmed = raw.trim()
++        val lower = trimmed.lowercase()
++
++        // Legacy display-name values from the prototype DataStore.
++        val fromLegacy = when {
++            lower == "english" || lower == "en" -> "en"
++            lower == "zulu" || lower == "isizulu" || lower == "zu" || lower == "zul" -> "zu"
++            lower == "afrikaans" || lower == "af" || lower == "afr" -> "af"
++            else -> null
++        }
++        if (fromLegacy != null) return fromLegacy
++
++        // Take the language part of a BCP-47 tag, e.g. `zu-ZA` → `zu`.
++        val base = lower.substringBefore('-').substringBefore('_')
++        return if (SUPPORTED.any { it.code == base }) base else DEFAULT
++    }
++
++    /** Native name for [code] (returns [DEFAULT]'s native name for unknown). */
++    fun nativeName(code: String): String =
++        SUPPORTED.firstOrNull { it.code == normalise(code) }?.nativeName
++            ?: SUPPORTED.first { it.code == DEFAULT }.nativeName
++
++    /** English name for [code] — used by the Android 13+ system picker label. */
++    fun englishName(code: String): String =
++        SUPPORTED.firstOrNull { it.code == normalise(code) }?.englishName
++            ?: SUPPORTED.first { it.code == DEFAULT }.englishName
++}
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />\r\n    <uses-permission android:name=\"android.permission.CAMERA\" />\r\n    <uses-permission android:name=\"android.permission.USE_BIOMETRIC\" />\r\n    <uses-permission android:name=\"android.permission.POST_NOTIFICATIONS\" />\r\n\r\n    <uses-feature\r\n        android:name=\"android.hardware.camera\"\r\n        android:required=\"false\" />\r\n\r\n    <application\r\n        android:name=\".FitHubApplication\"\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.FitHub\"\r\n        tools:replace=\"android:allowBackup,android:theme,android:label,android:icon\">\r\n\r\n        <!-- Phase 4: FCM service -->\r\n        <service\r\n            android:name=\".core.notifications.FitHubMessagingService\"\r\n            android:exported=\"false\">\r\n            <intent-filter>\r\n                <action android:name=\"com.google.firebase.MESSAGING_EVENT\" />\r\n            </intent-filter>\r\n        </service>\r\n\r\n        <!-- Phase 4: FCM defaults -->\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_icon\"\r\n            android:resource=\"@drawable/ic_stat_fithub\" />\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_color\"\r\n            android:resource=\"@color/fithub_notification_accent\" />\r\n        <meta-data\r\n            android:name=\"com.google.firebase.messaging.default_notification_channel_id\"\r\n            android:value=\"fithub_general\" />\r\n\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\"\r\n            android:label=\"@string/app_name\"\r\n            android:theme=\"@style/Theme.FitHub\"\r\n            android:windowSoftInputMode=\"adjustResize\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/AndroidManifest.xml	(date 1793749961214)
+@@ -19,12 +19,12 @@
+         android:fullBackupContent="@xml/backup_rules"
+         android:icon="@mipmap/ic_launcher"
+         android:label="@string/app_name"
++        android:localeConfig="@xml/locales_config"
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.FitHub"
+         tools:replace="android:allowBackup,android:theme,android:label,android:icon">
+ 
+-        <!-- Phase 4: FCM service -->
+         <service
+             android:name=".core.notifications.FitHubMessagingService"
+             android:exported="false">
+@@ -33,7 +33,6 @@
+             </intent-filter>
+         </service>
+ 
+-        <!-- Phase 4: FCM defaults -->
+         <meta-data
+             android:name="com.google.firebase.messaging.default_notification_icon"
+             android:resource="@drawable/ic_stat_fithub" />
+Index: app/src/main/java/com/example/fithub/core/sync/SyncWorker.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.fithub.core.sync\r\n\r\nimport android.content.Context\r\nimport android.util.Log\r\nimport androidx.work.Constraints\r\nimport androidx.work.CoroutineWorker\r\nimport androidx.work.ExistingWorkPolicy\r\nimport androidx.work.NetworkType\r\nimport androidx.work.OneTimeWorkRequestBuilder\r\nimport androidx.work.WorkManager\r\nimport androidx.work.WorkerParameters\r\nimport androidx.work.workDataOf\r\nimport com.example.fithub.core.LogTags\r\nimport com.example.fithub.core.SessionManager\r\nimport com.example.fithub.core.ServiceLocator\r\nimport java.util.concurrent.TimeUnit\r\n\r\n/**\r\n * Reference: https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started\r\n *            https://developer.android.com/reference/androidx/work/ExistingWorkPolicy\r\n * (accessed February 2026)\r\n */\r\nclass SyncWorker(\r\n    appContext: Context,\r\n    params: WorkerParameters\r\n) : CoroutineWorker(appContext, params) {\r\n\r\n    override suspend fun doWork(): Result {\r\n        val uid = SessionManager.currentUserId\r\n        if (uid == null) {\r\n            Log.d(LogTags.SYNC, \"SyncWorker: no session — success (nothing to do)\")\r\n            return Result.success()\r\n        }\r\n        val report = runCatching { ServiceLocator.syncManager.flush(uid) }\r\n            .onFailure { Log.e(LogTags.SYNC, \"SyncWorker flush threw\", it) }\r\n            .getOrNull()\r\n\r\n        if (report == null) return Result.retry()\r\n\r\n        return when {\r\n            report.abortedOffline -> {\r\n                Log.w(LogTags.SYNC, \"SyncWorker: offline — retry\")\r\n                Result.retry()\r\n            }\r\n            report.failed > 0 -> {\r\n                Log.w(LogTags.SYNC, \"SyncWorker: ${report.failed} failures — retry (remaining=${report.remaining})\")\r\n                Result.retry()\r\n            }\r\n            else -> {\r\n                Log.i(LogTags.SYNC, \"SyncWorker: clean (pushed=${report.pushed})\")\r\n                Result.success()\r\n            }\r\n        }\r\n    }\r\n\r\n    companion object {\r\n        private const val NAME = \"fithub_sync\"\r\n\r\n        /** Fire-and-forget enqueue with a network constraint and exponential backoff. */\r\n        fun enqueue(context: Context) {\r\n            val request = OneTimeWorkRequestBuilder<SyncWorker>()\r\n                .setConstraints(\r\n                    Constraints.Builder()\r\n                        .setRequiredNetworkType(NetworkType.CONNECTED)\r\n                        .build()\r\n                )\r\n                .setBackoffCriteria(\r\n                    androidx.work.BackoffPolicy.EXPONENTIAL,\r\n                    15L, TimeUnit.SECONDS\r\n                )\r\n                .setInputData(workDataOf(\"trigger\" to \"enqueue\"))\r\n                .build()\r\n\r\n            WorkManager.getInstance(context).enqueueUniqueWork(\r\n                NAME,\r\n                ExistingWorkPolicy.APPEND_OR_REPLACE,\r\n                request\r\n            )\r\n            Log.d(LogTags.SYNC, \"SyncWorker enqueued (unique=$NAME)\")\r\n        }\r\n    }\r\n}\r\n\r\n/**\r\n * Convenience façade the repositories call after an enqueue. Kept separate from\r\n * [SyncWorker] so that unit tests can call the repositories without depending\r\n * on WorkManager at all.\r\n */\r\nobject SyncScheduler {\r\n    fun enqueue(context: android.content.Context) = SyncWorker.enqueue(context)\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/core/sync/SyncWorker.kt b/app/src/main/java/com/example/fithub/core/sync/SyncWorker.kt
+--- a/app/src/main/java/com/example/fithub/core/sync/SyncWorker.kt	(revision c0aaf8b7ef96e46178761d3dba51c33086753592)
++++ b/app/src/main/java/com/example/fithub/core/sync/SyncWorker.kt	(date 1793751592391)
+@@ -16,6 +16,24 @@
+ import java.util.concurrent.TimeUnit
+ 
+ /**
++ * Background sync worker.
++ *
++ * ### Note on locale (Phase 5)
++ * `CoroutineWorker` extends `ListenableWorker`, which does **not** extend
++ * `android.content.Context`. Therefore `ContextWrapper.attachBaseContext` is
++ * unavailable here — it only exists on `Context` subclasses (Activity,
++ * Service, Application, etc.). When a future worker needs a localised string,
++ * wrap [applicationContext] explicitly:
++ *
++ * ```
++ * val localised = LocaleManager.wrap(applicationContext)
++ * localised.getString(R.string.some_key)
++ * ```
++ *
++ * That is the recommended pattern per
++ * https://developer.android.com/guide/topics/resources/app-languages
++ * (accessed February 2026).
++ *
+  * Reference: https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started
+  *            https://developer.android.com/reference/androidx/work/ExistingWorkPolicy
+  * (accessed February 2026)
+@@ -56,7 +74,6 @@
+     companion object {
+         private const val NAME = "fithub_sync"
+ 
+-        /** Fire-and-forget enqueue with a network constraint and exponential backoff. */
+         fun enqueue(context: Context) {
+             val request = OneTimeWorkRequestBuilder<SyncWorker>()
+                 .setConstraints(
+@@ -81,11 +98,6 @@
+     }
+ }
+ 
+-/**
+- * Convenience façade the repositories call after an enqueue. Kept separate from
+- * [SyncWorker] so that unit tests can call the repositories without depending
+- * on WorkManager at all.
+- */
+ object SyncScheduler {
+-    fun enqueue(context: android.content.Context) = SyncWorker.enqueue(context)
++    fun enqueue(context: Context) = SyncWorker.enqueue(context)
+ }
+\ No newline at end of file

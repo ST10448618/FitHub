@@ -13,20 +13,13 @@ import com.example.fithub.R
 import com.example.fithub.core.LogTags
 import com.example.fithub.core.SessionManager
 import com.example.fithub.core.ServiceLocator
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.domain.model.CheckpointSchedule
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 /**
- * Daily worker that fires the "weigh-in due" reminder once the schedule says
- * a checkpoint is due. Only runs when a checkpoint reminder is enabled **and**
- * push notifications are on in-app.
- *
- * Scheduling policy: this worker is a **periodic daily check**. Repetition is
- * suppressed by comparing `schedule.nextCheckpointDate` to today and by only
- * posting a notification when the date has been reached (or passed).
- *
  * Reference: https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started
  * (accessed February 2026)
  */
@@ -64,12 +57,16 @@ class CheckpointReminderWorker(
             Log.d(LogTags.PUSH, "CheckpointReminder: next=${schedule.nextCheckpointDate} future — success")
             return Result.success()
         }
+
+        // Localised strings via a wrapped context — safe inside a worker.
+        val localisedContext = LocaleManager.wrap(applicationContext)
+
         NotificationHelper.showNotification(
-            context = applicationContext,
+            context = localisedContext,
             channelId = NotificationChannels.REMINDERS,
             notificationId = NOTIFICATION_ID,
-            title = applicationContext.getString(R.string.notif_checkpoint_title),
-            body = applicationContext.getString(R.string.notif_checkpoint_body),
+            title = localisedContext.getString(R.string.notif_checkpoint_title),
+            body = localisedContext.getString(R.string.notif_checkpoint_body),
             route = com.example.fithub.ui.navigation.Screen.BODY_WEIGHT
         )
         Log.i(LogTags.PUSH, "CheckpointReminder posted for ${schedule.nextCheckpointDate}")
@@ -81,11 +78,6 @@ class CheckpointReminderWorker(
         private const val NOTIFICATION_ID = 3001
         private const val INTERVAL_HOURS = 24L
 
-        /**
-         * Schedule daily when reminders are enabled. Idempotent: called on
-         * every `save(...)` and on cold start. `UPDATE` replaces the existing
-         * work if the constraints haven't changed, no extra worker spawns.
-         */
         fun schedule(context: Context) {
             val request = PeriodicWorkRequestBuilder<CheckpointReminderWorker>(
                 INTERVAL_HOURS, TimeUnit.HOURS
@@ -104,16 +96,11 @@ class CheckpointReminderWorker(
             Log.d(LogTags.PUSH, "CheckpointReminderWorker scheduled (unique=$UNIQUE_NAME)")
         }
 
-        /** Cancel when reminders are disabled so the platform stops waking us. */
         fun cancel(context: Context) {
             WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_NAME)
             Log.d(LogTags.PUSH, "CheckpointReminderWorker cancelled (unique=$UNIQUE_NAME)")
         }
 
-        /**
-         * Convenience: `schedule` if [scheduleConfig.remindersEnabled], else `cancel`.
-         * Called from [com.example.fithub.data.repository.CheckpointRepositoryImpl.save].
-         */
         fun reschedule(context: Context, scheduleConfig: CheckpointSchedule) {
             if (scheduleConfig.remindersEnabled) schedule(context) else cancel(context)
         }

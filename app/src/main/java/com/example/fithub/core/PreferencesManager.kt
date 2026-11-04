@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.fithub.core.i18n.LocaleCodes
+import com.example.fithub.core.i18n.LocaleManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -18,7 +20,6 @@ class PreferencesManager(private val context: Context) {
         val LANGUAGE = stringPreferencesKey("language")
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         val CLAIMED_REWARDS = stringPreferencesKey("claimed_rewards")
-        // Phase 4
         val FCM_TOKEN = stringPreferencesKey("fcm_token")
         val NOTIFICATION_RATIONALE_SHOWN = booleanPreferencesKey("notification_rationale_shown")
     }
@@ -27,19 +28,12 @@ class PreferencesManager(private val context: Context) {
         .getSharedPreferences(SECURITY_PREFS_NAME, Context.MODE_PRIVATE)
 
     val claimedRewards: Flow<Set<String>> = context.dataStore.data.map { prefs ->
-        prefs[Keys.CLAIMED_REWARDS]
-            ?.split(",")
-            ?.filter { it.isNotBlank() }
-            ?.toSet()
-            ?: emptySet()
+        prefs[Keys.CLAIMED_REWARDS]?.split(",")?.filter { it.isNotBlank() }?.toSet() ?: emptySet()
     }
 
     suspend fun addClaimedReward(rewardId: String) {
         context.dataStore.edit { prefs ->
-            val current = prefs[Keys.CLAIMED_REWARDS]
-                ?.split(",")
-                ?.filter { it.isNotBlank() }
-                .orEmpty()
+            val current = prefs[Keys.CLAIMED_REWARDS]?.split(",")?.filter { it.isNotBlank() }.orEmpty()
             val updated = (current + rewardId).distinct()
             prefs[Keys.CLAIMED_REWARDS] = updated.joinToString(",")
         }
@@ -48,13 +42,21 @@ class PreferencesManager(private val context: Context) {
     val pushNotificationsEnabled: Flow<Boolean> =
         context.dataStore.data.map { it[Keys.PUSH_NOTIFICATIONS] ?: true }
 
+    /**
+     * Language as a canonical ISO code (`en`, `zu`, `af`).
+     *
+     * Reads from DataStore (source of truth) but the value is normalised so
+     * that callers never see legacy `"ENGLISH"`/`"ZULU"`/`"AFRIKAANS"` values.
+     * New writes via [setLanguage] always store the canonical form.
+     */
     val language: Flow<String> =
-        context.dataStore.data.map { it[Keys.LANGUAGE] ?: "ENGLISH" }
+        context.dataStore.data.map {
+            LocaleCodes.normalise(it[Keys.LANGUAGE])
+        }
 
     val biometricEnabled: Flow<Boolean> =
         context.dataStore.data.map { it[Keys.BIOMETRIC_ENABLED] ?: false }
 
-    // Phase 4
     val fcmToken: Flow<String?> =
         context.dataStore.data.map { it[Keys.FCM_TOKEN] }
 
@@ -65,8 +67,21 @@ class PreferencesManager(private val context: Context) {
         context.dataStore.edit { it[Keys.PUSH_NOTIFICATIONS] = enabled }
     }
 
+    /**
+     * Persists the language to DataStore AND to the synchronous mirror read
+     * by [LocaleManager.wrap] inside `attachBaseContext`.
+     *
+     * The mirror write is synchronous (`apply()` — cheap, asynchronous disk
+     * flush) so the **next** cold start picks up the new language even if the
+     * DataStore actor hasn't fully committed. Order matters: mirror first so a
+     * crash between the two still leaves the app in the correct language on
+     * restart.
+     */
     suspend fun setLanguage(language: String) {
-        context.dataStore.edit { it[Keys.LANGUAGE] = language }
+        val normalised = LocaleCodes.normalise(language)
+        LocaleManager.persistSync(context, normalised)
+        context.dataStore.edit { it[Keys.LANGUAGE] = normalised }
+        Log.i(LogTags.LOCALE, "PreferencesManager.setLanguage($normalised)")
     }
 
     suspend fun setBiometric(enabled: Boolean) {

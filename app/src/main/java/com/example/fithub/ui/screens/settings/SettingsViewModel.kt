@@ -2,6 +2,7 @@ package com.example.fithub.ui.screens.settings
 
 import android.content.Context
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fithub.core.BiometricAvailability
@@ -10,6 +11,8 @@ import com.example.fithub.core.LogTags
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
 import com.example.fithub.core.await
+import com.example.fithub.core.i18n.LocaleCodes
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.core.notifications.NotificationHelper
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +23,8 @@ import kotlinx.coroutines.launch
 
 data class SettingsUiState(
     val pushNotifications: Boolean = true,
-    val language: String = "ENGLISH",
+    val language: String = LocaleCodes.DEFAULT,
+    val languageNativeName: String = LocaleCodes.nativeName(LocaleCodes.DEFAULT),
     val biometricEnabled: Boolean = false,
     val biometricAvailable: Boolean = true,
     val lastActionMessage: String? = null,
@@ -41,8 +45,12 @@ class SettingsViewModel : ViewModel() {
             }
         }
         viewModelScope.launch {
-            prefs.language.collect { lang ->
-                _uiState.value = _uiState.value.copy(language = lang)
+            prefs.language.collect { code ->
+                val normalised = LocaleCodes.normalise(code)
+                _uiState.value = _uiState.value.copy(
+                    language = normalised,
+                    languageNativeName = LocaleCodes.nativeName(normalised)
+                )
             }
         }
         viewModelScope.launch {
@@ -67,8 +75,7 @@ class SettingsViewModel : ViewModel() {
     fun toggleNotifications(enabled: Boolean) {
         viewModelScope.launch {
             prefs.setPushNotifications(enabled)
-            val lang = prefs.language.first()
-            val langCode = if (lang.lowercase().startsWith("english")) "en" else lang.lowercase().take(2)
+            val langCode = LocaleCodes.normalise(prefs.language.first())
             try {
                 val messaging = FirebaseMessaging.getInstance()
                 if (enabled) {
@@ -86,8 +93,14 @@ class SettingsViewModel : ViewModel() {
         }
     }
 
-    fun setLanguage(language: String) {
-        viewModelScope.launch { prefs.setLanguage(language) }
+    /**
+     * Change the app language. Persists synchronously + DataStore asynchronously
+     * (via [LocaleManager.apply]) and then recreates the activity so resources
+     * reload from the new locale.
+     */
+    fun applyLocale(activity: FragmentActivity, code: String) {
+        Log.i(LogTags.LOCALE, "SettingsViewModel.applyLocale($code)")
+        LocaleManager.apply(activity, code)
     }
 
     fun setBiometric(enabled: Boolean) {

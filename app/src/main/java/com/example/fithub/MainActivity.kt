@@ -1,5 +1,6 @@
 package com.example.fithub
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,13 +11,26 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.fithub.core.LogTags
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.core.notifications.NotificationHelper
 import com.example.fithub.core.notifications.PendingRoute
 import com.example.fithub.ui.navigation.FitHubNavGraph
 import com.example.fithub.ui.navigation.Screen
 import com.example.fithub.ui.theme.FitHubTheme
 
+/**
+ * Reference: https://developer.android.com/guide/topics/resources/app-languages#app-specific-languages
+ * (accessed February 2026)
+ */
 class MainActivity : androidx.fragment.app.FragmentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        // Wraps the base context with the current language BEFORE onCreate.
+        // If this file is ever changed to AppCompat, delete this override — the
+        // AppCompatDelegate handles it there.
+        super.attachBaseContext(LocaleManager.wrap(newBase))
+        Log.d(LogTags.LOCALE, "MainActivity.attachBaseContext applied")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

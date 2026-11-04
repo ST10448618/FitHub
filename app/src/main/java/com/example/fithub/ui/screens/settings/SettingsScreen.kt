@@ -42,6 +42,7 @@ import com.example.fithub.R
 import com.example.fithub.core.BiometricHelper
 import com.example.fithub.core.BiometricResult
 import com.example.fithub.core.LogTags
+import com.example.fithub.core.i18n.LocaleCodes
 import com.example.fithub.ui.components.AppHeader
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SmallActionButton
@@ -55,13 +56,10 @@ fun SettingsScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showUnavailableDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            viewModel.toggleNotifications(true)
-        } else {
-            viewModel.toggleNotifications(false)
-        }
+        viewModel.toggleNotifications(isGranted)
     }
 
     LaunchedEffect(Unit) { viewModel.refreshAvailability(context) }
@@ -111,25 +109,28 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // Language (Phase 5 will implement)
+            // Language row — Phase 5
             SettingsRow(
                 icon = { Icon(Icons.Filled.Language, contentDescription = null, tint = FitHubPrimary) },
-                title = "Language",
-                subtitle = "Current : ${state.language}",
+                title = stringResource(R.string.settings_language_title),
+                subtitle = stringResource(R.string.settings_language_current, state.languageNativeName),
                 trailing = {
                     Text(
-                        "Change >",
+                        stringResource(R.string.settings_language_change),
                         style = MaterialTheme.typography.labelLarge,
                         color = FitHubPrimary,
                         fontWeight = FontWeight.Bold
                     )
                 },
-                onClick = { /* TODO(Phase 5) */ }
+                onClick = {
+                    Log.i(LogTags.LOCALE, "Settings: language picker opened (current=${state.language})")
+                    showLanguageDialog = true
+                }
             )
 
             Spacer(Modifier.height(12.dp))
 
-            // Fingerprint login
+            // Fingerprint
             SettingsRow(
                 icon = { Icon(Icons.Filled.Fingerprint, contentDescription = null, tint = FitHubPrimary) },
                 title = stringResource(R.string.settings_fingerprint_title),
@@ -176,7 +177,7 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // Phase 4: Diagnostics Card
+            // Diagnostics
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     stringResource(R.string.notif_diag_title),
@@ -241,6 +242,61 @@ fun SettingsScreen(
             }
         )
     }
+
+    if (showLanguageDialog) {
+        LanguagePickerDialog(
+            currentCode = state.language,
+            onDismiss = { showLanguageDialog = false },
+            onSelect = { code ->
+                showLanguageDialog = false
+                val activity = context as? FragmentActivity
+                if (activity != null) {
+                    viewModel.applyLocale(activity, code)
+                } else {
+                    Log.w(LogTags.LOCALE, "Language select: no FragmentActivity host")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+private fun LanguagePickerDialog(
+    currentCode: String,
+    onDismiss: () -> Unit,
+    onSelect: (String) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.settings_language_dialog_title)) },
+        text = {
+            Column {
+                LocaleCodes.SUPPORTED.forEach { entry ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelect(entry.code) }
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = currentCode == entry.code,
+                            onClick = { onSelect(entry.code) }
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = entry.nativeName,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = TextPrimary
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.generic_cancel)) }
+        }
+    )
 }
 
 @Composable

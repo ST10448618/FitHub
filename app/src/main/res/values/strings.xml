@@ -117,4 +117,19 @@
     <string name="notif_disabled_message">Notifications disabled. You can re-enable them any time.</string>
     <string name="notif_permission_denied_message">Notification permission denied. Enable it in system settings to receive reminders.</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 5 : Language picker                  -->
+    <!-- ========================================== -->
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_current">Current : %1$s</string>
+    <string name="settings_language_change">Change &gt;</string>
+    <string name="settings_language_dialog_title">Choose your language</string>
+
+    <!--
+      TEMPORARY STUB — delete after regenerating google-services.json
+      (see Phase 2 manual steps). Only needed while the Google provider is
+      not enabled in Firebase. Delete this comment + the string once you
+      re-download google-services.json. -->
+    <string name="default_web_client_id" translatable="false">STUB_REPLACE_AFTER_GOOGLE_PROVIDER_ENABLED</string>
+
 </resources>

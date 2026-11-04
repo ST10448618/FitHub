@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Phase 5 : Language picker (isiZulu) -->
+    <string name="settings_language_title">Ulimi</string>
+    <string name="settings_language_current">Okwamanje : %1$s</string>
+    <string name="settings_language_change">Shintsha &gt;</string>
+    <string name="settings_language_dialog_title">Khetha ulimi lwakho</string>
+</resources>

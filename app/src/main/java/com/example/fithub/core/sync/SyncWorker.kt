@@ -16,6 +16,24 @@ import com.example.fithub.core.ServiceLocator
 import java.util.concurrent.TimeUnit
 
 /**
+ * Background sync worker.
+ *
+ * ### Note on locale (Phase 5)
+ * `CoroutineWorker` extends `ListenableWorker`, which does **not** extend
+ * `android.content.Context`. Therefore `ContextWrapper.attachBaseContext` is
+ * unavailable here — it only exists on `Context` subclasses (Activity,
+ * Service, Application, etc.). When a future worker needs a localised string,
+ * wrap [applicationContext] explicitly:
+ *
+ * ```
+ * val localised = LocaleManager.wrap(applicationContext)
+ * localised.getString(R.string.some_key)
+ * ```
+ *
+ * That is the recommended pattern per
+ * https://developer.android.com/guide/topics/resources/app-languages
+ * (accessed February 2026).
+ *
  * Reference: https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started
  *            https://developer.android.com/reference/androidx/work/ExistingWorkPolicy
  * (accessed February 2026)
@@ -56,7 +74,6 @@ class SyncWorker(
     companion object {
         private const val NAME = "fithub_sync"
 
-        /** Fire-and-forget enqueue with a network constraint and exponential backoff. */
         fun enqueue(context: Context) {
             val request = OneTimeWorkRequestBuilder<SyncWorker>()
                 .setConstraints(
@@ -81,11 +98,6 @@ class SyncWorker(
     }
 }
 
-/**
- * Convenience façade the repositories call after an enqueue. Kept separate from
- * [SyncWorker] so that unit tests can call the repositories without depending
- * on WorkManager at all.
- */
 object SyncScheduler {
-    fun enqueue(context: android.content.Context) = SyncWorker.enqueue(context)
+    fun enqueue(context: Context) = SyncWorker.enqueue(context)
 }

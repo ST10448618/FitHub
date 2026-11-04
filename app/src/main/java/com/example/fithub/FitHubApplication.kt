@@ -1,10 +1,13 @@
 package com.example.fithub
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import com.example.fithub.core.LogTags
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
+import com.example.fithub.core.i18n.LocaleCodes
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.core.notifications.NotificationHelper
 import com.example.fithub.core.sync.SyncWorker
 import com.google.firebase.FirebaseApp
@@ -23,6 +26,17 @@ class FitHubApplication : Application() {
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    /**
+     * Phase 5: apply the user's chosen language to the application context so
+     * that [getString] inside services and workers (notifications, channel
+     * names, reminder text) uses the correct locale. Runs before `onCreate`,
+     * which is essential — `NotificationHelper.createChannels` in `onCreate`
+     * reads channel names from the resources.
+     */
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleManager.wrap(base))
+    }
+
     override fun onCreate() {
         super.onCreate()
         Log.i(LogTags.APP, "Application.onCreate — process start")
@@ -30,10 +44,15 @@ class FitHubApplication : Application() {
         FirebaseApp.initializeApp(this)
         ServiceLocator.init(this)
 
-        // Phase 4: create notification channels early so FCM can use them
+        // Phase 5: seed the sync mirror for the language if this is the first
+        // launch after upgrade. Guarded internally; runs at most once.
+        LocaleManager.migrateOnFirstRun(this) {
+            ServiceLocator.preferencesManager.language.first()
+        }
+        Log.i(LogTags.LOCALE, "Current app locale = ${LocaleManager.currentCode(this)}")
+
         NotificationHelper.createChannels(this)
 
-        // Session policy
         val lockEnabled = ServiceLocator.preferencesManager.isBiometricLockEnabledSync()
         val existingUid = FirebaseAuth.getInstance().currentUser?.uid
         if (lockEnabled && existingUid != null) {
@@ -54,10 +73,12 @@ class FitHubApplication : Application() {
 
             startPhase3SyncTriggers()
 
-            // Phase 4: ensure topics are subscribed if the user opted in
+            // Phase 4: topics (language code now uses LocaleCodes, not the raw
+            // DataStore value — keeps topics aligned with the current locale).
             if (ServiceLocator.preferencesManager.pushNotificationsEnabled.first()) {
-                val lang = ServiceLocator.preferencesManager.language.first()
-                val langCode = if (lang.lowercase().startsWith("english")) "en" else lang.lowercase().take(2)
+                val langCode = LocaleCodes.normalise(
+                    LocaleManager.currentCode(this@FitHubApplication)
+                )
                 FirebaseMessaging.getInstance().subscribeToTopic("fithub_all")
                 FirebaseMessaging.getInstance().subscribeToTopic("lang_$langCode")
                 Log.i(LogTags.PUSH, "Cold start subscribed to topics fithub_all, lang_$langCode")
