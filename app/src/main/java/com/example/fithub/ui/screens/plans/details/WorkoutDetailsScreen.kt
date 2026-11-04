@@ -7,11 +7,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,15 +22,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.fithub.R
 import com.example.fithub.core.WorkoutImageMapper
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun WorkoutDetailsScreen(
@@ -52,7 +53,10 @@ fun WorkoutDetailsScreen(
     val plan = state.plan
     if (plan == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(state.errorMessage ?: "Workout not found.")
+            Text(
+                state.errorMessage ?: stringResource(R.string.workout_details_not_found),
+                color = TextSecondary
+            )
         }
         return
     }
@@ -82,9 +86,7 @@ fun WorkoutDetailsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
-                            Brush.verticalGradient(
-                                listOf(FitHubMidBlue, FitHubPrimary)
-                            )
+                            Brush.verticalGradient(listOf(FitHubMidBlue, FitHubPrimary))
                         ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -101,8 +103,8 @@ fun WorkoutDetailsScreen(
                 modifier = Modifier.padding(8.dp)
             ) {
                 Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.common_back),
                     tint = Color.White
                 )
             }
@@ -125,36 +127,40 @@ fun WorkoutDetailsScreen(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                plan.description.ifBlank { "No description." },
+                plan.description.ifBlank { stringResource(R.string.workout_details_no_description) },
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary
             )
 
             Spacer(Modifier.height(14.dp))
 
-            // Difficulty + equipment chips
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                ChipLabel(difficultyLabel(plan.difficulty.name))
-                ChipLabel(if (plan.equipment.isBlank()) "No Equipment" else plan.equipment)
+                ChipLabel(plan.difficulty.localized())
+                ChipLabel(
+                    if (plan.equipment.isBlank()) stringResource(R.string.workout_details_no_equipment)
+                    else plan.equipment
+                )
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // Primary action
             if (!plan.isVerified || plan.isSaved) {
                 PrimaryButton(
-                    text = "▶  Start Plan",
+                    text = "▶  " + stringResource(R.string.workout_details_start_plan),
                     onClick = { onStartSession(plan.id) }
                 )
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     PrimaryButton(
-                        text = "▶  Start Plan",
+                        text = "▶  " + stringResource(R.string.workout_details_start_plan),
                         onClick = { onStartSession(plan.id) },
                         modifier = Modifier.weight(1f)
                     )
                     SecondaryButton(
-                        text = if (state.isSaving) "Saving…" else "Save",
+                        text = stringResource(
+                            if (state.isSaving) R.string.workout_details_saving
+                            else R.string.workout_details_save
+                        ),
                         onClick = viewModel::savePlan,
                         enabled = !state.isSaving,
                         modifier = Modifier.weight(1f)
@@ -164,10 +170,9 @@ fun WorkoutDetailsScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // Plan details grid
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Plan Details",
+                    stringResource(R.string.workout_details_plan_details),
                     style = MaterialTheme.typography.titleSmall,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
@@ -176,14 +181,14 @@ fun WorkoutDetailsScreen(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     DetailCell(
                         icon = { Icon(Icons.Filled.LocalFireDepartment, null, tint = FitHubPrimary) },
-                        label = "Calories Burnt",
-                        value = "${plan.estimatedActivityKcal} calories",
+                        label = stringResource(R.string.workout_details_calories_burnt),
+                        value = stringResource(R.string.workout_details_calories_format, plan.estimatedActivityKcal),
                         modifier = Modifier.weight(1f)
                     )
                     DetailCell(
                         icon = { Icon(Icons.Filled.Timer, null, tint = FitHubPrimary) },
-                        label = "Session Length",
-                        value = "${plan.estimatedDurationMinutes} mins",
+                        label = stringResource(R.string.workout_details_session_length),
+                        value = stringResource(R.string.workout_details_mins_format, plan.estimatedDurationMinutes),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -191,14 +196,15 @@ fun WorkoutDetailsScreen(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     DetailCell(
                         icon = { Icon(Icons.Filled.FitnessCenter, null, tint = FitHubPrimary) },
-                        label = "Exercises",
-                        value = "${plan.exercises.size} rounds",
+                        label = stringResource(R.string.workout_details_exercises),
+                        value = stringResource(R.string.workout_details_rounds_format, plan.exercises.size),
                         modifier = Modifier.weight(1f)
                     )
                     DetailCell(
                         icon = { Icon(Icons.Filled.BookmarkBorder, null, tint = FitHubPrimary) },
-                        label = "Requirements",
-                        value = if (plan.equipment.isBlank()) "None" else plan.equipment,
+                        label = stringResource(R.string.workout_details_requirements),
+                        value = if (plan.equipment.isBlank()) stringResource(R.string.workout_details_none)
+                        else plan.equipment,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -207,7 +213,7 @@ fun WorkoutDetailsScreen(
             Spacer(Modifier.height(20.dp))
 
             Text(
-                "Rounds",
+                stringResource(R.string.workout_details_rounds_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -219,8 +225,7 @@ fun WorkoutDetailsScreen(
                 ExerciseRow(
                     index = idx + 1,
                     name = ex.exerciseName,
-                    category = ex.category.name.lowercase()
-                        .replaceFirstChar { it.uppercase() },
+                    category = ex.category.localized(),
                     targetReps = ex.targetReps,
                     targetDurationSeconds = ex.targetDurationSeconds
                 )
@@ -325,15 +330,15 @@ private fun ExerciseRow(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                "Category : $category",
+                stringResource(R.string.workout_details_category_format, category),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
         }
         val meta = if (targetDurationSeconds > 0)
-            "${targetDurationSeconds / 60} min"
+            stringResource(R.string.workout_details_min_format, targetDurationSeconds / 60)
         else
-            "$targetReps reps"
+            stringResource(R.string.workout_details_reps_format, targetReps)
         Text(
             meta,
             style = MaterialTheme.typography.labelMedium,
@@ -341,6 +346,3 @@ private fun ExerciseRow(
         )
     }
 }
-
-private fun difficultyLabel(name: String): String =
-    name.lowercase().replaceFirstChar { it.uppercase() }

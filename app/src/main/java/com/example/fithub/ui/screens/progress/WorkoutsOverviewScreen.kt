@@ -20,11 +20,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.domain.model.WorkoutCategory
 import com.example.fithub.ui.charts.BarEntry
 import com.example.fithub.ui.charts.DonutChart
@@ -32,12 +36,8 @@ import com.example.fithub.ui.charts.DonutSegment
 import com.example.fithub.ui.charts.SimpleLineChart
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 import java.time.format.DateTimeFormatter
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import com.example.fithub.R
-import com.example.fithub.core.i18n.LocaleManager
-import com.example.fithub.util.localized
 import java.util.Locale
 
 @Composable
@@ -67,7 +67,6 @@ fun WorkoutsOverviewScreen(
         ) {
             Spacer(Modifier.height(8.dp))
 
-            // Month selector
             MonthSelector(
                 month = state.selectedMonth,
                 onPrevious = viewModel::onPreviousMonth,
@@ -76,7 +75,6 @@ fun WorkoutsOverviewScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            // Top tiles
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 MetricTile(
                     label = stringResource(R.string.workouts_overview_total_activity),
@@ -95,7 +93,6 @@ fun WorkoutsOverviewScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // Monthly Activity Goal
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     stringResource(R.string.workouts_overview_monthly_goal),
@@ -153,7 +150,6 @@ fun WorkoutsOverviewScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // Graph card with mode toggle
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -203,7 +199,6 @@ fun WorkoutsOverviewScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // Workout Habits
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     stringResource(R.string.workouts_overview_habits_title),
@@ -216,7 +211,6 @@ fun WorkoutsOverviewScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Donut showing category distribution
                 if (state.categoryBreakdown.isNotEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
@@ -237,7 +231,6 @@ fun WorkoutsOverviewScreen(
                     Spacer(Modifier.height(16.dp))
                 }
 
-                // Training Summary
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -295,7 +288,6 @@ fun WorkoutsOverviewScreen(
 
                 Spacer(Modifier.height(18.dp))
 
-                // Category list
                 if (state.categoryBreakdown.isEmpty()) {
                     Text(
                         stringResource(R.string.workouts_overview_no_categories),
@@ -466,8 +458,6 @@ private fun CategoryRow(category: WorkoutCategory, count: Int) {
         )
     }
 }
-
-// ---------- helpers ----------
 
 private fun categoryColor(category: WorkoutCategory): Color = when (category) {
     WorkoutCategory.GENERAL_FITNESS -> CategoryGeneral

@@ -22,16 +22,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.ui.components.LoadingState
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 import kotlinx.coroutines.delay
 
 @Composable
@@ -42,7 +44,6 @@ fun SessionModeScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // Drive the timer
     LaunchedEffect(state.isPaused, state.isLoading, state.isCompleting) {
         if (!state.isPaused && !state.isLoading && !state.isCompleting) {
             while (true) {
@@ -52,7 +53,6 @@ fun SessionModeScreen(
         }
     }
 
-    // Navigation effects
     LaunchedEffect(state.navigateToCompletedSessionId) {
         state.navigateToCompletedSessionId?.let(onNavigateToCompleted)
     }
@@ -68,7 +68,10 @@ fun SessionModeScreen(
     val plan = state.plan
     if (plan == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(state.errorMessage ?: "Workout not found.")
+            Text(
+                state.errorMessage ?: stringResource(R.string.session_not_found),
+                color = TextSecondary
+            )
         }
         return
     }
@@ -81,9 +84,12 @@ fun SessionModeScreen(
                 .padding(horizontal = 20.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top progress text
             Text(
-                "EXERCISE ${state.currentIndex + 1} OF ${plan.exercises.size}",
+                stringResource(
+                    R.string.session_exercise_progress_format,
+                    state.currentIndex + 1,
+                    plan.exercises.size
+                ),
                 style = MaterialTheme.typography.labelMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -92,7 +98,7 @@ fun SessionModeScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                "Session Mode",
+                stringResource(R.string.session_mode_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -100,7 +106,6 @@ fun SessionModeScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // Timer donut
             TimerDonut(
                 secondsRemaining = state.secondsRemaining,
                 totalSeconds = state.totalSecondsForCurrent
@@ -108,7 +113,6 @@ fun SessionModeScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // Bottom card with exercise + nav
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -127,7 +131,6 @@ fun SessionModeScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Current exercise info
                 state.currentExercise?.let { ex ->
                     Row(
                         modifier = Modifier
@@ -145,7 +148,7 @@ fun SessionModeScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                "${state.currentIndex + 1}",
+                                (state.currentIndex + 1).toString(),
                                 color = TextOnPrimary,
                                 fontWeight = FontWeight.Bold
                             )
@@ -159,8 +162,10 @@ fun SessionModeScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                "Category : ${ex.category.name.lowercase()
-                                    .replaceFirstChar { it.uppercase() }}",
+                                stringResource(
+                                    R.string.workout_details_category_format,
+                                    ex.category.localized()
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextSecondary
                             )
@@ -175,14 +180,20 @@ fun SessionModeScreen(
                     ) {
                         StatPill(
                             emoji = "🔄",
-                            label = "Number of Reps",
-                            value = if (state.currentIsTimeBased) "—" else "${ex.targetReps} reps",
+                            label = stringResource(R.string.session_number_of_reps),
+                            value = if (state.currentIsTimeBased)
+                                "—"
+                            else
+                                stringResource(R.string.create_step3_reps_format, ex.targetReps),
                             modifier = Modifier.weight(1f)
                         )
                         StatPill(
                             emoji = "🔥",
-                            label = "Calories Burnt",
-                            value = "${ex.estimatedActivityKcal.toInt()} cal",
+                            label = stringResource(R.string.session_calories_burnt),
+                            value = stringResource(
+                                R.string.create_step3_calories_format,
+                                ex.estimatedActivityKcal.toInt()
+                            ),
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -190,7 +201,6 @@ fun SessionModeScreen(
 
                 Spacer(Modifier.height(20.dp))
 
-                // Prev / Pause / Next
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -198,19 +208,19 @@ fun SessionModeScreen(
                 ) {
                     CircleAction(
                         icon = { Icon(Icons.Filled.KeyboardArrowLeft, null, tint = TextOnPrimary) },
-                        label = "Previous",
+                        label = stringResource(R.string.session_previous),
                         onClick = viewModel::previous,
                         enabled = state.currentIndex > 0
                     )
                     CircleAction(
                         icon = { Icon(Icons.Filled.Pause, null, tint = TextOnPrimary) },
-                        label = "Pause",
+                        label = stringResource(R.string.session_pause),
                         onClick = viewModel::pause,
                         primary = true
                     )
                     CircleAction(
                         icon = { Icon(Icons.Filled.KeyboardArrowRight, null, tint = TextOnPrimary) },
-                        label = "Next",
+                        label = stringResource(R.string.session_next),
                         onClick = viewModel::next
                     )
                 }
@@ -250,7 +260,6 @@ private fun TimerDonut(secondsRemaining: Int, totalSeconds: Int) {
             val arcSize = Size(size.width - stroke, size.height - stroke)
             val topLeft = Offset(stroke / 2, stroke / 2)
 
-            // Background track
             drawArc(
                 color = SurfaceGray.copy(alpha = 0.4f),
                 startAngle = -90f,
@@ -261,7 +270,6 @@ private fun TimerDonut(secondsRemaining: Int, totalSeconds: Int) {
                 style = Stroke(width = stroke, cap = StrokeCap.Round)
             )
 
-            // Progress arc — gradient purple → blue
             drawArc(
                 brush = Brush.sweepGradient(
                     listOf(FitHubSecondary, FitHubMidBlue, FitHubPrimary, FitHubSecondary)
@@ -285,7 +293,7 @@ private fun TimerDonut(secondsRemaining: Int, totalSeconds: Int) {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                "REMAINING",
+                stringResource(R.string.session_remaining),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextSecondary,
                 fontWeight = FontWeight.Bold
@@ -311,17 +319,8 @@ private fun StatPill(
         Text(emoji, style = MaterialTheme.typography.titleSmall)
         Spacer(Modifier.width(8.dp))
         Column {
-            Text(
-                label,
-                style = MaterialTheme.typography.labelSmall,
-                color = TextSecondary
-            )
-            Text(
-                value,
-                style = MaterialTheme.typography.titleSmall,
-                color = FitHubPrimary,
-                fontWeight = FontWeight.Bold
-            )
+            Text(label, style = MaterialTheme.typography.labelSmall, color = TextSecondary)
+            Text(value, style = MaterialTheme.typography.titleSmall, color = FitHubPrimary, fontWeight = FontWeight.Bold)
         }
     }
 }

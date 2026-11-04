@@ -13,13 +13,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.domain.model.Exercise
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun CreateWorkoutStep3Screen(
@@ -32,8 +35,8 @@ fun CreateWorkoutStep3Screen(
 
     CreateWorkoutScaffold(
         stepNumber = 3,
-        title = "Configure Exercises",
-        subtitle = "Now is where you make this your own. Adjust the Number of Reps or Minutes to your desired amount",
+        title = stringResource(R.string.create_step3_title),
+        subtitle = stringResource(R.string.create_step3_subtitle),
         onCancel = {
             viewModel.cancelAndReset()
             onBack()
@@ -42,7 +45,7 @@ fun CreateWorkoutStep3Screen(
         nextEnabled = state.draft.exercises.isNotEmpty()
     ) {
         Text(
-            "Your Workout",
+            stringResource(R.string.create_step2_your_workout),
             style = MaterialTheme.typography.titleMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold
@@ -55,8 +58,7 @@ fun CreateWorkoutStep3Screen(
             ConfigureExerciseRow(
                 index = idx + 1,
                 exerciseName = ex.exerciseName,
-                category = ex.category.name.lowercase()
-                    .replaceFirstChar { it.uppercase() },
+                category = ex.category.localized(),
                 isTimeBased = catalogEx?.isTimeBased == true,
                 reps = ex.targetReps,
                 seconds = ex.targetDurationSeconds,
@@ -73,21 +75,20 @@ fun CreateWorkoutStep3Screen(
 
         Spacer(Modifier.height(16.dp))
 
-        // Totals card
         RoundedCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "🔥  ${state.estimatedActivityKcal} Total Calories Burnt",
+                    "🔥  " + stringResource(R.string.create_step3_total_calories, state.estimatedActivityKcal),
                     style = MaterialTheme.typography.labelMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    "⏱  ~${state.estimatedDurationMinutes} minutes",
+                    "⏱  " + stringResource(R.string.create_step3_estimated_duration, state.estimatedDurationMinutes),
                     style = MaterialTheme.typography.labelMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
@@ -149,13 +150,12 @@ private fun ConfigureExerciseRow(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    "Category : $category",
+                    stringResource(R.string.workout_details_category_format, category),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextSecondary
                 )
             }
 
-            // Reorder controls
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 IconButton(
                     onClick = onMoveUp,
@@ -164,7 +164,7 @@ private fun ConfigureExerciseRow(
                 ) {
                     Icon(
                         Icons.Filled.KeyboardArrowUp,
-                        contentDescription = "Move up",
+                        contentDescription = stringResource(R.string.create_step3_move_up),
                         tint = if (canMoveUp) FitHubPrimary else SurfaceGray
                     )
                 }
@@ -175,7 +175,7 @@ private fun ConfigureExerciseRow(
                 ) {
                     Icon(
                         Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Move down",
+                        contentDescription = stringResource(R.string.create_step3_move_down),
                         tint = if (canMoveDown) FitHubPrimary else SurfaceGray
                     )
                 }
@@ -186,7 +186,7 @@ private fun ConfigureExerciseRow(
 
         if (isTimeBased) {
             Text(
-                "Duration",
+                stringResource(R.string.create_step3_duration),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
@@ -204,7 +204,7 @@ private fun ConfigureExerciseRow(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "${seconds / 60}m ${seconds % 60}s",
+                    stringResource(R.string.create_step3_duration_format, seconds / 60, seconds % 60),
                     style = MaterialTheme.typography.titleSmall,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
@@ -212,7 +212,7 @@ private fun ConfigureExerciseRow(
             }
         } else {
             Text(
-                "Repetitions",
+                stringResource(R.string.create_step3_repetitions),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
@@ -230,7 +230,7 @@ private fun ConfigureExerciseRow(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "$reps reps",
+                    stringResource(R.string.create_step3_reps_format, reps),
                     style = MaterialTheme.typography.titleSmall,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
@@ -241,7 +241,7 @@ private fun ConfigureExerciseRow(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            "🔥  ~${activityKcal.toInt()} cal",
+            "🔥  ~" + stringResource(R.string.create_step3_calories_format, activityKcal.toInt()),
             style = MaterialTheme.typography.labelSmall,
             color = TextSecondary
         )

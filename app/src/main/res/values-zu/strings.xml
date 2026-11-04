@@ -1,12 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Draft translation (AI-assisted). Reviewed by: ____ -->
 <resources>
-    <!-- Phase 5 : Language picker (isiZulu) -->
+    <string name="app_name">FitHub</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 1 : Biometric gate & Generic         -->
+    <!-- ========================================== -->
+    <string name="biometric_gate_title">Vula i-FitHub</string>
+    <string name="biometric_gate_subtitle">Qinisekisa ukuthi nguwe ukuze uqhubeke.</string>
+    <string name="biometric_gate_prompt">Sebenzisa umunwe</string>
+    <string name="biometric_gate_fallback">Sebenzisa iphasiwedi esikhundleni</string>
+    <string name="biometric_gate_cancel">Khansela</string>
+    <string name="biometric_gate_not_available">Ukungena nge-biometric akutholakali kule divayisi.</string>
+    <string name="biometric_gate_not_enrolled">Akukho munwe noma ubuso obubhalisiwe. Engeza okukodwa kuzilungiselelo zesistimu ukuze usebenzise ukungena nge-biometric.</string>
+    <string name="biometric_gate_error_generic">Asikwazanga ukuqinisekisa. Sicela uzame futhi.</string>
+    <string name="biometric_gate_error_lockout">Imizamo eminingi kakhulu. Zama futhi emzuzwini.</string>
+    <string name="biometric_gate_error_lockout_permanent">Ukungena nge-biometric kukhiyiwe. Vula idivayisi yakho ukuze uyivule futhi.</string>
+    <string name="biometric_gate_go_to_settings">Vula izilungiselelo</string>
+    <string name="session_logged_out">Uphumile.</string>
+    <string name="generic_back">Emuva</string>
+    <string name="generic_cancel">Khansela</string>
+    <string name="generic_ok">Kulungile</string>
+    <string name="generic_continue">Qhubeka</string>
+    <string name="generic_try_again">Zama futhi</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 2 : Google SSO & Settings/Onboarding -->
+    <!-- ========================================== -->
+    <string name="auth_continue_with_google">Qhubeka nge-Google</string>
+    <string name="auth_google_error_generic">Ukungena nge-Google kwehlulekile. Sicela uzame futhi.</string>
+    <string name="auth_google_error_cancelled">Ukungena kukhanseliwe.</string>
+    <string name="auth_google_error_no_account">Ayikho i-akhawunti ye-Google etholakele kule divayisi.</string>
+    <string name="auth_google_error_network">Iphutha lenethiwekhi — hlola uxhumano lwakho.</string>
+    <string name="auth_google_error_no_client_id">Ukungena nge-Google akukho hleliwe kulokhu kwakhiwa.</string>
+    <string name="auth_google_progress">Kungena nge-Google…</string>
+    <string name="auth_or_divider">NOMA</string>
+
+    <string name="onboarding_google_welcome_title">Sawubona, %1$s</string>
+    <string name="onboarding_google_welcome_body">Sigcwalise igama lakho ne-imeyili yakho kusuka ku-Google. Ungazihlela ngezansi.</string>
+    <string name="onboarding_username_label">IGAMA LOMSEBENZISI</string>
+    <string name="onboarding_username_placeholder">Faka igama lakho lomsebenzisi</string>
+    <string name="onboarding_email_label">IKHELI LE-IMEYILI</string>
+    <string name="onboarding_email_placeholder">Faka ikheli lakho le-imeyili</string>
+    <string name="onboarding_missing_details">Eminye imininingwane yokuqalisa ayikho.</string>
+
+    <string name="settings_title">Izilungiselelo</string>
+    <string name="settings_fingerprint_title">Ukungena ngomunwe</string>
+    <string name="settings_fingerprint_subtitle_on">Okwamanje : KUVULIWE</string>
+    <string name="settings_fingerprint_subtitle_off">Okwamanje : KUVALIWE</string>
+    <string name="settings_fingerprint_enable_title">Nika amandla ukungena ngomunwe</string>
+    <string name="settings_fingerprint_enable_subtitle">Qinisekisa ubunikazi bakho ukuze unike amandla ukungena nge-biometric.</string>
+    <string name="settings_fingerprint_unavailable_title">Umunwe awutholakali</string>
+    <string name="settings_fingerprint_unavailable_body">Le divayisi ayinayo ihadiwe ye-biometric, noma akukho munwe obhalisiwe kuzilungiselelo zesistimu.</string>
+    <string name="settings_fingerprint_open_settings">Vula izilungiselelo zesistimu</string>
+    <string name="settings_fingerprint_saved_ok">Ukungena ngomunwe kunikwe amandla.</string>
+    <string name="settings_fingerprint_saved_off">Ukungena ngomunwe kucishiwe amandla.</string>
+
+    <string name="login_welcome_back">Siyakwamukela futhi!</string>
+    <string name="login_email_label">I-imeyili</string>
+    <string name="login_email_placeholder">Faka ikheli lakho le-imeyili</string>
+    <string name="login_button">NGENA</string>
+    <string name="login_button_loading">Kuyangena…</string>
+    <string name="login_fingerprint_title">Ukungena ku-FitHub</string>
+    <string name="login_fingerprint_subtitle">Qinisekisa ukuze uqhubeke</string>
+    <string name="login_fingerprint_section_title">Ngena ngomunwe</string>
+    <string name="login_fingerprint_content_desc">Ukungena ngomunwe</string>
+    <string name="login_biometric_unavailable">I-biometric ayitholakali kule divayisi.</string>
+    <string name="login_biometric_need_first_login">Sicela ungene ngephasiwedi yakho kanye ngaphambi kokusebenzisa umunwe.</string>
+    <string name="login_missing_credentials">Sicela ufake igama lakho lomsebenzisi nephasiwedi yakho.</string>
+
+    <string name="profile_edit_details">Hlela Imininingwane</string>
+    <string name="profile_settings">Izilungiselelo</string>
+    <string name="profile_logout">Phuma</string>
+    <string name="profile_logout_confirm_title">Phuma ku-FitHub?</string>
+    <string name="profile_logout_confirm_body">Uzodinga ukungena futhi ngokuzayo.</string>
+    <string name="profile_logout_confirm_yes">Phuma</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 3 : Sync banner                      -->
+    <!-- ========================================== -->
+    <string name="sync_banner_offline">Awuxhunyiwe ku-inthanethi — izinguquko zizovumelaniswa uma uxhuma futhi.</string>
+    <string name="sync_banner_syncing">Kuvumelaniswa izinguquko ezingu-%1$d…</string>
+    <string name="sync_banner_done">Zonke izinguquko zivumelanisiwe ✓</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 4 : Notifications & Diagnostics      -->
+    <!-- ========================================== -->
+    <string name="notif_channel_general_name">Okuvamile</string>
+    <string name="notif_channel_general_desc">Izexwayiso zokulandelana kwezinsuku, izimpumelelo nezimemezelo ezijwayelekile ze-FitHub.</string>
+    <string name="notif_channel_reminders_name">Izikhumbuzo zokulinganisa isisindo</string>
+    <string name="notif_channel_reminders_desc">Isikhumbuzo sansuku zonke sokuthi ulothe isisindo sakho uma isikhathi sokulinganisa sifikile.</string>
+
+    <string name="notif_fallback_title">FitHub</string>
+    <string name="notif_fallback_body">Unomlayezo omusha ovela ku-FitHub.</string>
+
+    <string name="notif_checkpoint_title">Isikhathi sokulinganisa sifikile</string>
+    <string name="notif_checkpoint_body">Usuku lokulinganisa. Lotheka isisindo sakho ukuze ugcine inqubekela phambili yakho isesikhathini.</string>
+
+    <string name="notif_rationale_title">Hlala emkhondweni</string>
+    <string name="notif_rationale_body">Nika amandla izaziso ukuze uthole izikhumbuzo zokulinganisa, izexwayiso zokulandelana kwezinsuku kanye nezibuyekezo zenselelo yeviki.</string>
+    <string name="notif_rationale_accept">Nika amandla</string>
+    <string name="notif_rationale_decline">Hhayi manje</string>
+
+    <string name="notif_diag_title">Ukuxilongwa kwezaziso</string>
+    <string name="notif_diag_token_label">Ithokheni ye-FCM</string>
+    <string name="notif_diag_token_hint">Thepha ukuze ukopishe</string>
+    <string name="notif_diag_token_copied">Kukopishwe kubhodi lokunamathisela</string>
+    <string name="notif_diag_token_missing">Akukatholakali okwamanje. Zama futhi emzuzwini.</string>
+    <string name="notif_diag_send_test">Thumela isaziso sokuhlola</string>
+    <string name="notif_diag_perm_granted">Imvume: inikeziwe</string>
+    <string name="notif_diag_perm_denied">Imvume: inqatshiwe</string>
+    <string name="notif_diag_perm_open_settings">Vula izilungiselelo zezaziso</string>
+    <string name="notif_diag_test_sent">Isaziso sokuhlola sithunyelwe</string>
+    <string name="notif_diag_test_requires_perm">Nika imvume yezaziso kuqala.</string>
+
+    <string name="notif_enabled_message">Izaziso zinikwe amandla. Ungathola izikhumbuzo nezibuyekezo.</string>
+    <string name="notif_disabled_message">Izaziso zicishiwe amandla. Ungazenza zibe namandla noma nini.</string>
+    <string name="notif_permission_denied_message">Imvume yezaziso inqatshiwe. Yinike amandla kuzilungiselelo zesistimu ukuze uthole izikhumbuzo.</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 : Language picker                  -->
+    <!-- ========================================== -->
     <string name="settings_language_title">Ulimi</string>
     <string name="settings_language_current">Okwamanje : %1$s</string>
     <string name="settings_language_change">Shintsha &gt;</string>
     <string name="settings_language_dialog_title">Khetha ulimi lwakho</string>
 
-    <!-- Phase 5 Batch A : Components -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH A1 : Components               -->
+    <!-- ========================================== -->
     <string name="common_back">Emuva</string>
     <string name="common_error_title">Kukhona okungahambanga kahle</string>
     <string name="common_try_again">Zama futhi</string>
@@ -20,14 +142,18 @@
     <string name="nav_goals">Izinhloso</string>
     <string name="nav_rewards">Imiklomelo</string>
 
-    <!-- Phase 5 Batch A2 : Screens -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH A2 : Screens                 -->
+    <!-- ========================================== -->
     <string name="landing_register">BHALISA</string>
 
     <string name="settings_push_title">Izaziso Ezicindezelayo</string>
     <string name="settings_push_subtitle_on">Okwamanje : KUVULIWE</string>
     <string name="settings_push_subtitle_off">Okwamanje : KUVALIWE</string>
 
-    <!-- Phase 5 Batch B : Onboarding -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH B : Onboarding               -->
+    <!-- ========================================== -->
     <string name="onboarding_title">Ukuqalisa</string>
     <string name="onboarding_step_counter">ISINYATHELO %1$d KWESIKA-%2$d</string>
     <string name="onboarding_next">Isinyathelo esilandelayo</string>
@@ -79,7 +205,9 @@
     <string name="onboarding_complete_setting_up">Kuyalungiswa…</string>
     <string name="onboarding_complete_confirm">Qinisekisa</string>
 
-    <!-- Phase 5 : Enum labels -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 : Enum labels                      -->
+    <!-- ========================================== -->
     <string name="enum_gender_male">Owesilisa</string>
     <string name="enum_gender_female">Owesifazane</string>
     <string name="enum_gender_other">Okunye</string>
@@ -131,7 +259,9 @@
     <string name="enum_ach_cat_nutrition">Ukudla okunomsoco</string>
     <string name="enum_ach_cat_workout">Ukuvivinya umzimba</string>
 
-    <!-- Phase 5 Batch C PART 1 : Dashboard & Journal -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH C PART 1 : Dashboard & Journal -->
+    <!-- ========================================== -->
     <string name="common_view_more">bona okwengeziwe</string>
     <string name="common_view_all">bona konke</string>
 
@@ -191,55 +321,9 @@
     <string name="journal_workouts_exercises_minutes_format">%1$d ukuzivocavoca • %2$d imizuzu</string>
     <string name="journal_workouts_kcal_format">%1$d kcal elinganiselwe</string>
 
-
-    <!-- Phase 5 Batch D2 PART 2 : Progress Overview + Workouts Overview -->
-
-    <string name="progress_overview_title">Uhlolojikelelo Lwenqubekela Phambili</string>
-    <string name="progress_overview_current_weight">Isisindo samanje</string>
-    <string name="progress_overview_goal_weight">Isisindo senhloso</string>
-    <string name="progress_overview_average_intake">Isilinganiso sokudliwayo</string>
-    <string name="progress_overview_activity">Umsebenzi</string>
-    <string name="progress_overview_overall_goal">Inqubekela phambili yenhloso iyonke</string>
-    <string name="progress_overview_pct_toward_goal">%1$d%% uya enkosini</string>
-    <string name="progress_overview_by_category">Inqubekela phambili ngesigaba</string>
-    <string name="progress_overview_intake_analysis">Ukuhlaziywa kokudliwayo</string>
-    <string name="progress_overview_no_intake">Akukho kudliwayo okulotshiwe kule nyanga.</string>
-    <string name="progress_overview_avg_daily_intake">Isilinganiso sokudliwayo nsuku zonke</string>
-    <string name="progress_overview_daily_calorie_goal">Inhloso yama-kcal ansuku zonke</string>
-    <string name="progress_overview_workout_overview">Uhlolojikelelo lokuzivocavoca</string>
-    <string name="progress_overview_no_workout_sessions">Akukho maseshini okuzivocavoca kule nyanga.</string>
-    <string name="progress_overview_planned_sessions_format">%1$d / %2$d amaseshini ahleliwe aqediwe</string>
-    <string name="progress_overview_adherence_format">%1$d%% izinga lokulandela.</string>
-    <string name="progress_overview_view_detailed">bona imininingwane &gt;</string>
-    <string name="progress_overview_prev_desc">Eyangaphambili</string>
-    <string name="progress_overview_next_desc">Elandelayo</string>
-    <string name="progress_overview_week_short_format">V%1$d</string>
-    <string name="progress_overview_week_label_format">Iviki %1$d</string>
-
-    <string name="workouts_overview_title">Uhlolojikelelo Lokuzivocavoca</string>
-    <string name="workouts_overview_total_activity">Umsebenzi uwonke</string>
-    <string name="workouts_overview_active_time">Isikhathi sokusebenza</string>
-    <string name="workouts_overview_monthly_goal">Inhloso yomsebenzi wenyanga</string>
-    <string name="workouts_overview_goal_progress_format">%1$d kcal / %2$d kcal</string>
-    <string name="workouts_overview_pct_of_target_format">%1$d%% yethagethi</string>
-    <string name="workouts_overview_remaining_format">%1$d kcal ngaphansi kwenhloso yenyanga</string>
-    <string name="workouts_overview_graph_title">Amakhalori Ashisiwe Alinganiselwe</string>
-    <string name="workouts_overview_no_activity">Akukho msebenzi wokuzivocavoca ongaboniswa.</string>
-    <string name="workouts_overview_graph_note">Amanani asekelwe kumaseshini aqediwe • izilinganiso</string>
-    <string name="workouts_overview_habits_title">Imikhuba Yakho Yokuzivocavoca</string>
-    <string name="workouts_overview_training_summary">Isifinyezo sokuqeqeshwa</string>
-    <string name="workouts_overview_total_sessions_format">Amaseshini aqediwe uwonke : %1$d</string>
-    <string name="workouts_overview_avg_session_format">Isilinganiso sobude beseshini : %1$d imizuzu</string>
-    <string name="workouts_overview_longest_session_format">Iseshini ende kunawo wonke : %1$d imizuzu</string>
-    <string name="workouts_overview_no_categories">Azikho izigaba ezizoboniswa okwamanje.</string>
-    <string name="workouts_overview_sessions_format">%1$d amaseshini</string>
-    <string name="workouts_overview_mode_week">Iviki</string>
-    <string name="workouts_overview_mode_month">Inyanga</string>
-    <string name="workouts_overview_mode_year">Unyaka</string>
-
-    <string name="weight_journey_latest_tooltip_format">%1$.1f KG</string>
-
-    <!-- Phase 5 Batch C PART 2 : Food & Nutrition (restore) -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH C PART 2 : Food & Nutrition  -->
+    <!-- ========================================== -->
     <string name="food_add_meal_title">Engeza Isidlo</string>
     <string name="food_add_meal_search_placeholder">Sesha Isidlo noma Ukudla</string>
     <string name="food_add_meal_scan">Skena</string>
@@ -254,9 +338,6 @@
     <string name="food_details_nutritional_info">Ulwazi lokudla okunomsoco</string>
     <string name="food_details_calories_format">%1$d cal</string>
     <string name="food_details_grams_format">%1$d g</string>
-    <string name="food_details_macro_protein">Iprotheyini</string>
-    <string name="food_details_macro_carbs">Ama-carbohydrate</string>
-    <string name="food_details_macro_fats">Amafutha</string>
     <string name="food_details_meal_target_progress">%1$d / %2$d cal</string>
     <string name="food_details_description_title">Incazelo</string>
     <string name="food_details_add_meal_button">Engeza Isidlo esingu-%1$s</string>
@@ -269,7 +350,6 @@
     <string name="food_log_list_title_format">Ukudla okunomsoco · %1$s</string>
     <string name="food_log_list_empty_title">Akukho kudla okulotshiwe</string>
     <string name="food_log_list_empty_body">Akukho okuqoshiwe ngalolu suku.</string>
-    <string name="food_log_row_calories_format">%1$d cal</string>
 
     <string name="food_scanner_title">Skena i-Barcode</string>
     <string name="food_scanner_permission_required">Imvume yekhamera iyadingeka.</string>
@@ -328,7 +408,9 @@
     <string name="nutrition_overview_consumed">Kudliwe</string>
     <string name="nutrition_overview_donut_target_format">/%1$dg</string>
 
-    <!-- Phase 5 Batch D2 PART 1 (restore) -->
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH D2 PART 1 : Goals + Body + Checkpoint -->
+    <!-- ========================================== -->
     <string name="common_dash">—</string>
     <string name="common_unit_kg">kg</string>
     <string name="common_unit_kcal">kcal</string>
@@ -420,5 +502,208 @@
     <string name="checkpoint_manager_reminders_title">Izikhumbuzo Zamaphoyinti</string>
     <string name="checkpoint_manager_reminders_subtitle">Thola isaziso ngosuku lokulinganisa.</string>
     <string name="checkpoint_manager_upcoming_title">Amaphoyinti Azayo</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH D2 PART 2 : Progress Overview + Workouts Overview -->
+    <!-- ========================================== -->
+    <string name="progress_overview_title">Uhlolojikelelo Lwenqubekela Phambili</string>
+    <string name="progress_overview_current_weight">Isisindo samanje</string>
+    <string name="progress_overview_goal_weight">Isisindo senhloso</string>
+    <string name="progress_overview_average_intake">Isilinganiso sokudliwayo</string>
+    <string name="progress_overview_activity">Umsebenzi</string>
+    <string name="progress_overview_overall_goal">Inqubekela phambili yenhloso iyonke</string>
+    <string name="progress_overview_pct_toward_goal">%1$d%% uya enkosini</string>
+    <string name="progress_overview_by_category">Inqubekela phambili ngesigaba</string>
+    <string name="progress_overview_intake_analysis">Ukuhlaziywa kokudliwayo</string>
+    <string name="progress_overview_no_intake">Akukho kudliwayo okulotshiwe kule nyanga.</string>
+    <string name="progress_overview_avg_daily_intake">Isilinganiso sokudliwayo nsuku zonke</string>
+    <string name="progress_overview_daily_calorie_goal">Inhloso yama-kcal ansuku zonke</string>
+    <string name="progress_overview_workout_overview">Uhlolojikelelo lokuzivocavoca</string>
+    <string name="progress_overview_no_workout_sessions">Akukho maseshini okuzivocavoca kule nyanga.</string>
+    <string name="progress_overview_planned_sessions_format">%1$d / %2$d amaseshini ahleliwe aqediwe</string>
+    <string name="progress_overview_adherence_format">%1$d%% izinga lokulandela.</string>
+    <string name="progress_overview_view_detailed">bona imininingwane &gt;</string>
+    <string name="progress_overview_prev_desc">Eyangaphambili</string>
+    <string name="progress_overview_next_desc">Elandelayo</string>
+    <string name="progress_overview_week_short_format">V%1$d</string>
+    <string name="progress_overview_week_label_format">Iviki %1$d</string>
+
+    <string name="workouts_overview_title">Uhlolojikelelo Lokuzivocavoca</string>
+    <string name="workouts_overview_total_activity">Umsebenzi uwonke</string>
+    <string name="workouts_overview_active_time">Isikhathi sokusebenza</string>
+    <string name="workouts_overview_monthly_goal">Inhloso yomsebenzi wenyanga</string>
+    <string name="workouts_overview_goal_progress_format">%1$d kcal / %2$d kcal</string>
+    <string name="workouts_overview_pct_of_target_format">%1$d%% yethagethi</string>
+    <string name="workouts_overview_remaining_format">%1$d kcal ngaphansi kwenhloso yenyanga</string>
+    <string name="workouts_overview_graph_title">Amakhalori Ashisiwe Alinganiselwe</string>
+    <string name="workouts_overview_no_activity">Akukho msebenzi wokuzivocavoca ongaboniswa.</string>
+    <string name="workouts_overview_graph_note">Amanani asekelwe kumaseshini aqediwe • izilinganiso</string>
+    <string name="workouts_overview_habits_title">Imikhuba Yakho Yokuzivocavoca</string>
+    <string name="workouts_overview_training_summary">Isifinyezo sokuqeqeshwa</string>
+    <string name="workouts_overview_total_sessions_format">Amaseshini aqediwe uwonke : %1$d</string>
+    <string name="workouts_overview_avg_session_format">Isilinganiso sobude beseshini : %1$d imizuzu</string>
+    <string name="workouts_overview_longest_session_format">Iseshini ende kunawo wonke : %1$d imizuzu</string>
+    <string name="workouts_overview_no_categories">Azikho izigaba ezizoboniswa okwamanje.</string>
+    <string name="workouts_overview_sessions_format">%1$d amaseshini</string>
+    <string name="workouts_overview_mode_week">Iviki</string>
+    <string name="workouts_overview_mode_month">Inyanga</string>
+    <string name="workouts_overview_mode_year">Unyaka</string>
+
+    <string name="weight_journey_latest_tooltip_format">%1$.1f KG</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH D1 : Plans + Create + Session -->
+    <!-- ========================================== -->
+    <string name="plans_title">Isikhungo Sokuzivocavoca</string>
+    <string name="plans_today_title">Imisebenzi Yanamuhla</string>
+    <string name="plans_stat_calories">Amakhalori Ashisiwe</string>
+    <string name="plans_stat_active">Umatasa</string>
+    <string name="plans_stat_days">Izinsuku</string>
+    <string name="plans_weekly_goal_title">Inhloso Yeviki Lokuzivocavoca</string>
+    <string name="plans_weekly_sessions_format">%1$d / %2$d amaseshini okuvivinya umzimba aqediwe</string>
+    <string name="plans_weekly_left_format">%1$d%% okusele</string>
+    <string name="plans_custom_banner_title">Akukho okukubamba iso? Akunankinga!</string>
+    <string name="plans_custom_banner_body">Zakhela uhlelo lwakho lokuzivocavoca, oluhambisana nezidingo zakho!</string>
+    <string name="plans_workout_plans_title">Izinhlelo Zokuzivocavoca</string>
+    <string name="plans_add_plan">Engeza Uhlelo</string>
+    <string name="plans_search_placeholder">Sesha Izinhlelo</string>
+    <string name="plans_recent_title">Imisebenzi Yakho Yakamuva</string>
+    <string name="plans_recent_action">izinhlelo ezengeziwe</string>
+    <string name="plans_recent_empty">Akukho misebenzi yakamuva okwamanje.</string>
+    <string name="plans_created_title">Izinhlelo Ezidalwe</string>
+    <string name="plans_created_empty_title">Azikho izinhlelo zokuzivocavoca zesiko okwamanje</string>
+    <string name="plans_created_empty_body">Dala eyakho yokuzivocavoca ukuze uyibone lapha.</string>
+    <string name="plans_saved_title">Izinhlelo Ezigciniwe</string>
+    <string name="plans_saved_empty_title">Azikho izinhlelo ezilondoloziwe okwamanje</string>
+    <string name="plans_saved_empty_body">Phewula izinhlelo eziqinisekisiwe ukuze ulondoloze eyodwa.</string>
+    <string name="plans_kcal_burnt_format">%1$d kcal eshisiwe</string>
+    <string name="plans_exercises_minutes_format">%1$d ukuzivocavoca • %2$d min</string>
+
+    <string name="verified_plans_search_placeholder">Sesha Ngegama</string>
+    <string name="verified_plans_filter">Hlunga</string>
+    <string name="verified_plans_hero_title">Ukuqina komzimba\nkuhambo lomuntu siqu</string>
+    <string name="verified_plans_hero_subtitle">Thola okusebenzayo kuwe</string>
+    <string name="verified_plans_title">Izinhlelo Eziqinisekisiwe</string>
+    <string name="verified_plans_see_all">bona konke</string>
+    <string name="verified_plans_empty_title">Azikho izinhlelo ezitholakele</string>
+    <string name="verified_plans_empty_body">Zama igama lokusesha elihlukile.</string>
+
+    <string name="workout_list_search_format">Sesha %1$s</string>
+    <string name="workout_list_found_format">%1$d izinhlelo zitholakele</string>
+    <string name="workout_list_empty_title">Azikho izinhlelo ezitholakele</string>
+    <string name="workout_list_empty_body">Zama ukulungisa ukusesha kwakho.</string>
+
+    <string name="workout_details_not_found">Uhlelo lokuzivocavoca alutholakalanga.</string>
+    <string name="workout_details_no_description">Ayikho incazelo.</string>
+    <string name="workout_details_no_equipment">Azikho Imathuluzi</string>
+    <string name="workout_details_start_plan">Qala Uhlelo</string>
+    <string name="workout_details_save">Gcina</string>
+    <string name="workout_details_saving">Kuyagcinwa…</string>
+    <string name="workout_details_plan_details">Imininingwane Yohlelo</string>
+    <string name="workout_details_calories_burnt">Amakhalori Ashisiwe</string>
+    <string name="workout_details_calories_format">%1$d amakhalori</string>
+    <string name="workout_details_session_length">Ubude Beseshini</string>
+    <string name="workout_details_mins_format">%1$d imizuzu</string>
+    <string name="workout_details_exercises">Ukuzivocavoca</string>
+    <string name="workout_details_rounds_format">%1$d imijikelezo</string>
+    <string name="workout_details_requirements">Izidingo</string>
+    <string name="workout_details_none">Akukho</string>
+    <string name="workout_details_rounds_title">Imijikelezo</string>
+    <string name="workout_details_category_format">Isigaba : %1$s</string>
+    <string name="workout_details_min_format">%1$d min</string>
+    <string name="workout_details_reps_format">%1$d imiphindo</string>
+
+    <string name="create_title">Dala Uhlelo Lokuzivocavoca</string>
+    <string name="create_step1_title">Faka Igama Neminingwane</string>
+    <string name="create_step1_subtitle">Sitshele konke ngomsebenzi wakho omuhle!</string>
+    <string name="create_step1_task_details">Imininingwane Yomsebenzi</string>
+    <string name="create_step1_name_label">Igama Lokuzivocavoca</string>
+    <string name="create_step1_name_placeholder">Faka Igama Lokuzivocavoca</string>
+    <string name="create_step1_description_label">Incazelo</string>
+    <string name="create_step1_description_placeholder">Faka Incazelo (kungokuzithandela)</string>
+    <string name="create_step1_difficulty_label">Izinga Lobunzima</string>
+    <string name="create_step1_equipment_label">Imathuluzi Adingekayo</string>
+    <string name="create_step1_additional_info">Ulwazi Olwengeziwe</string>
+    <string name="create_step1_attach">Namathisela Ifayela</string>
+
+    <string name="create_step2_title">Ukukhetha Ukuzivocavoca</string>
+    <string name="create_step2_subtitle">Sebenzisa i-Session Builder ukuthola ukuzivocavoca okufunayo futhi ukwengeze ohlelweni lwakho!</string>
+    <string name="create_step2_builder">Session Builder</string>
+    <string name="create_step2_search_placeholder">Sesha Ngegama</string>
+    <string name="create_step2_categories">Izigaba</string>
+    <string name="create_step2_exercises">Ukuzivocavoca</string>
+    <string name="create_step2_no_exercises">Akukho kuzivocavoca okuhambisanayo.</string>
+    <string name="create_step2_your_workout">Uhlelo Lwakho</string>
+    <string name="create_step2_exercise_count_format">%1$d ukuzivocavoca okwengeziwe njengamanje</string>
+    <string name="create_step2_add_exercises_hint">Engeza ukuzivocavoca ukuze wakhe uhlelo lwakho.</string>
+    <string name="create_step2_remove_desc">Susa</string>
+
+    <string name="create_step3_title">Lungisa Ukuzivocavoca</string>
+    <string name="create_step3_subtitle">Lapha yilapho wenza lokhu kube okwakho. Lungisa Inani Lemiphindo noma Imizuzu ngenani olifunayo</string>
+    <string name="create_step3_total_calories">%1$d Amakhalori Ashisiwe Isamba</string>
+    <string name="create_step3_estimated_duration">~%1$d imizuzu</string>
+    <string name="create_step3_duration">Isikhathi</string>
+    <string name="create_step3_duration_format">%1$dm %2$ds</string>
+    <string name="create_step3_repetitions">Ukuphindaphinda</string>
+    <string name="create_step3_reps_format">%1$d imiphindo</string>
+    <string name="create_step3_calories_format">%1$d cal</string>
+    <string name="create_step3_move_up">Hambisa phezulu</string>
+    <string name="create_step3_move_down">Hambisa phansi</string>
+
+    <string name="create_step4_title">Buyekeza Uhlelo</string>
+    <string name="create_step4_subtitle">Ukuhlola kokugcina ukuthi konke kuyathandeka kuwe. Hlela uma kudingeka bese uqinisekisa ukuqeda!</string>
+    <string name="create_step4_plan_details">Imininingwane Yohlelo</string>
+    <string name="create_step4_exercise_details">Imininingwane Yokuzivocavoca</string>
+    <string name="create_step4_duration_format">%1$ds isikhathi</string>
+    <string name="create_step4_estimated_calories">Amakhalori Ashisiwe Alinganiselwe</string>
+    <string name="create_step4_calories_value_format">%1$d amakhalori</string>
+    <string name="create_step4_estimated_time">Isikhathi Esilinganiselwe</string>
+    <string name="create_step4_minutes_value_format">%1$d imizuzu</string>
+    <string name="create_step4_creating">Kuyadalwa…</string>
+    <string name="create_step4_create_plan">Dala Uhlelo</string>
+    <string name="create_step4_success_title">Uhlelo Lokuzivocavoca Ludalwe!</string>
+    <string name="create_step4_success_message">Uhlelo lwakho ludalwe ngempumelelo futhi lungafinyelelwa ku-Izinhlelo Ezidalwe</string>
+    <string name="create_step4_success_confirm">Qinisekisa</string>
+    <string name="create_error_incomplete">Sicela uqedele zonke izinyathelo.</string>
+
+    <string name="equipment_none">Akukho</string>
+    <string name="equipment_dumbbells">Ama-Dumbbells</string>
+    <string name="equipment_barbell">I-Barbell</string>
+    <string name="equipment_bench">Ibhantshi</string>
+    <string name="equipment_resistance_band">Ibhande Lokumelana</string>
+    <string name="equipment_kettlebell">I-Kettlebell</string>
+
+    <string name="session_not_found">Iseshini ayitholakalanga.</string>
+    <string name="session_mode_title">Imodi Yeseshini</string>
+    <string name="session_exercise_progress_format">UKUZIVOCAVOCA %1$d KWANGAMA-%2$d</string>
+    <string name="session_remaining">OKUSELE</string>
+    <string name="session_number_of_reps">Inani Lemiphindo</string>
+    <string name="session_calories_burnt">Amakhalori Ashisiwe</string>
+    <string name="session_previous">Eyangaphambili</string>
+    <string name="session_pause">Misa isikhashana</string>
+    <string name="session_next">Elandelayo</string>
+
+    <string name="session_paused_title">ISESHINI IMISIWE!</string>
+    <string name="session_paused_subtitle">Uphuma ngokushesha? Noma uthola umoya nje?</string>
+    <string name="session_paused_action_prompt">YISIPHI ISENZO ONGATHANDA UKUSITHATHA?</string>
+    <string name="session_paused_progress_note">Inqubekela phambili yakho izogcinwa!</string>
+    <string name="session_paused_save_title">GCINA INQUBEKELA PHAMBILI BESE UQEDA</string>
+    <string name="session_paused_save_body">Ungaqhubeka nalolu hlelo noma nini.</string>
+    <string name="session_paused_discard_title">LAHLA ISESHINI</string>
+    <string name="session_paused_discard_body">Inqubekela phambili yale seshini ngeke iqoshwe.</string>
+    <string name="session_paused_resume_desc">Qhubeka</string>
+
+    <string name="session_completed_title">ISESHINI IQEDIWE!</string>
+    <string name="session_completed_subtitle">Qhubeka nomsebenzi omuhle!</string>
+    <string name="session_completed_plan_details">Imininingwane Yohlelo</string>
+    <string name="session_completed_calories_format">%1$d cal</string>
+    <string name="session_completed_mins_format">%1$d imizuzu</string>
+    <string name="session_completed_rounds_format">%1$d imijikelezo</string>
+    <string name="session_completed_status">Kuqediwe</string>
+    <string name="session_completed_weekly_title">Inhloso Yeviki Lokuzivocavoca</string>
+    <string name="session_completed_weekly_format">%1$d / %2$d amaseshini aqediwe</string>
+    <string name="session_completed_left_format">%1$d%% okusele</string>
+    <string name="session_completed_particles_format">%1$d ama-Particles Engeziwe</string>
+    <string name="session_completed_tap_to_continue">Thepha noma kuphi ukuze uqhubeke</string>
 
 </resources>

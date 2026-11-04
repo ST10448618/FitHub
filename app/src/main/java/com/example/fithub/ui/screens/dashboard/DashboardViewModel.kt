@@ -16,9 +16,9 @@ import java.time.LocalDate
 /**
  * ### Locale note (Phase 5)
  * Weekly calorie bars now carry only the [DailyCalorieBar.date]; the visible
- * label (e.g. "Mon") is computed inside `CalorieIntakeChartSection` using
+ * label is computed inside `CalorieIntakeChartSection` via
  * `DateTimeFormatter.ofLocalizedDate(...)` so it renders in the user's
- * language. The previous English-only `dayLabel: String` field was removed.
+ * language. The old English-only `dayLabel` field was removed.
  */
 class DashboardViewModel : ViewModel() {
 
@@ -61,10 +61,11 @@ class DashboardViewModel : ViewModel() {
 
                 val bars = (0..6).map { offset ->
                     val date = start.plusDays(offset.toLong())
+                    val cals = byDay[date] ?: 0
                     DailyCalorieBar(
                         date = date,
-                        calories = byDay[date] ?: 0,
-                        isOverTarget = target > 0 && (byDay[date] ?: 0) > target
+                        calories = cals,
+                        isOverTarget = target > 0 && cals > target
                     )
                 }
                 _uiState.update {
@@ -102,7 +103,8 @@ class DashboardViewModel : ViewModel() {
             if (goals == null) {
                 val profile = userRepo.getProfile(uid)
                 val goal = goalRepo.getCurrent(uid)
-                val direction = goal?.direction ?: com.example.fithub.domain.model.GoalDirection.MAINTAIN
+                val direction = goal?.direction
+                    ?: com.example.fithub.domain.model.GoalDirection.MAINTAIN
 
                 val recommended = if (profile != null) {
                     com.example.fithub.domain.calculator.CalorieEngine.calculate(
@@ -166,11 +168,9 @@ class DashboardViewModel : ViewModel() {
 
     private fun loadRecommendations() {
         viewModelScope.launch {
-            ServiceLocator.workoutPlanRepository
-                .observeVerified()
-                .collect { plans ->
-                    _uiState.update { it.copy(recommendedPlans = plans.take(4)) }
-                }
+            planRepo.observeVerified().collect { plans ->
+                _uiState.update { it.copy(recommendedPlans = plans.take(4)) }
+            }
         }
     }
 }

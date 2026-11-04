@@ -3,6 +3,7 @@ package com.example.fithub.ui.screens.session
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
@@ -19,20 +20,14 @@ import java.time.LocalDateTime
 data class SessionModeUiState(
     val isLoading: Boolean = true,
     val plan: WorkoutPlan? = null,
-
-    // Current position
     val currentIndex: Int = 0,
     val currentExercise: WorkoutExercise? = null,
     val currentIsTimeBased: Boolean = false,
     val secondsRemaining: Int = 0,
     val totalSecondsForCurrent: Int = 0,
-
-    // Session lifecycle
     val isPaused: Boolean = false,
     val isCompleting: Boolean = false,
     val sessionStartTime: LocalDateTime = LocalDateTime.now(),
-
-    // Navigation triggers
     val navigateToCompletedSessionId: String? = null,
     val navigateBack: Boolean = false,
     val errorMessage: String? = null
@@ -59,7 +54,10 @@ class SessionModeViewModel(
             val plan = planRepo.getById(planId)
             if (plan == null || plan.exercises.isEmpty()) {
                 _uiState.update {
-                    it.copy(isLoading = false, errorMessage = "Workout not found.")
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = ServiceLocator.appContext().getString(R.string.session_not_found)
+                    )
                 }
                 return@launch
             }
@@ -84,16 +82,13 @@ class SessionModeViewModel(
         if (index !in plan.exercises.indices) return
 
         val ex = plan.exercises[index]
-        // Determine if time-based from the seeded catalog
         viewModelScope.launch {
             val catalog = ServiceLocator.exerciseRepository.getById(ex.exerciseId)
             val isTimeBased = catalog?.isTimeBased == true
 
             val totalSeconds = if (isTimeBased) {
-                // use configured duration
                 ex.targetDurationSeconds.takeIf { it > 0 } ?: 60
             } else {
-                // rep-based → approximate seconds (3s per rep)
                 val perRep = catalog?.estimatedSecondsPerRep ?: 3
                 (ex.targetReps * perRep).coerceAtLeast(15)
             }
@@ -110,7 +105,6 @@ class SessionModeViewModel(
         }
     }
 
-    /** Called every second by the screen while the session is active. */
     fun onTimerTick() {
         val s = _uiState.value
         if (s.isPaused || s.isCompleting) return
@@ -120,7 +114,6 @@ class SessionModeViewModel(
         _uiState.update { it.copy(secondsRemaining = next) }
 
         if (next == 0) {
-            // Auto-advance or complete
             val plan = s.plan ?: return
             if (s.currentIndex < plan.exercises.lastIndex) {
                 loadExercise(s.currentIndex + 1)
@@ -153,7 +146,6 @@ class SessionModeViewModel(
         _uiState.update { it.copy(isPaused = false) }
     }
 
-    /** Saves the session as PARTIAL. Doesn't count toward weekly goal. */
     fun saveAndExit() {
         val s = _uiState.value
         val plan = s.plan ?: return
@@ -184,7 +176,6 @@ class SessionModeViewModel(
         }
     }
 
-    /** Discards without saving. */
     fun discardAndExit() {
         _uiState.update { it.copy(navigateBack = true) }
     }
@@ -257,10 +248,6 @@ class SessionModeViewModel(
         return (seconds / 60).coerceAtLeast(1).toInt()
     }
 
-    /**
-     * Prototype reward rule: ~0.7 particles per kcal, clamped 50..500.
-     * Matches the "+225 Particles" shown in the design for a 320 kcal session.
-     */
     private fun particlesEarned(activityKcal: Int): Int =
         (activityKcal * 0.7).toInt().coerceIn(50, 500)
 }

@@ -16,9 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.ui.theme.*
 
 @Composable
@@ -41,7 +43,6 @@ fun SessionPausedOverlay(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Close (resume) button top-right
             Box(modifier = Modifier.fillMaxWidth()) {
                 IconButton(
                     onClick = onResume,
@@ -53,7 +54,7 @@ fun SessionPausedOverlay(
                 ) {
                     Icon(
                         Icons.Filled.Close,
-                        contentDescription = "Resume",
+                        contentDescription = stringResource(R.string.session_paused_resume_desc),
                         tint = FitHubPrimary
                     )
                 }
@@ -62,14 +63,14 @@ fun SessionPausedOverlay(
             Text("⏸", style = MaterialTheme.typography.displayLarge)
             Spacer(Modifier.height(8.dp))
             Text(
-                "SESSION PAUSED!",
+                stringResource(R.string.session_paused_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(6.dp))
             Text(
-                "Clocking out early? Or just catching your breath?",
+                stringResource(R.string.session_paused_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
@@ -85,14 +86,14 @@ fun SessionPausedOverlay(
             Spacer(Modifier.height(20.dp))
 
             Text(
-                "WHAT ACTION WOULD YOU LIKE TO TAKE?",
+                stringResource(R.string.session_paused_action_prompt),
                 style = MaterialTheme.typography.labelMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                "Your progress will be saved!",
+                stringResource(R.string.session_paused_progress_note),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
@@ -101,8 +102,8 @@ fun SessionPausedOverlay(
 
             PausedActionRow(
                 emoji = "💾",
-                title = "SAVE PROGRESS & END",
-                subtitle = "You can continue this workout at any time.",
+                title = stringResource(R.string.session_paused_save_title),
+                subtitle = stringResource(R.string.session_paused_save_body),
                 onClick = onSaveAndExit
             )
 
@@ -110,8 +111,8 @@ fun SessionPausedOverlay(
 
             PausedActionRow(
                 emoji = "🗑",
-                title = "DISCARD SESSION",
-                subtitle = "This session's progress will not be recorded.",
+                title = stringResource(R.string.session_paused_discard_title),
+                subtitle = stringResource(R.string.session_paused_discard_body),
                 onClick = onDiscard
             )
         }

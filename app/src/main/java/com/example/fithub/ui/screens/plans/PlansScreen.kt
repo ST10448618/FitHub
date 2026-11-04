@@ -21,13 +21,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.core.WorkoutImageMapper
 import com.example.fithub.domain.model.WorkoutSession
 import com.example.fithub.ui.components.*
+import com.example.fithub.ui.navigation.Screen
 import com.example.fithub.ui.theme.*
 
 @Composable
@@ -43,7 +46,7 @@ fun PlansScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Fitness Hub")
+        AppHeader(title = stringResource(R.string.plans_title))
 
         if (state.isLoading) {
             LoadingState()
@@ -61,7 +64,7 @@ fun PlansScreen(
             // ---- Today's Activities ----
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Today's Activities",
+                    stringResource(R.string.plans_today_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
@@ -78,15 +81,18 @@ fun PlansScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    StatColumn("🔥", "${state.todayActivityKcal}", "Calories Burnt")
-                    StatColumn("⏱", "${state.todayActiveMinutes}m", "Active")
-                    StatColumn("⭐", "${state.workoutStreakDays}", "Days")
+                    StatColumn("🔥", state.todayActivityKcal.toString(),
+                        stringResource(R.string.plans_stat_calories))
+                    StatColumn("⏱", "${state.todayActiveMinutes}m",
+                        stringResource(R.string.plans_stat_active))
+                    StatColumn("⭐", state.workoutStreakDays.toString(),
+                        stringResource(R.string.plans_stat_days))
                 }
 
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    "Weekly Workout Goal",
+                    stringResource(R.string.plans_weekly_goal_title),
                     style = MaterialTheme.typography.labelMedium,
                     color = TextSecondary
                 )
@@ -98,14 +104,21 @@ fun PlansScreen(
                 Spacer(Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "${state.weeklyGoalCompleted} / ${state.weeklyGoalTarget} Workout Sessions Completed",
+                        stringResource(
+                            R.string.plans_weekly_sessions_format,
+                            state.weeklyGoalCompleted,
+                            state.weeklyGoalTarget
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = FitHubPrimary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        "${(100 - state.weeklyGoalPercent).coerceAtLeast(0)}% left",
+                        stringResource(
+                            R.string.plans_weekly_left_format,
+                            (100 - state.weeklyGoalPercent).coerceAtLeast(0)
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )
@@ -120,7 +133,7 @@ fun PlansScreen(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
                     .background(CardWhite)
-                    .clickable { onNavigate("create_workout/step1") }
+                    .clickable { onNavigate(Screen.CREATE_WORKOUT_1) }
                     .padding(16.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -140,13 +153,13 @@ fun PlansScreen(
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Nothing catches your eye? No problem!",
+                            stringResource(R.string.plans_custom_banner_title),
                             style = MaterialTheme.typography.titleSmall,
                             color = FitHubPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Tailor make your very own workout plan, suited perfectly to your needs!",
+                            stringResource(R.string.plans_custom_banner_body),
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
                         )
@@ -167,14 +180,14 @@ fun PlansScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Workout Plans",
+                    stringResource(R.string.plans_workout_plans_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
                 Button(
-                    onClick = { onNavigate("create_workout/step1") },
+                    onClick = { onNavigate(Screen.CREATE_WORKOUT_1) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = FitHubPrimary,
                         contentColor = Color.White
@@ -182,7 +195,10 @@ fun PlansScreen(
                     shape = RoundedCornerShape(10.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                 ) {
-                    Text("Add Plan", style = MaterialTheme.typography.labelMedium)
+                    Text(
+                        stringResource(R.string.plans_add_plan),
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
             }
 
@@ -192,7 +208,7 @@ fun PlansScreen(
                 value = "",
                 onValueChange = { },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search Plans") },
+                placeholder = { Text(stringResource(R.string.plans_search_placeholder)) },
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
@@ -203,14 +219,14 @@ fun PlansScreen(
 
             // ---- Your Recent Activities ----
             SectionHeader(
-                title = "Your Recent Activities",
-                actionText = "more plans",
-                onAction = { onNavigate("create_workout/step1") }
+                title = stringResource(R.string.plans_recent_title),
+                actionText = stringResource(R.string.plans_recent_action),
+                onAction = { onNavigate(Screen.CREATE_WORKOUT_1) }
             )
             Spacer(Modifier.height(8.dp))
             if (state.recentSessions.isEmpty()) {
                 Text(
-                    "No recent activity yet.",
+                    stringResource(R.string.plans_recent_empty),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary
                 )
@@ -223,7 +239,7 @@ fun PlansScreen(
                         RecentSessionCard(
                             session = session,
                             onClick = {
-                                onNavigate("workout_details/${session.workoutPlanId}")
+                                onNavigate(Screen.workoutDetails(session.workoutPlanId))
                             }
                         )
                     }
@@ -234,15 +250,15 @@ fun PlansScreen(
 
             // ---- Created Plans ----
             SectionHeader(
-                title = "Created Plans",
-                actionText = "view all",
-                onAction = { onNavigate("create_workout/step1") }
+                title = stringResource(R.string.plans_created_title),
+                actionText = stringResource(R.string.common_view_all),
+                onAction = { onNavigate(Screen.CREATE_WORKOUT_1) }
             )
             Spacer(Modifier.height(8.dp))
             if (state.createdPlans.isEmpty()) {
                 EmptyState(
-                    title = "No custom workouts yet",
-                    message = "Create your own workout to see it here.",
+                    title = stringResource(R.string.plans_created_empty_title),
+                    message = stringResource(R.string.plans_created_empty_body),
                     emoji = "🛠"
                 )
             } else {
@@ -253,7 +269,7 @@ fun PlansScreen(
                     items(state.createdPlans, key = { it.id }) { plan ->
                         WorkoutCardHorizontal(
                             plan = plan,
-                            onClick = { onNavigate("workout_details/${plan.id}") },
+                            onClick = { onNavigate(Screen.workoutDetails(plan.id)) },
                             localImageRes = WorkoutImageMapper.drawableRes(context, plan.id)
                         )
                     }
@@ -264,15 +280,15 @@ fun PlansScreen(
 
             // ---- Saved Plans ----
             SectionHeader(
-                title = "Saved Plans",
-                actionText = "view all",
-                onAction = { onNavigate("verified_plans") }
+                title = stringResource(R.string.plans_saved_title),
+                actionText = stringResource(R.string.common_view_all),
+                onAction = { onNavigate(Screen.VERIFIED_PLANS) }
             )
             Spacer(Modifier.height(8.dp))
             if (state.savedPlans.isEmpty()) {
                 EmptyState(
-                    title = "No saved workouts yet",
-                    message = "Browse verified workouts to save one.",
+                    title = stringResource(R.string.plans_saved_empty_title),
+                    message = stringResource(R.string.plans_saved_empty_body),
                     emoji = "⭐"
                 )
             } else {
@@ -283,7 +299,7 @@ fun PlansScreen(
                     items(state.savedPlans, key = { it.id }) { plan ->
                         WorkoutCardHorizontal(
                             plan = plan,
-                            onClick = { onNavigate("workout_details/${plan.id}") },
+                            onClick = { onNavigate(Screen.workoutDetails(plan.id)) },
                             localImageRes = WorkoutImageMapper.drawableRes(context, plan.id)
                         )
                     }
@@ -337,12 +353,16 @@ private fun RecentSessionCard(session: WorkoutSession, onClick: () -> Unit) {
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                "${session.estimatedActivityKcal} kcal burnt",
+                stringResource(R.string.plans_kcal_burnt_format, session.estimatedActivityKcal),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White.copy(alpha = 0.9f)
             )
             Text(
-                "${session.exercises.size} exercises • ${session.durationMinutes} min",
+                stringResource(
+                    R.string.plans_exercises_minutes_format,
+                    session.exercises.size,
+                    session.durationMinutes
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White.copy(alpha = 0.9f)
             )

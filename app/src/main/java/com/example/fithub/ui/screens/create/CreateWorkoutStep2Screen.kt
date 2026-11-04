@@ -4,9 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,14 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.domain.model.Exercise
 import com.example.fithub.domain.model.ExerciseCategory
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun CreateWorkoutStep2Screen(
@@ -40,8 +40,8 @@ fun CreateWorkoutStep2Screen(
 
     CreateWorkoutScaffold(
         stepNumber = 2,
-        title = "Exercise Selection",
-        subtitle = "Use the Session Builder to find the exercises you desire and add them to your plan!",
+        title = stringResource(R.string.create_step2_title),
+        subtitle = stringResource(R.string.create_step2_subtitle),
         onCancel = {
             viewModel.cancelAndReset()
             onBack()
@@ -50,7 +50,7 @@ fun CreateWorkoutStep2Screen(
         nextEnabled = state.draft.exercises.isNotEmpty()
     ) {
         Text(
-            "Session Builder",
+            stringResource(R.string.create_step2_builder),
             style = MaterialTheme.typography.titleMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold
@@ -58,12 +58,11 @@ fun CreateWorkoutStep2Screen(
 
         Spacer(Modifier.height(10.dp))
 
-        // Search
         OutlinedTextField(
             value = state.exerciseSearchQuery,
             onValueChange = viewModel::onExerciseSearchChange,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search by Name") },
+            placeholder = { Text(stringResource(R.string.create_step2_search_placeholder)) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp)
@@ -71,9 +70,8 @@ fun CreateWorkoutStep2Screen(
 
         Spacer(Modifier.height(12.dp))
 
-        // Category chips
         Text(
-            "Categories",
+            stringResource(R.string.create_step2_categories),
             style = MaterialTheme.typography.labelMedium,
             color = TextSecondary,
             fontWeight = FontWeight.Bold
@@ -88,7 +86,7 @@ fun CreateWorkoutStep2Screen(
         Spacer(Modifier.height(14.dp))
 
         Text(
-            "Exercises",
+            stringResource(R.string.create_step2_exercises),
             style = MaterialTheme.typography.labelMedium,
             color = TextSecondary,
             fontWeight = FontWeight.Bold
@@ -97,7 +95,7 @@ fun CreateWorkoutStep2Screen(
 
         if (state.filteredExercises.isEmpty()) {
             Text(
-                "No exercises match.",
+                stringResource(R.string.create_step2_no_exercises),
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary,
                 modifier = Modifier.padding(vertical = 12.dp)
@@ -112,20 +110,22 @@ fun CreateWorkoutStep2Screen(
 
         Spacer(Modifier.height(20.dp))
 
-        // Your Workout
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Your Workout",
+                stringResource(R.string.create_step2_your_workout),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
             Text(
-                "${state.draft.exercises.size} exercises currently added",
+                stringResource(
+                    R.string.create_step2_exercise_count_format,
+                    state.draft.exercises.size
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
@@ -135,7 +135,7 @@ fun CreateWorkoutStep2Screen(
 
         if (state.draft.exercises.isEmpty()) {
             Text(
-                "Add exercises to build your workout.",
+                stringResource(R.string.create_step2_add_exercises_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
@@ -144,8 +144,7 @@ fun CreateWorkoutStep2Screen(
                 YourWorkoutRow(
                     index = idx + 1,
                     exerciseName = ex.exerciseName,
-                    category = ex.category.name.lowercase()
-                        .replaceFirstChar { it.uppercase() },
+                    category = ex.category.localized(),
                     onRemove = { viewModel.removeExercise(ex.exerciseId) }
                 )
                 Spacer(Modifier.height(8.dp))
@@ -161,19 +160,17 @@ private fun CategoryGrid(
 ) {
     val categories = ExerciseCategory.entries
 
-    // Simple wrap-style row of chips (2 rows)
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         categories.chunked(4).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 row.forEach { cat ->
                     ChipToggle(
-                        label = cat.name.lowercase().replaceFirstChar { it.uppercase() },
+                        label = cat.localized(),
                         selected = cat == selected,
                         onClick = { onSelect(cat) },
                         modifier = Modifier.weight(1f)
                     )
                 }
-                // fill remaining slots with spacer for consistent widths
                 repeat(4 - row.size) {
                     Spacer(Modifier.weight(1f))
                 }
@@ -258,8 +255,7 @@ private fun ExerciseCard(
                 maxLines = 1
             )
             Text(
-                "Category : ${exercise.category.name.lowercase()
-                    .replaceFirstChar { it.uppercase() }}",
+                stringResource(R.string.workout_details_category_format, exercise.category.localized()),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
@@ -319,7 +315,7 @@ private fun YourWorkoutRow(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                "Category : $category",
+                stringResource(R.string.workout_details_category_format, category),
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
@@ -327,7 +323,7 @@ private fun YourWorkoutRow(
         IconButton(onClick = onRemove) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "Remove",
+                contentDescription = stringResource(R.string.create_step2_remove_desc),
                 tint = ErrorRed
             )
         }

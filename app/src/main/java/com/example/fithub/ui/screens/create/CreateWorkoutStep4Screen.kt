@@ -3,7 +3,6 @@ package com.example.fithub.ui.screens.plans.create
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,13 +14,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SuccessOverlay
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun CreateWorkoutStep4Screen(
@@ -39,45 +41,54 @@ fun CreateWorkoutStep4Screen(
 
     CreateWorkoutScaffold(
         stepNumber = 4,
-        title = "Review Workout",
-        subtitle = "One final check that everything is to your liking. Edit if needed and then confirm to complete!",
+        title = stringResource(R.string.create_step4_title),
+        subtitle = stringResource(R.string.create_step4_subtitle),
         onCancel = {
             viewModel.cancelAndReset()
             onCancelAll()
         },
         onNext = { viewModel.createPlan() },
         nextEnabled = !state.isCreating,
-        nextButtonText = if (state.isCreating) "Creating…" else "Create Plan"
+        nextButtonText = stringResource(
+            if (state.isCreating) R.string.create_step4_creating
+            else R.string.create_step4_create_plan
+        )
     ) {
-        // Plan Details
         RoundedCard(modifier = Modifier.fillMaxWidth()) {
             Text(
-                "Plan Details",
+                stringResource(R.string.create_step4_plan_details),
                 style = MaterialTheme.typography.titleSmall,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(10.dp))
 
-            DetailField("Workout Name", state.draft.name.ifBlank { "—" })
-            Spacer(Modifier.height(10.dp))
-            DetailField("Description", state.draft.description.ifBlank { "—" })
-            Spacer(Modifier.height(10.dp))
             DetailField(
-                "Difficulty Level",
-                state.draft.difficulty.name.lowercase()
-                    .replaceFirstChar { it.uppercase() }
+                stringResource(R.string.create_step1_name_label),
+                state.draft.name.ifBlank { "—" }
             )
             Spacer(Modifier.height(10.dp))
-            DetailField("Equipment Required", state.draft.equipment)
+            DetailField(
+                stringResource(R.string.create_step1_description_label),
+                state.draft.description.ifBlank { "—" }
+            )
+            Spacer(Modifier.height(10.dp))
+            DetailField(
+                stringResource(R.string.create_step1_difficulty_label),
+                state.draft.difficulty.localized()
+            )
+            Spacer(Modifier.height(10.dp))
+            DetailField(
+                stringResource(R.string.create_step1_equipment_label),
+                state.draft.equipment
+            )
         }
 
         Spacer(Modifier.height(14.dp))
 
-        // Exercise details
         RoundedCard(modifier = Modifier.fillMaxWidth()) {
             Text(
-                "Exercise Details",
+                stringResource(R.string.create_step4_exercise_details),
                 style = MaterialTheme.typography.titleSmall,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -114,9 +125,12 @@ fun CreateWorkoutStep4Screen(
                             fontWeight = FontWeight.Bold
                         )
                         val meta = if (ex.targetDurationSeconds > 0)
-                            "${ex.targetDurationSeconds}s duration"
+                            stringResource(
+                                R.string.create_step4_duration_format,
+                                ex.targetDurationSeconds
+                            )
                         else
-                            "${ex.targetReps} reps"
+                            stringResource(R.string.create_step3_reps_format, ex.targetReps)
                         Text(
                             meta,
                             style = MaterialTheme.typography.labelSmall,
@@ -124,7 +138,7 @@ fun CreateWorkoutStep4Screen(
                         )
                     }
                     Text(
-                        "~${ex.estimatedActivityKcal.toInt()} cal",
+                        "~" + stringResource(R.string.create_step3_calories_format, ex.estimatedActivityKcal.toInt()),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )
@@ -134,17 +148,22 @@ fun CreateWorkoutStep4Screen(
 
         Spacer(Modifier.height(14.dp))
 
-        // Estimates
         RoundedCard(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 EstimateCell(
-                    label = "Estimated Calories Burnt",
-                    value = "${state.estimatedActivityKcal} calories",
+                    label = stringResource(R.string.create_step4_estimated_calories),
+                    value = stringResource(
+                        R.string.create_step4_calories_value_format,
+                        state.estimatedActivityKcal
+                    ),
                     modifier = Modifier.weight(1f)
                 )
                 EstimateCell(
-                    label = "Estimated Time Spent",
-                    value = "${state.estimatedDurationMinutes} minutes",
+                    label = stringResource(R.string.create_step4_estimated_time),
+                    value = stringResource(
+                        R.string.create_step4_minutes_value_format,
+                        state.estimatedDurationMinutes
+                    ),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -158,9 +177,9 @@ fun CreateWorkoutStep4Screen(
 
     if (showSuccess) {
         SuccessOverlay(
-            title = "Workout Plan Created!",
-            message = "Your plan has been successfully created and can be accessed from Created Plans",
-            buttonText = "Confirm",
+            title = stringResource(R.string.create_step4_success_title),
+            message = stringResource(R.string.create_step4_success_message),
+            buttonText = stringResource(R.string.create_step4_success_confirm),
             onDismiss = {
                 viewModel.cancelAndReset()
                 onCreated()

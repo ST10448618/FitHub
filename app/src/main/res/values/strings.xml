@@ -70,7 +70,7 @@
 
     <string name="profile_edit_details">Edit Details</string>
     <string name="profile_settings">Settings</string>
-    <string name="profile_logout" translatable="false">Log out</string>
+    <string name="profile_logout">Log out</string>
     <string name="profile_logout_confirm_title">Log out of FitHub?</string>
     <string name="profile_logout_confirm_body">You will need to sign in again next time.</string>
     <string name="profile_logout_confirm_yes">Log out</string>
@@ -166,10 +166,8 @@
     <string name="onboarding_username_fallback">there</string>
     <string name="onboarding_info_hint">This information is needed for us to personalize your experience.</string>
 
-    <!-- Step 1 -->
     <string name="onboarding_step1_subtitle">Enter your Username and Email, as well as set up your password.</string>
 
-    <!-- Step 2 -->
     <string name="onboarding_step2_title">Biometric Login</string>
     <string name="onboarding_step2_subtitle">Did you know you could use your Fingerprint to unlock Fit Hub and save time?</string>
     <string name="onboarding_step2_card_title">Enable Quick Login?</string>
@@ -177,32 +175,27 @@
     <string name="onboarding_step2_btn_enable">ENABLE</string>
     <string name="onboarding_step2_btn_enabled">ENABLED</string>
 
-    <!-- Step 3 -->
     <string name="onboarding_step3_title">Enter your age</string>
     <string name="onboarding_step3_subtitle">They say 30 is the new 20. But we still need your actual age though.</string>
     <string name="onboarding_step3_label">ENTER YOUR CURRENT AGE</string>
     <string name="onboarding_step3_placeholder">20</string>
 
-    <!-- Step 4 -->
     <string name="onboarding_step4_title">What do you identify as?</string>
     <string name="onboarding_step4_subtitle">There wasn\'t enough space to fit all of them so please pick from two.</string>
     <string name="onboarding_step4_label">What gender are you?</string>
 
-    <!-- Step 5 -->
     <string name="onboarding_step5_title">What is your current height?</string>
     <string name="onboarding_step5_subtitle">Not the one on your dating profile.</string>
     <string name="onboarding_step5_question">How tall are you?</string>
     <string name="onboarding_step5_label">ENTER YOUR CURRENT HEIGHT</string>
     <string name="onboarding_step5_placeholder">169 cm</string>
 
-    <!-- Step 6 -->
     <string name="onboarding_step6_title">Enter your current weight</string>
     <string name="onboarding_step6_subtitle">Everyone loves a Before and After picture after all!</string>
     <string name="onboarding_step6_question">How much do you currently weigh?</string>
     <string name="onboarding_step6_label">ENTER YOUR CURRENT WEIGHT</string>
     <string name="onboarding_step6_placeholder">60 kg</string>
 
-    <!-- Step 7 -->
     <string name="onboarding_step7_title">How active are you?</string>
     <string name="onboarding_step7_subtitle">No judgement. We just ask for 100% honesty.</string>
     <string name="onboarding_step7_next">Finish</string>
@@ -212,16 +205,14 @@
     <string name="onboarding_step7_desc_very">Hard exercise 6 - 7 days a week</string>
     <string name="onboarding_step7_desc_extremely">Intensive physical work daily</string>
 
-    <!-- Complete -->
     <string name="onboarding_complete_success">SUCCESS!</string>
     <string name="onboarding_complete_title">Onboarding Completed</string>
     <string name="onboarding_complete_body">We have all the startup information we need. You can set your personal goals from the Goals section.</string>
     <string name="onboarding_complete_setting_up">Setting up…</string>
     <string name="onboarding_complete_confirm">Confirm</string>
 
-
     <!-- ========================================== -->
-    <!-- PHASE 5 : Enum labels (all batches)        -->
+    <!-- PHASE 5 : Enum labels                      -->
     <!-- ========================================== -->
     <string name="enum_gender_male">Male</string>
     <string name="enum_gender_female">Female</string>
@@ -280,12 +271,10 @@
     <string name="common_view_more">view more</string>
     <string name="common_view_all">view all</string>
 
-    <!-- Dashboard Hero -->
     <string name="dashboard_greeting_morning">Good Morning,</string>
     <string name="dashboard_user_fallback">User</string>
     <string name="dashboard_profile_desc">Profile</string>
 
-    <!-- Dashboard Overview -->
     <string name="dashboard_overview_title">Today\'s Overview</string>
     <string name="dashboard_estimated_burnt">Estimated Burnt</string>
     <string name="dashboard_consumed">Consumed</string>
@@ -295,28 +284,23 @@
     <string name="dashboard_add_meal">Add Meal</string>
     <string name="dashboard_add_workout">Add Workout</string>
 
-    <!-- Dashboard Recommendations -->
     <string name="dashboard_recommended_title">Recommended Activities</string>
     <string name="dashboard_recommended_action">view plans</string>
     <string name="dashboard_recommended_empty">No recommendations yet — browse verified plans.</string>
 
-    <!-- Dashboard Calorie chart -->
     <string name="dashboard_calorie_intake_title">Your Calorie Intake</string>
     <string name="dashboard_legend_achieved">Achieved Amount</string>
     <string name="dashboard_legend_goal">Goal Amount</string>
     <string name="dashboard_legend_exceeded">Exceeded</string>
     <string name="dashboard_daily_goal_format">Daily goal: %1$d kcal</string>
 
-    <!-- Dashboard Meals -->
     <string name="dashboard_meals_title">Today\'s Meals</string>
 
-    <!-- Dashboard Weekly workout -->
     <string name="dashboard_weekly_workout_title">Weekly Workout Goal</string>
     <string name="dashboard_weekly_workout_sessions_format">%1$d / %2$d sessions completed</string>
     <string name="dashboard_percent_format">%1$d%%</string>
     <string name="dashboard_weekly_workout_hint">Keep going — you\'re building consistency.</string>
 
-    <!-- Workout card / food card -->
     <string name="workout_card_verified">Verified</string>
     <string name="workout_card_exercises_min_format">%1$d exercises • %2$d min</string>
     <string name="workout_card_minutes_format">%1$d minutes</string>
@@ -324,12 +308,8 @@
     <string name="food_card_kcal_format">%1$d kcal</string>
     <string name="food_card_grams_format">%1$dg</string>
     <string name="food_details_grams_over_target_format">%1$d/%2$dg</string>
-    <string name="food_details_macro_protein">Protein</string>
-    <string name="food_details_macro_carbs">Carbs</string>
-    <string name="food_details_macro_fats">Fats</string>
     <string name="food_log_row_calories_format">%1$d cal</string>
 
-    <!-- Journal -->
     <string name="journal_body_title">Body &amp; Weight</string>
     <string name="journal_body_action">view details</string>
     <string name="journal_body_recent_weight">Most Recent Weight</string>
@@ -349,63 +329,8 @@
     <string name="journal_workouts_kcal_format">%1$d kcal estimated</string>
 
     <!-- ========================================== -->
-    <!-- PHASE 5 BATCH D2 PART 2 : Progress Overview + Workouts Overview -->
-    <!-- ========================================== -->
-
-    <!-- Progress Overview -->
-    <string name="progress_overview_title">Progress Overview</string>
-    <string name="progress_overview_current_weight">Current weight</string>
-    <string name="progress_overview_goal_weight">Goal weight</string>
-    <string name="progress_overview_average_intake">Average Intake</string>
-    <string name="progress_overview_activity">Activity</string>
-    <string name="progress_overview_overall_goal">Overall Goal Progress</string>
-    <string name="progress_overview_pct_toward_goal">%1$d%% toward goal</string>
-    <string name="progress_overview_by_category">Progress Overview by Category</string>
-    <string name="progress_overview_intake_analysis">Intake Analysis</string>
-    <string name="progress_overview_no_intake">No intake logged this month.</string>
-    <string name="progress_overview_avg_daily_intake">Avg. Daily Intake</string>
-    <string name="progress_overview_daily_calorie_goal">Daily Calorie Goal</string>
-    <string name="progress_overview_workout_overview">Workout Overview</string>
-    <string name="progress_overview_no_workout_sessions">No workout sessions this month.</string>
-    <string name="progress_overview_planned_sessions_format">%1$d / %2$d planned sessions completed</string>
-    <string name="progress_overview_adherence_format">%1$d%% adherence rate.</string>
-    <string name="progress_overview_view_detailed">view detailed &gt;</string>
-    <string name="progress_overview_prev_desc">Previous</string>
-    <string name="progress_overview_next_desc">Next</string>
-    <string name="progress_overview_week_short_format">W%1$d</string>
-    <string name="progress_overview_week_label_format">Week %1$d</string>
-
-    <!-- Workouts Overview -->
-    <string name="workouts_overview_title">Workouts Overview</string>
-    <string name="workouts_overview_total_activity">Total Activity</string>
-    <string name="workouts_overview_active_time">Active Time</string>
-    <string name="workouts_overview_monthly_goal">Monthly Activity Goal</string>
-    <string name="workouts_overview_goal_progress_format">%1$d kcal / %2$d kcal</string>
-    <string name="workouts_overview_pct_of_target_format">%1$d%% of target</string>
-    <string name="workouts_overview_remaining_format">%1$d kcal below monthly goal</string>
-    <string name="workouts_overview_graph_title">Estimated Calories Burnt</string>
-    <string name="workouts_overview_no_activity">No workout activity to show.</string>
-    <string name="workouts_overview_graph_note">Values are based on completed sessions • estimates</string>
-    <string name="workouts_overview_habits_title">Your Workout Habits</string>
-    <string name="workouts_overview_training_summary">Training Summary</string>
-    <string name="workouts_overview_total_sessions_format">Total Sessions Completed : %1$d Sessions</string>
-    <string name="workouts_overview_avg_session_format">Average Session Length : %1$d minutes</string>
-    <string name="workouts_overview_longest_session_format">Longest Session Completed : %1$d minutes</string>
-    <string name="workouts_overview_no_categories">No categories to display yet.</string>
-    <string name="workouts_overview_sessions_format">%1$d sessions</string>
-    <string name="workouts_overview_mode_week">Week</string>
-    <string name="workouts_overview_mode_month">Month</string>
-    <string name="workouts_overview_mode_year">Year</string>
-
-    <!-- Weight Journey Chart -->
-    <string name="weight_journey_latest_tooltip_format">%1$.1f KG</string>
-
-
-    <!-- ========================================== -->
     <!-- PHASE 5 BATCH C PART 2 : Food & Nutrition  -->
-    <!-- (MISSING — restore from Batch C PART 2)    -->
     <!-- ========================================== -->
-
     <string name="food_add_meal_title">Add Meal</string>
     <string name="food_add_meal_search_placeholder">Search Meal or Food</string>
     <string name="food_add_meal_scan">Scan</string>
@@ -420,7 +345,9 @@
     <string name="food_details_nutritional_info">Nutritional Information</string>
     <string name="food_details_calories_format">%1$d cal</string>
     <string name="food_details_grams_format">%1$d g</string>
-
+    <string name="food_details_macro_protein">Protein</string>
+    <string name="food_details_macro_carbs">Carbs</string>
+    <string name="food_details_macro_fats">Fats</string>
     <string name="food_details_meal_target_progress">%1$d / %2$d cal</string>
     <string name="food_details_description_title">Description</string>
     <string name="food_details_add_meal_button">Add %1$s Meal</string>
@@ -493,9 +420,7 @@
 
     <!-- ========================================== -->
     <!-- PHASE 5 BATCH D2 PART 1 : Goals + Body + Checkpoint -->
-    <!-- (MISSING — restore from Batch D2 PART 1)   -->
     <!-- ========================================== -->
-
     <string name="common_dash">—</string>
     <string name="common_unit_kg">kg</string>
     <string name="common_unit_kcal">kcal</string>
@@ -588,5 +513,207 @@
     <string name="checkpoint_manager_reminders_subtitle">Get a notification on weigh-in day.</string>
     <string name="checkpoint_manager_upcoming_title">Upcoming Checkpoints</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH D2 PART 2 : Progress Overview + Workouts Overview -->
+    <!-- ========================================== -->
+    <string name="progress_overview_title">Progress Overview</string>
+    <string name="progress_overview_current_weight">Current weight</string>
+    <string name="progress_overview_goal_weight">Goal weight</string>
+    <string name="progress_overview_average_intake">Average Intake</string>
+    <string name="progress_overview_activity">Activity</string>
+    <string name="progress_overview_overall_goal">Overall Goal Progress</string>
+    <string name="progress_overview_pct_toward_goal">%1$d%% toward goal</string>
+    <string name="progress_overview_by_category">Progress Overview by Category</string>
+    <string name="progress_overview_intake_analysis">Intake Analysis</string>
+    <string name="progress_overview_no_intake">No intake logged this month.</string>
+    <string name="progress_overview_avg_daily_intake">Avg. Daily Intake</string>
+    <string name="progress_overview_daily_calorie_goal">Daily Calorie Goal</string>
+    <string name="progress_overview_workout_overview">Workout Overview</string>
+    <string name="progress_overview_no_workout_sessions">No workout sessions this month.</string>
+    <string name="progress_overview_planned_sessions_format">%1$d / %2$d planned sessions completed</string>
+    <string name="progress_overview_adherence_format">%1$d%% adherence rate.</string>
+    <string name="progress_overview_view_detailed">view detailed &gt;</string>
+    <string name="progress_overview_prev_desc">Previous</string>
+    <string name="progress_overview_next_desc">Next</string>
+    <string name="progress_overview_week_short_format">W%1$d</string>
+    <string name="progress_overview_week_label_format">Week %1$d</string>
+
+    <string name="workouts_overview_title">Workouts Overview</string>
+    <string name="workouts_overview_total_activity">Total Activity</string>
+    <string name="workouts_overview_active_time">Active Time</string>
+    <string name="workouts_overview_monthly_goal">Monthly Activity Goal</string>
+    <string name="workouts_overview_goal_progress_format">%1$d kcal / %2$d kcal</string>
+    <string name="workouts_overview_pct_of_target_format">%1$d%% of target</string>
+    <string name="workouts_overview_remaining_format">%1$d kcal below monthly goal</string>
+    <string name="workouts_overview_graph_title">Estimated Calories Burnt</string>
+    <string name="workouts_overview_no_activity">No workout activity to show.</string>
+    <string name="workouts_overview_graph_note">Values are based on completed sessions • estimates</string>
+    <string name="workouts_overview_habits_title">Your Workout Habits</string>
+    <string name="workouts_overview_training_summary">Training Summary</string>
+    <string name="workouts_overview_total_sessions_format">Total Sessions Completed : %1$d Sessions</string>
+    <string name="workouts_overview_avg_session_format">Average Session Length : %1$d minutes</string>
+    <string name="workouts_overview_longest_session_format">Longest Session Completed : %1$d minutes</string>
+    <string name="workouts_overview_no_categories">No categories to display yet.</string>
+    <string name="workouts_overview_sessions_format">%1$d sessions</string>
+    <string name="workouts_overview_mode_week">Week</string>
+    <string name="workouts_overview_mode_month">Month</string>
+    <string name="workouts_overview_mode_year">Year</string>
+
+    <string name="weight_journey_latest_tooltip_format">%1$.1f KG</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH D1 : Plans + Create + Session -->
+    <!-- ========================================== -->
+    <string name="plans_title">Fitness Hub</string>
+    <string name="plans_today_title">Today\'s Activities</string>
+    <string name="plans_stat_calories">Calories Burnt</string>
+    <string name="plans_stat_active">Active</string>
+    <string name="plans_stat_days">Days</string>
+    <string name="plans_weekly_goal_title">Weekly Workout Goal</string>
+    <string name="plans_weekly_sessions_format">%1$d / %2$d Workout Sessions Completed</string>
+    <string name="plans_weekly_left_format">%1$d%% left</string>
+    <string name="plans_custom_banner_title">Nothing catches your eye? No problem!</string>
+    <string name="plans_custom_banner_body">Tailor make your very own workout plan, suited perfectly to your needs!</string>
+    <string name="plans_workout_plans_title">Workout Plans</string>
+    <string name="plans_add_plan">Add Plan</string>
+    <string name="plans_search_placeholder">Search Plans</string>
+    <string name="plans_recent_title">Your Recent Activities</string>
+    <string name="plans_recent_action">more plans</string>
+    <string name="plans_recent_empty">No recent activity yet.</string>
+    <string name="plans_created_title">Created Plans</string>
+    <string name="plans_created_empty_title">No custom workouts yet</string>
+    <string name="plans_created_empty_body">Create your own workout to see it here.</string>
+    <string name="plans_saved_title">Saved Plans</string>
+    <string name="plans_saved_empty_title">No saved workouts yet</string>
+    <string name="plans_saved_empty_body">Browse verified workouts to save one.</string>
+    <string name="plans_kcal_burnt_format">%1$d kcal burnt</string>
+    <string name="plans_exercises_minutes_format">%1$d exercises • %2$d min</string>
+
+    <string name="verified_plans_search_placeholder">Search by Name</string>
+    <string name="verified_plans_filter">Filter</string>
+    <string name="verified_plans_hero_title">Fitness is a\npersonal journey</string>
+    <string name="verified_plans_hero_subtitle">Discover what works for you</string>
+    <string name="verified_plans_title">Verified Plans</string>
+    <string name="verified_plans_see_all">see all</string>
+    <string name="verified_plans_empty_title">No plans found</string>
+    <string name="verified_plans_empty_body">Try a different search term.</string>
+
+    <string name="workout_list_search_format">Search %1$s</string>
+    <string name="workout_list_found_format">%1$d plans found</string>
+    <string name="workout_list_empty_title">No plans found</string>
+    <string name="workout_list_empty_body">Try adjusting your search.</string>
+
+    <string name="workout_details_not_found">Workout not found.</string>
+    <string name="workout_details_no_description">No description.</string>
+    <string name="workout_details_no_equipment">No Equipment</string>
+    <string name="workout_details_start_plan">Start Plan</string>
+    <string name="workout_details_save">Save</string>
+    <string name="workout_details_saving">Saving…</string>
+    <string name="workout_details_plan_details">Plan Details</string>
+    <string name="workout_details_calories_burnt">Calories Burnt</string>
+    <string name="workout_details_calories_format">%1$d calories</string>
+    <string name="workout_details_session_length">Session Length</string>
+    <string name="workout_details_mins_format">%1$d mins</string>
+    <string name="workout_details_exercises">Exercises</string>
+    <string name="workout_details_rounds_format">%1$d rounds</string>
+    <string name="workout_details_requirements">Requirements</string>
+    <string name="workout_details_none">None</string>
+    <string name="workout_details_rounds_title">Rounds</string>
+    <string name="workout_details_category_format">Category : %1$s</string>
+    <string name="workout_details_min_format">%1$d min</string>
+    <string name="workout_details_reps_format">%1$d reps</string>
+
+    <string name="create_title">Create Workout</string>
+    <string name="create_step1_title">Enter Name &amp; Details</string>
+    <string name="create_step1_subtitle">Tell us all about your masterpiece!</string>
+    <string name="create_step1_task_details">Task Details</string>
+    <string name="create_step1_name_label">Workout Name</string>
+    <string name="create_step1_name_placeholder">Enter Workout Name</string>
+    <string name="create_step1_description_label">Description</string>
+    <string name="create_step1_description_placeholder">Enter Description (optional)</string>
+    <string name="create_step1_difficulty_label">Difficulty Level</string>
+    <string name="create_step1_equipment_label">Equipment Required</string>
+    <string name="create_step1_additional_info">Additional Info</string>
+    <string name="create_step1_attach">Attach File</string>
+
+    <string name="create_step2_title">Exercise Selection</string>
+    <string name="create_step2_subtitle">Use the Session Builder to find the exercises you desire and add them to your plan!</string>
+    <string name="create_step2_builder">Session Builder</string>
+    <string name="create_step2_search_placeholder">Search by Name</string>
+    <string name="create_step2_categories">Categories</string>
+    <string name="create_step2_exercises">Exercises</string>
+    <string name="create_step2_no_exercises">No exercises match.</string>
+    <string name="create_step2_your_workout">Your Workout</string>
+    <string name="create_step2_exercise_count_format">%1$d exercises currently added</string>
+    <string name="create_step2_add_exercises_hint">Add exercises to build your workout.</string>
+    <string name="create_step2_remove_desc">Remove</string>
+
+    <string name="create_step3_title">Configure Exercises</string>
+    <string name="create_step3_subtitle">Now is where you make this your own. Adjust the Number of Reps or Minutes to your desired amount</string>
+    <string name="create_step3_total_calories">%1$d Total Calories Burnt</string>
+    <string name="create_step3_estimated_duration">~%1$d minutes</string>
+    <string name="create_step3_duration">Duration</string>
+    <string name="create_step3_duration_format">%1$dm %2$ds</string>
+    <string name="create_step3_repetitions">Repetitions</string>
+    <string name="create_step3_reps_format">%1$d reps</string>
+    <string name="create_step3_calories_format">%1$d cal</string>
+    <string name="create_step3_move_up">Move up</string>
+    <string name="create_step3_move_down">Move down</string>
+
+    <string name="create_step4_title">Review Workout</string>
+    <string name="create_step4_subtitle">One final check that everything is to your liking. Edit if needed and then confirm to complete!</string>
+    <string name="create_step4_plan_details">Plan Details</string>
+    <string name="create_step4_exercise_details">Exercise Details</string>
+    <string name="create_step4_duration_format">%1$ds duration</string>
+    <string name="create_step4_estimated_calories">Estimated Calories Burnt</string>
+    <string name="create_step4_calories_value_format">%1$d calories</string>
+    <string name="create_step4_estimated_time">Estimated Time Spent</string>
+    <string name="create_step4_minutes_value_format">%1$d minutes</string>
+    <string name="create_step4_creating">Creating…</string>
+    <string name="create_step4_create_plan">Create Plan</string>
+    <string name="create_step4_success_title">Workout Plan Created!</string>
+    <string name="create_step4_success_message">Your plan has been successfully created and can be accessed from Created Plans</string>
+    <string name="create_step4_success_confirm">Confirm</string>
+    <string name="create_error_incomplete">Please complete all steps.</string>
+
+    <string name="equipment_none">None</string>
+    <string name="equipment_dumbbells">Dumbbells</string>
+    <string name="equipment_barbell">Barbell</string>
+    <string name="equipment_bench">Bench</string>
+    <string name="equipment_resistance_band">Resistance Band</string>
+    <string name="equipment_kettlebell">Kettlebell</string>
+
+    <string name="session_not_found">Session not found.</string>
+    <string name="session_mode_title">Session Mode</string>
+    <string name="session_exercise_progress_format">EXERCISE %1$d OF %2$d</string>
+    <string name="session_remaining">REMAINING</string>
+    <string name="session_number_of_reps">Number of Reps</string>
+    <string name="session_calories_burnt">Calories Burnt</string>
+    <string name="session_previous">Previous</string>
+    <string name="session_pause">Pause</string>
+    <string name="session_next">Next</string>
+
+    <string name="session_paused_title">SESSION PAUSED!</string>
+    <string name="session_paused_subtitle">Clocking out early? Or just catching your breath?</string>
+    <string name="session_paused_action_prompt">WHAT ACTION WOULD YOU LIKE TO TAKE?</string>
+    <string name="session_paused_progress_note">Your progress will be saved!</string>
+    <string name="session_paused_save_title">SAVE PROGRESS &amp; END</string>
+    <string name="session_paused_save_body">You can continue this workout at any time.</string>
+    <string name="session_paused_discard_title">DISCARD SESSION</string>
+    <string name="session_paused_discard_body">This session\'s progress will not be recorded.</string>
+    <string name="session_paused_resume_desc">Resume</string>
+
+    <string name="session_completed_title">SESSION COMPLETED!</string>
+    <string name="session_completed_subtitle">Keep up the great work!</string>
+    <string name="session_completed_plan_details">Plan Details</string>
+    <string name="session_completed_calories_format">%1$d cal</string>
+    <string name="session_completed_mins_format">%1$d mins</string>
+    <string name="session_completed_rounds_format">%1$d rounds</string>
+    <string name="session_completed_status">Completed</string>
+    <string name="session_completed_weekly_title">Weekly Workout Goal</string>
+    <string name="session_completed_weekly_format">%1$d / %2$d sessions completed</string>
+    <string name="session_completed_left_format">%1$d%% left</string>
+    <string name="session_completed_particles_format">%1$d Particles Added</string>
+    <string name="session_completed_tap_to_continue">Tap anywhere to continue</string>
 
 </resources>

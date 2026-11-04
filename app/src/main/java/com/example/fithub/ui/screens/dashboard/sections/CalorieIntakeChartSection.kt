@@ -29,7 +29,7 @@ fun CalorieIntakeChartSection(
     dailyTarget: Int,
     onViewMoreClick: () -> Unit
 ) {
-    // Localised short-day formatter (e.g. "Mon", "Mo", "Ma" per locale).
+    // Localised short-day formatter (e.g. "Mon" / "Ma" / "Mo" per system locale).
     val dayFormatter = DateTimeFormatter
         .ofLocalizedDate(FormatStyle.SHORT)
         .withLocale(Locale.getDefault())

@@ -21,7 +21,7 @@ import com.example.fithub.domain.model.ActivityLevel
 import com.example.fithub.ui.theme.CardWhite
 import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.TextSecondary
-import com.example.fithub.util.localized
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun OnboardingStep7Lifestyle(

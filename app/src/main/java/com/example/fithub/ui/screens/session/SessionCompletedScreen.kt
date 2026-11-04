@@ -24,11 +24,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.ui.components.LoadingState
 import com.example.fithub.ui.components.RoundedProgressBar
 import com.example.fithub.ui.theme.*
@@ -48,7 +50,10 @@ fun SessionCompletedScreen(
     val session = state.session
     if (session == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(state.errorMessage ?: "Session not found.")
+            Text(
+                state.errorMessage ?: stringResource(R.string.session_not_found),
+                color = TextSecondary
+            )
         }
         return
     }
@@ -62,9 +67,7 @@ fun SessionCompletedScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Brush.verticalGradient(
-                    listOf(SuccessGreen, SuccessGreenDark)
-                )
+                Brush.verticalGradient(listOf(SuccessGreen, SuccessGreenDark))
             )
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 32.dp),
@@ -72,7 +75,6 @@ fun SessionCompletedScreen(
     ) {
         Spacer(Modifier.height(20.dp))
 
-        // Checkmark bubble
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -91,7 +93,7 @@ fun SessionCompletedScreen(
         Spacer(Modifier.height(24.dp))
 
         Text(
-            "SESSION COMPLETED!",
+            stringResource(R.string.session_completed_title),
             style = MaterialTheme.typography.displayLarge,
             color = Color.White,
             fontWeight = FontWeight.Bold,
@@ -99,14 +101,13 @@ fun SessionCompletedScreen(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Keep up the great work!",
+            stringResource(R.string.session_completed_subtitle),
             style = MaterialTheme.typography.titleMedium,
             color = Color.White.copy(alpha = 0.9f)
         )
 
         Spacer(Modifier.height(28.dp))
 
-        // Summary card
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,7 +127,7 @@ fun SessionCompletedScreen(
             Spacer(Modifier.height(16.dp))
 
             Text(
-                "Plan Details",
+                stringResource(R.string.session_completed_plan_details),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextSecondary,
                 fontWeight = FontWeight.Bold
@@ -136,14 +137,20 @@ fun SessionCompletedScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 SummaryStat(
                     emoji = "🔥",
-                    label = "Calories Burnt",
-                    value = "${session.estimatedActivityKcal} cal",
+                    label = stringResource(R.string.session_calories_burnt),
+                    value = stringResource(
+                        R.string.session_completed_calories_format,
+                        session.estimatedActivityKcal
+                    ),
                     modifier = Modifier.weight(1f)
                 )
                 SummaryStat(
                     emoji = "⏱",
-                    label = "Session Length",
-                    value = "${session.durationMinutes} mins",
+                    label = stringResource(R.string.workout_details_session_length),
+                    value = stringResource(
+                        R.string.session_completed_mins_format,
+                        session.durationMinutes
+                    ),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -151,23 +158,25 @@ fun SessionCompletedScreen(
             Row(modifier = Modifier.fillMaxWidth()) {
                 SummaryStat(
                     emoji = "🏋",
-                    label = "Exercises",
-                    value = "${session.exercises.size} rounds",
+                    label = stringResource(R.string.workout_details_exercises),
+                    value = stringResource(
+                        R.string.session_completed_rounds_format,
+                        session.exercises.size
+                    ),
                     modifier = Modifier.weight(1f)
                 )
                 SummaryStat(
                     emoji = "📋",
-                    label = "Requirements",
-                    value = "Completed",
+                    label = stringResource(R.string.workout_details_requirements),
+                    value = stringResource(R.string.session_completed_status),
                     modifier = Modifier.weight(1f)
                 )
             }
 
             Spacer(Modifier.height(20.dp))
 
-            // Weekly progress
             Text(
-                "Weekly Workout Goal",
+                stringResource(R.string.session_completed_weekly_title),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextSecondary,
                 fontWeight = FontWeight.Bold
@@ -181,14 +190,21 @@ fun SessionCompletedScreen(
             Spacer(Modifier.height(6.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "${state.weeklyCompleted} / ${state.weeklyTarget} sessions completed",
+                    stringResource(
+                        R.string.session_completed_weekly_format,
+                        state.weeklyCompleted,
+                        state.weeklyTarget
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    "${(100 - state.weeklyProgressPercent).coerceAtLeast(0)}% left",
+                    stringResource(
+                        R.string.session_completed_left_format,
+                        (100 - state.weeklyProgressPercent).coerceAtLeast(0)
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextSecondary
                 )
@@ -197,7 +213,6 @@ fun SessionCompletedScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // Particles earned pill
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(30.dp))
@@ -222,7 +237,7 @@ fun SessionCompletedScreen(
             }
             Spacer(Modifier.width(10.dp))
             Text(
-                "${state.particlesEarned} Particles Added",
+                stringResource(R.string.session_completed_particles_format, state.particlesEarned),
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
@@ -244,7 +259,7 @@ fun SessionCompletedScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                "Tap anywhere to continue",
+                stringResource(R.string.session_completed_tap_to_continue),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.85f)
             )

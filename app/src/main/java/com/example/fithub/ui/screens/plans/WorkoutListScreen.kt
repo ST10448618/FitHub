@@ -16,13 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.core.WorkoutImageMapper
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun WorkoutListScreen(
@@ -39,7 +41,7 @@ fun WorkoutListScreen(
             .background(BackgroundGray)
     ) {
         AppHeader(
-            title = "Workout Plans",
+            title = stringResource(R.string.plans_workout_plans_title),
             onBack = onBack
         )
 
@@ -53,8 +55,12 @@ fun WorkoutListScreen(
                 onValueChange = viewModel::onSearchChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
-                    Text("Search ${state.category.name.lowercase()
-                        .replaceFirstChar { it.uppercase() }}")
+                    Text(
+                        stringResource(
+                            R.string.workout_list_search_format,
+                            state.category.localized()
+                        )
+                    )
                 },
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                 trailingIcon = { Icon(Icons.Filled.FilterList, contentDescription = null) },
@@ -65,7 +71,7 @@ fun WorkoutListScreen(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                "${state.items.size} plans found",
+                stringResource(R.string.workout_list_found_format, state.items.size),
                 style = MaterialTheme.typography.labelMedium,
                 color = TextSecondary
             )
@@ -75,8 +81,8 @@ fun WorkoutListScreen(
             when {
                 state.isLoading -> LoadingState()
                 state.items.isEmpty() -> EmptyState(
-                    title = "No plans found",
-                    message = "Try adjusting your search.",
+                    title = stringResource(R.string.workout_list_empty_title),
+                    message = stringResource(R.string.workout_list_empty_body),
                     emoji = "🔍"
                 )
                 else -> LazyColumn(

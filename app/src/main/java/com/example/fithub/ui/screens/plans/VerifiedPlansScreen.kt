@@ -19,14 +19,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.core.WorkoutImageMapper
 import com.example.fithub.domain.model.WorkoutCategory
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun VerifiedPlansScreen(
@@ -44,7 +47,7 @@ fun VerifiedPlansScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Workout Plans", onBack = onBack)
+        AppHeader(title = stringResource(R.string.plans_workout_plans_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -57,7 +60,6 @@ fun VerifiedPlansScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
-            // Search + filter
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -66,7 +68,7 @@ fun VerifiedPlansScreen(
                     value = state.searchQuery,
                     onValueChange = viewModel::onSearchChange,
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Search by Name") },
+                    placeholder = { Text(stringResource(R.string.verified_plans_search_placeholder)) },
                     leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp)
@@ -79,13 +81,12 @@ fun VerifiedPlansScreen(
                 ) {
                     Icon(Icons.Filled.FilterList, contentDescription = null)
                     Spacer(Modifier.width(4.dp))
-                    Text("Filter")
+                    Text(stringResource(R.string.verified_plans_filter))
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // Hero banner
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -98,18 +99,16 @@ fun VerifiedPlansScreen(
                     )
                     .padding(20.dp)
             ) {
-                Column(
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
+                Column(modifier = Modifier.align(Alignment.CenterStart)) {
                     Text(
-                        "Fitness is a\npersonal journey",
+                        stringResource(R.string.verified_plans_hero_title),
                         style = MaterialTheme.typography.headlineMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "Discover what works for you",
+                        stringResource(R.string.verified_plans_hero_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.85f)
                     )
@@ -118,9 +117,8 @@ fun VerifiedPlansScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // Category icons row
             Text(
-                "Verified Plans",
+                stringResource(R.string.verified_plans_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -131,14 +129,13 @@ fun VerifiedPlansScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Per-category sections
             state.plansByCategory
                 .toList()
                 .sortedBy { (cat, _) -> categoryOrder(cat) }
                 .forEach { (category, plans) ->
                     if (plans.isNotEmpty()) {
                         CategorySection(
-                            title = categoryLabel(category),
+                            title = category.localized(),
                             plans = plans,
                             onPlanClick = onPlanClick,
                             onSeeAllClick = { onSeeAllClick(category) },
@@ -150,8 +147,8 @@ fun VerifiedPlansScreen(
 
             if (state.plansByCategory.isEmpty()) {
                 EmptyState(
-                    title = "No plans found",
-                    message = "Try a different search term.",
+                    title = stringResource(R.string.verified_plans_empty_title),
+                    message = stringResource(R.string.verified_plans_empty_body),
                     emoji = "🔍"
                 )
             }
@@ -164,18 +161,15 @@ fun VerifiedPlansScreen(
 @Composable
 private fun CategoryIconRow(onCategoryClick: (WorkoutCategory) -> Unit) {
     val categories = listOf(
-        WorkoutCategory.STRENGTH to ("💪" to "Strength"),
-        WorkoutCategory.CARDIO to ("🏃" to "Cardio"),
-        WorkoutCategory.ENDURANCE to ("⏱" to "Endurance"),
-        WorkoutCategory.GENERAL_FITNESS to ("🎯" to "General"),
-        WorkoutCategory.MOBILITY to ("🧘" to "Mobility")
+        WorkoutCategory.STRENGTH to "💪",
+        WorkoutCategory.CARDIO to "🏃",
+        WorkoutCategory.ENDURANCE to "⏱",
+        WorkoutCategory.GENERAL_FITNESS to "🎯",
+        WorkoutCategory.MOBILITY to "🧘"
     )
 
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        items(categories) { (cat, meta) ->
-            val (emoji, label) = meta
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        items(categories) { (cat, emoji) ->
             Column(
                 modifier = Modifier
                     .width(72.dp)
@@ -187,7 +181,7 @@ private fun CategoryIconRow(onCategoryClick: (WorkoutCategory) -> Unit) {
                 Text(emoji, style = MaterialTheme.typography.headlineMedium)
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    label,
+                    cat.localized(),
                     style = MaterialTheme.typography.labelSmall,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Medium
@@ -208,7 +202,7 @@ private fun CategorySection(
     Column {
         SectionHeader(
             title = title,
-            actionText = "see all",
+            actionText = stringResource(R.string.verified_plans_see_all),
             onAction = onSeeAllClick
         )
         LazyRow(
@@ -233,13 +227,4 @@ private fun categoryOrder(cat: WorkoutCategory): Int = when (cat) {
     WorkoutCategory.ENDURANCE -> 3
     WorkoutCategory.MOBILITY -> 4
     WorkoutCategory.CREATED -> 5
-}
-
-private fun categoryLabel(cat: WorkoutCategory): String = when (cat) {
-    WorkoutCategory.GENERAL_FITNESS -> "General Fitness"
-    WorkoutCategory.CARDIO -> "Cardio"
-    WorkoutCategory.STRENGTH -> "Strength"
-    WorkoutCategory.ENDURANCE -> "Endurance"
-    WorkoutCategory.MOBILITY -> "Mobility"
-    WorkoutCategory.CREATED -> "Created"
 }

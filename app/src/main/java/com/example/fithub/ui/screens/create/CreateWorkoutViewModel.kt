@@ -2,6 +2,7 @@ package com.example.fithub.ui.screens.plans.create
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
 import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
@@ -53,8 +54,6 @@ class CreateWorkoutViewModel : ViewModel() {
         }
     }
 
-    // ---------- STEP 1 ----------
-
     fun updateName(name: String) {
         CreateWorkoutSession.update { it.copy(name = name) }
         syncDraft()
@@ -74,8 +73,6 @@ class CreateWorkoutViewModel : ViewModel() {
         CreateWorkoutSession.update { it.copy(equipment = equipment) }
         syncDraft()
     }
-
-    // ---------- STEP 2 ----------
 
     fun selectCategory(category: ExerciseCategory) {
         _uiState.update { it.copy(selectedCategory = category, exerciseSearchQuery = "") }
@@ -120,9 +117,7 @@ class CreateWorkoutViewModel : ViewModel() {
             )
         )
 
-        CreateWorkoutSession.update {
-            it.copy(exercises = current + newSlot)
-        }
+        CreateWorkoutSession.update { it.copy(exercises = current + newSlot) }
         syncDraft()
         recalculate()
     }
@@ -135,8 +130,6 @@ class CreateWorkoutViewModel : ViewModel() {
         syncDraft()
         recalculate()
     }
-
-    // ---------- STEP 3 ----------
 
     fun setReps(exerciseId: String, reps: Int) {
         val catalog = _uiState.value.exerciseCatalog.toMapById()
@@ -205,12 +198,15 @@ class CreateWorkoutViewModel : ViewModel() {
         syncDraft()
     }
 
-    // ---------- STEP 4 ----------
-
     fun createPlan() {
         val draft = _uiState.value.draft
         if (draft.name.isBlank() || draft.exercises.isEmpty()) {
-            _uiState.update { it.copy(errorMessage = "Please complete all steps.") }
+            _uiState.update {
+                it.copy(
+                    errorMessage = ServiceLocator.appContext()
+                        .getString(R.string.create_error_incomplete)
+                )
+            }
             return
         }
 
@@ -249,11 +245,13 @@ class CreateWorkoutViewModel : ViewModel() {
     fun cancelAndReset() {
         CreateWorkoutSession.reset()
         _uiState.update {
-            it.copy(draft = CreateWorkoutSession.draft, estimatedActivityKcal = 0, estimatedDurationMinutes = 0)
+            it.copy(
+                draft = CreateWorkoutSession.draft,
+                estimatedActivityKcal = 0,
+                estimatedDurationMinutes = 0
+            )
         }
     }
-
-    // ---------- HELPERS ----------
 
     private fun syncDraft() {
         _uiState.update { it.copy(draft = CreateWorkoutSession.draft) }

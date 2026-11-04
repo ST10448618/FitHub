@@ -26,7 +26,7 @@ import com.example.fithub.ui.components.EmptyState
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SectionHeader
 import com.example.fithub.ui.theme.*
-import com.example.fithub.util.localized
+import com.example.fithub.ui.util.localized
 
 @Composable
 fun JournalNutritionCard(

@@ -3,9 +3,11 @@ package com.example.fithub.ui.screens.session
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
 import com.example.fithub.domain.calculator.WorkoutProgressCalculator
+import com.example.fithub.domain.model.SessionStatus
 import com.example.fithub.domain.model.WorkoutSession
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,12 +43,14 @@ class SessionCompletedViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            // Load all completed sessions and pick out the one we just created
             val sessions = sessionRepo.getBetween(uid, LocalDate.now().minusDays(30), LocalDate.now())
             val session = sessions.firstOrNull { it.id == sessionId }
             if (session == null) {
                 _uiState.update {
-                    it.copy(isLoading = false, errorMessage = "Session not found.")
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = ServiceLocator.appContext().getString(R.string.session_not_found)
+                    )
                 }
                 return@launch
             }
@@ -54,7 +58,7 @@ class SessionCompletedViewModel(
             val goals = workoutGoalsRepo.get(uid)
             val target = goals?.sessionsPerWeek ?: 4
 
-            val allCompleted = sessions.filter { it.status == com.example.fithub.domain.model.SessionStatus.COMPLETED }
+            val allCompleted = sessions.filter { it.status == SessionStatus.COMPLETED }
             val thisWeek = WorkoutProgressCalculator
                 .sessionsThisWeek(allCompleted, LocalDate.now()).size
 
