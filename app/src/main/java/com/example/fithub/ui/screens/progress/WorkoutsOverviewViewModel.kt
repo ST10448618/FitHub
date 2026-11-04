@@ -1,9 +1,12 @@
 package com.example.fithub.ui.screens.progress
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.domain.calculator.WorkoutProgressCalculator
 import com.example.fithub.domain.model.SessionStatus
 import com.example.fithub.domain.model.WorkoutSession
@@ -12,34 +15,30 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 enum class GraphMode { WEEK, MONTH, YEAR }
 
+/** One plotted point. */
+data class GraphPoint(val label: String, val value: Float)
+
 data class WorkoutsOverviewUiState(
     val isLoading: Boolean = true,
-
-    // Period
     val selectedMonth: YearMonth = YearMonth.now(),
     val graphMode: GraphMode = GraphMode.WEEK,
 
-    // Top tiles
     val totalActivityKcal: Int = 0,
     val totalActiveMinutes: Int = 0,
 
-    // Monthly goal
     val monthlyGoalKcal: Int = 10000,
     val monthlyProgressPercent: Int = 0,
 
-    // Graph
-    val graphEntries: List<Pair<String, Float>> = emptyList(),
-    val graphTitle: String = "Estimated Calories Burnt",
+    val graphEntries: List<GraphPoint> = emptyList(),
+    @param:StringRes val graphTitleRes: Int = R.string.workouts_overview_graph_title,
 
-    // Habits
     val habits: WorkoutProgressCalculator.Habits = WorkoutProgressCalculator.Habits(0, 0, 0, 0),
-
-    // Category breakdown
     val categoryBreakdown: List<WorkoutProgressCalculator.CategoryCount> = emptyList(),
     val totalSessions: Int = 0,
 
@@ -56,7 +55,6 @@ class WorkoutsOverviewViewModel : ViewModel() {
     private val sessionRepo = ServiceLocator.workoutSessionRepository
     private val workoutGoalsRepo = ServiceLocator.workoutGoalsRepository
 
-    // Sessions cache used for all computed views
     private var allSessions: List<WorkoutSession> = emptyList()
 
     init {
@@ -108,7 +106,6 @@ class WorkoutsOverviewViewModel : ViewModel() {
         val from = month.atDay(1)
         val to = month.atEndOfMonth()
 
-        // Top tiles — scoped to the selected month
         val monthSessions = allSessions.filter { it.logDate in from..to }
         val totalActivity = monthSessions.sumOf { it.estimatedActivityKcal }
         val totalMinutes = monthSessions.sumOf { it.durationMinutes }
@@ -118,7 +115,6 @@ class WorkoutsOverviewViewModel : ViewModel() {
             ((totalActivity.toFloat() / goal) * 100).toInt().coerceIn(0, 100)
         else 0
 
-        // Habits and breakdown — all-time, since the design shows aggregate stats
         val habits = WorkoutProgressCalculator.habits(allSessions)
         val breakdown = WorkoutProgressCalculator.categoryBreakdown(allSessions)
 
@@ -140,29 +136,41 @@ class WorkoutsOverviewViewModel : ViewModel() {
         val s = _uiState.value
         val month = s.selectedMonth
         val mode = s.graphMode
+        val locale = Locale.forLanguageTag(
+            LocaleManager.currentCode(ServiceLocator.appContext())
+        )
 
-        val pairs: List<Pair<String, Float>> = when (mode) {
+        val points: List<GraphPoint> = when (mode) {
             GraphMode.WEEK -> {
-                // Days Mon..Sun of the week containing the 15th of the selected month
+                val dayFormatter = DateTimeFormatter.ofPattern("EEE", locale)
                 val anchor = month.atDay(15)
                 WorkoutProgressCalculator.weekGraph(allSessions, anchor).map { day ->
-                    day.date.dayOfWeek.name.take(3)
-                        .lowercase()
-                        .replaceFirstChar { it.uppercase() } to day.activityKcal.toFloat()
+                    GraphPoint(
+                        label = day.date.format(dayFormatter),
+                        value = day.activityKcal.toFloat()
+                    )
                 }
             }
             GraphMode.MONTH -> {
+                val short = DateTimeFormatter.ofPattern("d MMM", locale)
                 WorkoutProgressCalculator.monthGraph(allSessions, month.atDay(1)).map { week ->
-                    week.label to week.activityKcal.toFloat()
+                    GraphPoint(
+                        label = week.label,
+                        value = week.activityKcal.toFloat()
+                    )
                 }
             }
             GraphMode.YEAR -> {
+                val monthFormatter = DateTimeFormatter.ofPattern("MMM", locale)
                 WorkoutProgressCalculator.yearGraph(allSessions, month.year).map { m ->
-                    m.label to m.activityKcal.toFloat()
+                    GraphPoint(
+                        label = m.label,
+                        value = m.activityKcal.toFloat()
+                    )
                 }
             }
         }
 
-        _uiState.update { it.copy(graphEntries = pairs) }
+        _uiState.update { it.copy(graphEntries = points) }
     }
 }

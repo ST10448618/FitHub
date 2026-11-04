@@ -24,13 +24,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.ui.charts.BarEntry
 import com.example.fithub.ui.charts.SimpleBarChart
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @Composable
 fun ProgressOverviewScreen(
@@ -47,7 +55,7 @@ fun ProgressOverviewScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Progress Overview", onBack = onBack)
+        AppHeader(title = stringResource(R.string.progress_overview_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -75,25 +83,35 @@ fun ProgressOverviewScreen(
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     MetricTile(
-                        label = "Current weight",
-                        value = state.currentWeightKg?.let { "${it.toInt()} kg" } ?: "—",
+                        label = stringResource(R.string.progress_overview_current_weight),
+                        value = state.currentWeightKg?.let {
+                            stringResource(R.string.journal_body_kg_format, it.toInt())
+                        } ?: stringResource(R.string.common_dash),
                         modifier = Modifier.weight(1f)
                     )
                     MetricTile(
-                        label = "Goal weight",
-                        value = state.targetWeightKg?.let { "${it.toInt()} kg" } ?: "—",
+                        label = stringResource(R.string.progress_overview_goal_weight),
+                        value = state.targetWeightKg?.let {
+                            stringResource(R.string.journal_body_kg_format, it.toInt())
+                        } ?: stringResource(R.string.common_dash),
                         modifier = Modifier.weight(1f)
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     MetricTile(
-                        label = "Average Intake",
-                        value = "${state.averageDailyIntakeKcal} kcal",
+                        label = stringResource(R.string.progress_overview_average_intake),
+                        value = stringResource(
+                            R.string.nutrition_overview_kcal_format,
+                            state.averageDailyIntakeKcal
+                        ),
                         modifier = Modifier.weight(1f)
                     )
                     MetricTile(
-                        label = "Activity",
-                        value = "${state.totalMonthlyActivityKcal} kcal",
+                        label = stringResource(R.string.progress_overview_activity),
+                        value = stringResource(
+                            R.string.nutrition_overview_kcal_format,
+                            state.totalMonthlyActivityKcal
+                        ),
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -104,7 +122,7 @@ fun ProgressOverviewScreen(
             // ---- Overall Goal Progress bar ----
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Overall Goal Progress",
+                    stringResource(R.string.progress_overview_overall_goal),
                     style = MaterialTheme.typography.titleSmall,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold,
@@ -118,20 +136,26 @@ fun ProgressOverviewScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        state.startingWeightKg?.let { "${it.toInt()} kg" } ?: "—",
+                        state.startingWeightKg?.let {
+                            stringResource(R.string.journal_body_kg_format, it.toInt())
+                        } ?: stringResource(R.string.common_dash),
                         style = MaterialTheme.typography.labelMedium,
                         color = TextSecondary
                     )
                     Spacer(Modifier.weight(1f))
                     Text(
-                        state.currentWeightKg?.let { "${it.toInt()} kg" } ?: "—",
+                        state.currentWeightKg?.let {
+                            stringResource(R.string.journal_body_kg_format, it.toInt())
+                        } ?: stringResource(R.string.common_dash),
                         style = MaterialTheme.typography.labelMedium,
                         color = FitHubPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(Modifier.weight(1f))
                     Text(
-                        state.targetWeightKg?.let { "${it.toInt()} kg" } ?: "—",
+                        state.targetWeightKg?.let {
+                            stringResource(R.string.journal_body_kg_format, it.toInt())
+                        } ?: stringResource(R.string.common_dash),
                         style = MaterialTheme.typography.labelMedium,
                         color = TextSecondary
                     )
@@ -144,7 +168,10 @@ fun ProgressOverviewScreen(
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    "${state.weightProgressPercent}% toward goal",
+                    stringResource(
+                        R.string.progress_overview_pct_toward_goal,
+                        state.weightProgressPercent
+                    ),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextSecondary,
                     modifier = Modifier.fillMaxWidth(),
@@ -156,7 +183,7 @@ fun ProgressOverviewScreen(
 
             // ---- Progress Overview by Category ----
             Text(
-                "Progress Overview by Category",
+                stringResource(R.string.progress_overview_by_category),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -165,7 +192,7 @@ fun ProgressOverviewScreen(
 
             // Weight & Body teaser
             CategoryTeaser(
-                title = "Weight & Body",
+                title = stringResource(R.string.body_title),
                 onViewClick = onBodyWeight
             ) {
                 Row(
@@ -179,7 +206,7 @@ fun ProgressOverviewScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(Modifier.width(12.dp))
-                    BmiBadge(state.bmiLabel)
+                    state.bmiLabelRes?.let { BmiBadge(stringResource(it)) }
                 }
                 Spacer(Modifier.height(10.dp))
                 BmiScaleBar(state.bmi)
@@ -188,10 +215,10 @@ fun ProgressOverviewScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    BmiLegendDot("Under weight", WarningOrange)
-                    BmiLegendDot("Healthy", SuccessGreen)
-                    BmiLegendDot("Overweight", Color(0xFFFFC107))
-                    BmiLegendDot("Obese", ErrorRed)
+                    BmiLegendDot(stringResource(R.string.bmi_underweight), WarningOrange)
+                    BmiLegendDot(stringResource(R.string.bmi_healthy), SuccessGreen)
+                    BmiLegendDot(stringResource(R.string.bmi_overweight), Color(0xFFFFC107))
+                    BmiLegendDot(stringResource(R.string.bmi_obese), ErrorRed)
                 }
             }
 
@@ -199,11 +226,11 @@ fun ProgressOverviewScreen(
 
             // Nutrition teaser
             CategoryTeaser(
-                title = "Nutrition Overview",
+                title = stringResource(R.string.nutrition_overview_title),
                 onViewClick = onNutritionOverview
             ) {
                 Text(
-                    "Intake Analysis",
+                    stringResource(R.string.progress_overview_intake_analysis),
                     style = MaterialTheme.typography.labelMedium,
                     color = TextSecondary,
                     fontWeight = FontWeight.Bold
@@ -212,13 +239,18 @@ fun ProgressOverviewScreen(
 
                 if (state.weekBars.isEmpty()) {
                     Text(
-                        "No intake logged this month.",
+                        stringResource(R.string.progress_overview_no_intake),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
                 } else {
                     SimpleBarChart(
-                        entries = state.weekBars.map { BarEntry(it.label, it.kcal.toFloat()) },
+                        entries = state.weekBars.map {
+                            BarEntry(
+                                stringResource(it.labelRes, it.weekNumber),
+                                it.kcal.toFloat()
+                            )
+                        },
                         chartHeight = 130.dp,
                         barGradient = listOf(FitHubMidBlue, FitHubPrimary)
                     )
@@ -228,12 +260,15 @@ fun ProgressOverviewScreen(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Avg. Daily Intake",
+                            stringResource(R.string.progress_overview_avg_daily_intake),
                             style = MaterialTheme.typography.labelSmall,
                             color = TextSecondary
                         )
                         Text(
-                            "${state.averageDailyIntakeKcal} kcal",
+                            stringResource(
+                                R.string.nutrition_overview_kcal_format,
+                                state.averageDailyIntakeKcal
+                            ),
                             style = MaterialTheme.typography.titleSmall,
                             color = FitHubPrimary,
                             fontWeight = FontWeight.Bold
@@ -241,12 +276,15 @@ fun ProgressOverviewScreen(
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Daily Calorie Goal",
+                            stringResource(R.string.progress_overview_daily_calorie_goal),
                             style = MaterialTheme.typography.labelSmall,
                             color = TextSecondary
                         )
                         Text(
-                            "${state.dailyCalorieGoal} kcal",
+                            stringResource(
+                                R.string.nutrition_overview_kcal_format,
+                                state.dailyCalorieGoal
+                            ),
                             style = MaterialTheme.typography.titleSmall,
                             color = FitHubPrimary,
                             fontWeight = FontWeight.Bold
@@ -259,12 +297,12 @@ fun ProgressOverviewScreen(
 
             // Workout teaser
             CategoryTeaser(
-                title = "Workout Overview",
+                title = stringResource(R.string.progress_overview_workout_overview),
                 onViewClick = onWorkoutsOverview
             ) {
                 if (state.weeksInMonth.isEmpty()) {
                     Text(
-                        "No workout sessions this month.",
+                        stringResource(R.string.progress_overview_no_workout_sessions),
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -277,7 +315,7 @@ fun ProgressOverviewScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                week.label,
+                                stringResource(week.labelRes, week.weekNumber),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextSecondary,
                                 modifier = Modifier.width(56.dp)
@@ -305,13 +343,20 @@ fun ProgressOverviewScreen(
                         (totalCompleted * 100 / totalTarget) else 0
 
                     Text(
-                        "$totalCompleted / $totalTarget planned sessions completed",
+                        stringResource(
+                            R.string.progress_overview_planned_sessions_format,
+                            totalCompleted,
+                            totalTarget
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = FitHubPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "$adherence% adherence rate.",
+                        stringResource(
+                            R.string.progress_overview_adherence_format,
+                            adherence
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )
@@ -330,6 +375,9 @@ private fun MonthSelector(
     onNext: () -> Unit
 ) {
     val canGoNext = month < java.time.YearMonth.now()
+    val locale = Locale.forLanguageTag(LocaleManager.currentCode(LocalContext.current))
+    val monthFormatter = DateTimeFormatter
+        .ofPattern("LLLL yyyy", locale)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -341,10 +389,14 @@ private fun MonthSelector(
                 .size(36.dp)
                 .clip(CircleShape)
         ) {
-            Icon(Icons.Filled.KeyboardArrowLeft, contentDescription = "Previous", tint = FitHubPrimary)
+            Icon(
+                Icons.Filled.KeyboardArrowLeft,
+                contentDescription = stringResource(R.string.progress_overview_prev_desc),
+                tint = FitHubPrimary
+            )
         }
         Text(
-            month.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+            month.format(monthFormatter),
             style = MaterialTheme.typography.titleMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold,
@@ -360,7 +412,7 @@ private fun MonthSelector(
         ) {
             Icon(
                 Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Next",
+                contentDescription = stringResource(R.string.progress_overview_next_desc),
                 tint = if (canGoNext) FitHubPrimary else SurfaceGray
             )
         }
@@ -416,7 +468,7 @@ private fun CategoryTeaser(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                "view detailed >",
+                stringResource(R.string.progress_overview_view_detailed),
                 style = MaterialTheme.typography.labelSmall,
                 color = FitHubPrimary,
                 modifier = Modifier.clickable(onClick = onViewClick)
@@ -429,11 +481,15 @@ private fun CategoryTeaser(
 
 @Composable
 private fun BmiBadge(label: String) {
+    val under = stringResource(R.string.bmi_underweight)
+    val healthy = stringResource(R.string.bmi_healthy)
+    val overweight = stringResource(R.string.bmi_overweight)
+    val obese = stringResource(R.string.bmi_obese)
     val (bg, fg) = when (label) {
-        "Under weight" -> WarningOrange.copy(alpha = 0.15f) to WarningOrange
-        "Healthy" -> SuccessGreen.copy(alpha = 0.15f) to SuccessGreen
-        "Overweight" -> Color(0xFFFFC107).copy(alpha = 0.15f) to Color(0xFF996A00)
-        "Obese" -> ErrorRed.copy(alpha = 0.15f) to ErrorRed
+        under -> WarningOrange.copy(alpha = 0.15f) to WarningOrange
+        healthy -> SuccessGreen.copy(alpha = 0.15f) to SuccessGreen
+        overweight -> Color(0xFFFFC107).copy(alpha = 0.15f) to Color(0xFF996A00)
+        obese -> ErrorRed.copy(alpha = 0.15f) to ErrorRed
         else -> SurfaceGray to TextSecondary
     }
     Box(
@@ -450,7 +506,6 @@ private fun BmiBadge(label: String) {
         )
     }
 }
-
 @Composable
 private fun BmiScaleBar(bmi: Double?) {
     Box(

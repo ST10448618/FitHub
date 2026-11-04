@@ -1,63 +1,67 @@
 package com.example.fithub.ui.screens.progress
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fithub.R
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
 import com.example.fithub.domain.calculator.NutritionProgressCalculator
 import com.example.fithub.domain.calculator.WeightProgressCalculator
-import com.example.fithub.domain.calculator.WorkoutProgressCalculator
 import com.example.fithub.domain.model.GoalDirection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.YearMonth
 
 data class ProgressOverviewUiState(
     val isLoading: Boolean = true,
 
-    // Period
     val selectedMonth: YearMonth = YearMonth.now(),
 
-    // Headline numbers
     val currentWeightKg: Double? = null,
     val targetWeightKg: Double? = null,
     val averageDailyIntakeKcal: Int = 0,
     val totalMonthlyActivityKcal: Int = 0,
 
-    // Weight progress
     val startingWeightKg: Double? = null,
     val weightProgressPercent: Int = 0,
     val goalDirection: GoalDirection = GoalDirection.MAINTAIN,
 
-    // BMI
     val bmi: Double? = null,
-    val bmiLabel: String = "—",
+    @param:StringRes val bmiLabelRes: Int? = null,
 
-    // Nutrition teaser
     val dailyCalorieGoal: Int = 3000,
     val averageCaloriesByWeek: List<NutritionProgressCalculator.DashboardNutrition> = emptyList(),
-    // For the mini week graph we only need per-week averages; store as pairs (label, kcal)
     val weekBars: List<WeekBar> = emptyList(),
 
-    // Workout teaser
     val weeklyWorkoutGoal: Int = 4,
     val weeksInMonth: List<WeekWorkoutProgress> = emptyList(),
 
     val errorMessage: String? = null
 )
 
+/**
+ * One bar in the per-week mini nutrition chart.
+ * [labelRes] carries a `@StringRes` id (e.g. `progress_overview_week_short_format`)
+ * with `%1$d` for the week number; the caller resolves it with `stringResource`.
+ */
 data class WeekBar(
-    val label: String,
+    @param:StringRes val labelRes: Int,
+    val weekNumber: Int,
     val kcal: Int,
     val goalKcal: Int
 )
 
+/**
+ * One row in the per-week workout progress list.
+ * [labelRes] carries a `@StringRes` id with `%1$d` for the week number.
+ */
 data class WeekWorkoutProgress(
-    val label: String,
+    @param:StringRes val labelRes: Int,
+    val weekNumber: Int,
     val completed: Int,
     val target: Int
 )
@@ -108,9 +112,7 @@ class ProgressOverviewViewModel : ViewModel() {
     private fun observeProfile() {
         viewModelScope.launch {
             userRepo.observeProfile(uid).collect { profile ->
-                _uiState.update {
-                    it.copy(startingWeightKg = profile?.startingWeightKg)
-                }
+                _uiState.update { it.copy(startingWeightKg = profile?.startingWeightKg) }
                 recomputeDerived(profile?.heightCm)
             }
         }
@@ -153,9 +155,7 @@ class ProgressOverviewViewModel : ViewModel() {
     private fun observeWorkoutGoals() {
         viewModelScope.launch {
             workoutGoalsRepo.observe(uid).collect { goals ->
-                _uiState.update {
-                    it.copy(weeklyWorkoutGoal = goals?.sessionsPerWeek ?: 4)
-                }
+                _uiState.update { it.copy(weeklyWorkoutGoal = goals?.sessionsPerWeek ?: 4) }
                 reloadWorkouts()
             }
         }
@@ -176,10 +176,7 @@ class ProgressOverviewViewModel : ViewModel() {
             val goals = nutritionGoalsRepo.getCurrent(uid)
             val dailyGoal = goals?.userDailyCalories ?: 3000
 
-            // Average daily intake across logged days
             val avg = NutritionProgressCalculator.averageDailyIntake(logs, from..to)
-
-            // Build per-week bars for the month
             val bars = buildWeekBars(logs, month, dailyGoal)
 
             _uiState.update {
@@ -214,7 +211,14 @@ class ProgressOverviewViewModel : ViewModel() {
                 }
                 (total / daysWithLogs.size).toInt()
             }
-            bars.add(WeekBar("W$weekIdx", weekAvg, dailyGoal))
+            bars.add(
+                WeekBar(
+                    labelRes = R.string.progress_overview_week_short_format,
+                    weekNumber = weekIdx,
+                    kcal = weekAvg,
+                    goalKcal = dailyGoal
+                )
+            )
             cursor = weekEnd.plusDays(1)
             weekIdx++
         }
@@ -231,8 +235,6 @@ class ProgressOverviewViewModel : ViewModel() {
             val target = _uiState.value.weeklyWorkoutGoal
 
             val totalActivity = sessions.sumOf { it.estimatedActivityKcal }
-
-            // Weekly breakdown Mon..Sun-style weeks within the month
             val weeks = buildWeekWorkoutProgress(sessions, month, target)
 
             _uiState.update {
@@ -258,7 +260,14 @@ class ProgressOverviewViewModel : ViewModel() {
         while (cursor <= lastOfMonth) {
             val weekEnd = minOf(cursor.plusDays(6), lastOfMonth)
             val count = sessions.count { it.logDate in cursor..weekEnd }
-            result.add(WeekWorkoutProgress("Week $idx", count, weeklyTarget))
+            result.add(
+                WeekWorkoutProgress(
+                    labelRes = R.string.progress_overview_week_label_format,
+                    weekNumber = idx,
+                    completed = count,
+                    target = weeklyTarget
+                )
+            )
             cursor = weekEnd.plusDays(1)
             idx++
         }
@@ -289,19 +298,19 @@ class ProgressOverviewViewModel : ViewModel() {
             current / ((height / 100.0) * (height / 100.0))
         } else null
 
-        val label = when {
-            bmi == null -> "—"
-            bmi < 18.5 -> "Under weight"
-            bmi < 25.0 -> "Healthy"
-            bmi < 30.0 -> "Overweight"
-            else -> "Obese"
+        val labelRes: Int? = when {
+            bmi == null -> null
+            bmi < 18.5 -> R.string.bmi_underweight
+            bmi < 25.0 -> R.string.bmi_healthy
+            bmi < 30.0 -> R.string.bmi_overweight
+            else -> R.string.bmi_obese
         }
 
         _uiState.update {
             it.copy(
                 weightProgressPercent = progress,
                 bmi = bmi,
-                bmiLabel = label
+                bmiLabelRes = labelRes
             )
         }
     }

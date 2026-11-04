@@ -348,6 +348,248 @@
     <string name="journal_workouts_exercises_minutes_format">%1$d exercises • %2$d minutes</string>
     <string name="journal_workouts_kcal_format">%1$d kcal estimated</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH D2 PART 2 : Progress Overview + Workouts Overview -->
+    <!-- ========================================== -->
+
+    <!-- Progress Overview -->
+    <string name="progress_overview_title">Progress Overview</string>
+    <string name="progress_overview_current_weight">Current weight</string>
+    <string name="progress_overview_goal_weight">Goal weight</string>
+    <string name="progress_overview_average_intake">Average Intake</string>
+    <string name="progress_overview_activity">Activity</string>
+    <string name="progress_overview_overall_goal">Overall Goal Progress</string>
+    <string name="progress_overview_pct_toward_goal">%1$d%% toward goal</string>
+    <string name="progress_overview_by_category">Progress Overview by Category</string>
+    <string name="progress_overview_intake_analysis">Intake Analysis</string>
+    <string name="progress_overview_no_intake">No intake logged this month.</string>
+    <string name="progress_overview_avg_daily_intake">Avg. Daily Intake</string>
+    <string name="progress_overview_daily_calorie_goal">Daily Calorie Goal</string>
+    <string name="progress_overview_workout_overview">Workout Overview</string>
+    <string name="progress_overview_no_workout_sessions">No workout sessions this month.</string>
+    <string name="progress_overview_planned_sessions_format">%1$d / %2$d planned sessions completed</string>
+    <string name="progress_overview_adherence_format">%1$d%% adherence rate.</string>
+    <string name="progress_overview_view_detailed">view detailed &gt;</string>
+    <string name="progress_overview_prev_desc">Previous</string>
+    <string name="progress_overview_next_desc">Next</string>
+    <string name="progress_overview_week_short_format">W%1$d</string>
+    <string name="progress_overview_week_label_format">Week %1$d</string>
+
+    <!-- Workouts Overview -->
+    <string name="workouts_overview_title">Workouts Overview</string>
+    <string name="workouts_overview_total_activity">Total Activity</string>
+    <string name="workouts_overview_active_time">Active Time</string>
+    <string name="workouts_overview_monthly_goal">Monthly Activity Goal</string>
+    <string name="workouts_overview_goal_progress_format">%1$d kcal / %2$d kcal</string>
+    <string name="workouts_overview_pct_of_target_format">%1$d%% of target</string>
+    <string name="workouts_overview_remaining_format">%1$d kcal below monthly goal</string>
+    <string name="workouts_overview_graph_title">Estimated Calories Burnt</string>
+    <string name="workouts_overview_no_activity">No workout activity to show.</string>
+    <string name="workouts_overview_graph_note">Values are based on completed sessions • estimates</string>
+    <string name="workouts_overview_habits_title">Your Workout Habits</string>
+    <string name="workouts_overview_training_summary">Training Summary</string>
+    <string name="workouts_overview_total_sessions_format">Total Sessions Completed : %1$d Sessions</string>
+    <string name="workouts_overview_avg_session_format">Average Session Length : %1$d minutes</string>
+    <string name="workouts_overview_longest_session_format">Longest Session Completed : %1$d minutes</string>
+    <string name="workouts_overview_no_categories">No categories to display yet.</string>
+    <string name="workouts_overview_sessions_format">%1$d sessions</string>
+    <string name="workouts_overview_mode_week">Week</string>
+    <string name="workouts_overview_mode_month">Month</string>
+    <string name="workouts_overview_mode_year">Year</string>
+
+    <!-- Weight Journey Chart -->
+    <string name="weight_journey_latest_tooltip_format">%1$.1f KG</string>
+
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH C PART 2 : Food & Nutrition  -->
+    <!-- (MISSING — restore from Batch C PART 2)    -->
+    <!-- ========================================== -->
+
+    <string name="food_add_meal_title">Add Meal</string>
+    <string name="food_add_meal_search_placeholder">Search Meal or Food</string>
+    <string name="food_add_meal_scan">Scan</string>
+    <string name="food_add_meal_scan_desc">Scan barcode</string>
+    <string name="food_add_meal_results_title">Search Results</string>
+    <string name="food_add_meal_searching">Searching OpenFoodFacts…</string>
+    <string name="food_add_meal_empty_hint">Search for a food, scan a barcode, or pick a category.</string>
+
+    <string name="food_details_not_found">Food not found.</string>
+    <string name="food_details_meal_category_label">Meal Category :</string>
+    <string name="food_details_quantity_label">Quantity :</string>
+    <string name="food_details_nutritional_info">Nutritional Information</string>
+    <string name="food_details_calories_format">%1$d cal</string>
+    <string name="food_details_grams_format">%1$d g</string>
+    <string name="food_details_macro_protein">Protein</string>
+    <string name="food_details_macro_carbs">Carbs</string>
+    <string name="food_details_macro_fats">Fats</string>
+    <string name="food_details_meal_target_progress">%1$d / %2$d cal</string>
+    <string name="food_details_description_title">Description</string>
+    <string name="food_details_add_meal_button">Add %1$s Meal</string>
+    <string name="food_details_default_serving_unit">serving</string>
+
+    <string name="food_list_title_format">Food · %1$s</string>
+    <string name="food_list_empty_title">No foods found</string>
+    <string name="food_list_empty_body">Try another category or search from Add Meal.</string>
+
+    <string name="food_log_list_title_format">Nutrition · %1$s</string>
+    <string name="food_log_list_empty_title">No meals logged</string>
+    <string name="food_log_list_empty_body">Nothing recorded for this day.</string>
+    <string name="food_log_row_calories_format">%1$d cal</string>
+
+    <string name="food_scanner_title">Scan Barcode</string>
+    <string name="food_scanner_permission_required">Camera permission required.</string>
+    <string name="food_scanner_hint">Align the barcode inside the box</string>
+
+    <string name="nutrition_goals_title">Nutrition Goals</string>
+    <string name="nutrition_goals_your_details">Your Details</string>
+    <string name="nutrition_goals_age_label">Age :</string>
+    <string name="nutrition_goals_current_weight_label">Current Weight :</string>
+    <string name="nutrition_goals_height_label">Height :</string>
+    <string name="nutrition_goals_lifestyle_label">Lifestyle :</string>
+    <string name="nutrition_goals_target_weight_label">Target Weight :</string>
+    <string name="nutrition_goals_kg_format">%1$d kg</string>
+    <string name="nutrition_goals_cm_format">%1$d cm</string>
+    <string name="nutrition_goals_management_title">Nutrition Management</string>
+    <string name="nutrition_goals_recommendation_engine">Based on the Mifflin-St Jeor equation</string>
+    <string name="nutrition_goals_recommendation_value">We would recommend %1$d kcal per day</string>
+    <string name="nutrition_goals_daily_calorie_goal">Daily Calorie Intake Goal</string>
+    <string name="nutrition_goals_kcal_suffix">kcal</string>
+    <string name="nutrition_goals_kcal_format">%1$d kcal</string>
+    <string name="nutrition_goals_recommended_value">Recommended : %1$d kcal</string>
+    <string name="nutrition_goals_current_value">Current : %1$d kcal</string>
+    <string name="nutrition_goals_use_recommendation">Use Recommendation</string>
+    <string name="nutrition_goals_meal_targets_title">Meal Targets</string>
+    <string name="nutrition_goals_meal_targets_subtitle">Divide your daily calories across meals</string>
+    <string name="nutrition_goals_total_label">TOTAL : </string>
+    <string name="nutrition_goals_total_format">%1$d kcal / %2$d kcal</string>
+    <string name="nutrition_goals_meal_invalid_hint">Adjust meal targets to match your daily calories.</string>
+    <string name="nutrition_goals_macro_targets_title">Macro Targets</string>
+    <string name="nutrition_goals_macro_targets_subtitle">Set your daily nutrient targets</string>
+    <string name="nutrition_goals_reset_macros">Reset to starter split</string>
+    <string name="nutrition_goals_saving">Saving…</string>
+    <string name="nutrition_goals_confirm">Confirm Goals</string>
+    <string name="nutrition_goals_profile_missing">Profile not found.</string>
+    <string name="nutrition_goals_meal_must_sum">Meal targets must sum to your daily target.</string>
+
+    <string name="nutrition_overview_title">Nutrition Overview</string>
+    <string name="nutrition_overview_daily_intake">Daily Intake</string>
+    <string name="nutrition_overview_daily_goal">Daily Goal</string>
+    <string name="nutrition_overview_kcal_format">%1$d kcal</string>
+    <string name="nutrition_overview_progress_title">Daily Nutrition Progress</string>
+    <string name="nutrition_overview_remaining_format">%1$d kcal remaining</string>
+    <string name="nutrition_overview_exceeded_format">%1$d kcal exceeded</string>
+    <string name="nutrition_overview_on_target">On target!</string>
+    <string name="nutrition_overview_pct_of_goal_format">%1$d%% of goal</string>
+    <string name="nutrition_overview_macro_goals_title">Macro Goals</string>
+    <string name="nutrition_overview_meals_title">Calories by Meal Type</string>
+    <string name="nutrition_overview_meal_kcal_format">%1$d kcal / %2$d kcal</string>
+    <string name="nutrition_overview_under_goal_format">%1$d kcal under daily goal</string>
+    <string name="nutrition_overview_over_goal_format">%1$d kcal over daily goal</string>
+    <string name="nutrition_overview_pct_of_target_format">%1$d%% of target</string>
+    <string name="nutrition_overview_edit_goals">✏  Edit Goals</string>
+    <string name="nutrition_overview_prev_day">Previous day</string>
+    <string name="nutrition_overview_next_day">Next day</string>
+    <string name="nutrition_overview_today">Today</string>
+    <string name="nutrition_overview_consumed">Consumed</string>
+    <string name="nutrition_overview_donut_target_format">/%1$dg</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH D2 PART 1 : Goals + Body + Checkpoint -->
+    <!-- (MISSING — restore from Batch D2 PART 1)   -->
+    <!-- ========================================== -->
+
+    <string name="common_dash">—</string>
+    <string name="common_unit_kg">kg</string>
+    <string name="common_unit_kcal">kcal</string>
+    <string name="common_manage_arrow">Manage →</string>
+
+    <string name="bmi_underweight">Under weight</string>
+    <string name="bmi_healthy">Healthy</string>
+    <string name="bmi_overweight">Overweight</string>
+    <string name="bmi_obese">Obese</string>
+
+    <string name="goals_journey_hero_title">Personalize your fitness journey</string>
+    <string name="goals_journey_hero_body">Set and manage your goals and targets to stay on track.</string>
+    <string name="goals_my_goal">My Goal</string>
+    <string name="goals_no_goal_set">No goal set</string>
+    <string name="goals_journey_start">START</string>
+    <string name="goals_journey_current">CURRENT</string>
+    <string name="goals_journey_goal">GOAL</string>
+
+    <string name="goals_nutrition_title">Nutrition Goals</string>
+    <string name="goals_nutrition_subtitle">Avg. Daily Calories</string>
+
+    <string name="goals_workout_title">Workout Goals</string>
+    <string name="goals_workout_days_format">%1$d days</string>
+    <string name="goals_workout_subtitle">Weekly Session Goal</string>
+
+    <string name="checkpoint_card_title">Weigh In Checkpoints</string>
+    <string name="checkpoint_card_next_scheduled">Next Weigh In Scheduled For : %1$s</string>
+    <string name="checkpoint_card_frequency_format">Checkpoint Frequency : %1$s</string>
+
+    <string name="checkpoint_frequency_weekly">Weekly</string>
+    <string name="checkpoint_frequency_biweekly">Every 2 weeks</string>
+    <string name="checkpoint_frequency_monthly">Monthly</string>
+
+    <string name="journal_body_kg_format">%1$d kg</string>
+
+    <string name="weight_goal_title">Weight Goal</string>
+    <string name="weight_goal_hero_title">Your journey begins with two numbers.</string>
+    <string name="weight_goal_hero_body">Manage your current weight logged by the system as well as your desired target.</string>
+    <string name="weight_goal_current_weight">Current Weight</string>
+    <string name="weight_goal_no_weighin_warning">Log a weigh-in from Body &amp; Weight before setting a goal.</string>
+    <string name="weight_goal_tracked_from_weighin">Tracked from your latest weigh-in</string>
+    <string name="weight_goal_set_target">Set Your Target Weight</string>
+    <string name="weight_goal_detect_lose_label">GOAL DETECTED : LOSE WEIGHT</string>
+    <string name="weight_goal_detect_lose_message">You want to lose %1$d kg</string>
+    <string name="weight_goal_detect_gain_label">GOAL DETECTED : GAIN WEIGHT</string>
+    <string name="weight_goal_detect_gain_message">You want to gain %1$d kg</string>
+    <string name="weight_goal_detect_maintain_label">GOAL DETECTED : MAINTAIN WEIGHT</string>
+    <string name="weight_goal_detect_maintain_message">You want to stay around your current weight</string>
+    <string name="weight_goal_need_weighin">Log a weigh-in first.</string>
+
+    <string name="workout_goals_title">Workout Goals</string>
+    <string name="workout_goals_weekly_subtitle">How many days a week do you aim to train for?</string>
+    <string name="workout_goals_monthly_title">Monthly Activity Goal</string>
+    <string name="workout_goals_monthly_subtitle">Amount of calories you aim to burn in a month.</string>
+
+    <string name="body_title">Body &amp; Weight</string>
+    <string name="body_weight_data">Weight Data</string>
+    <string name="body_achieved">Achieved</string>
+    <string name="body_goal_format">GOAL: %1$s kg</string>
+    <string name="body_current_weight_format">Current Weight : %1$s</string>
+    <string name="body_delta_from_last">%1$s kg from last measure</string>
+    <string name="body_journey_title">Your Journey So Far</string>
+    <string name="body_not_enough_data_title">Not enough data yet</string>
+    <string name="body_not_enough_data_body">Log at least two weigh-ins to see your journey.</string>
+    <string name="body_journey_note">Every point shows one of your recorded weigh-ins.</string>
+    <string name="body_log_weight_button">Log Current Weight</string>
+    <string name="body_bmi_title">Your BMI</string>
+    <string name="body_bmi_source">Based on your last weight in</string>
+    <string name="body_next_checkpoint_format">Next Weight In Checkpoint : %1$s</string>
+    <string name="body_manage_checkpoints_cta">Click Here to Manage Checkpoints</string>
+
+    <string name="checkpoint_logger_title">New Weigh In</string>
+    <string name="checkpoint_logger_hero_title">Consistency brings results</string>
+    <string name="checkpoint_logger_hero_body">Every weigh in is a part of your fitness journey</string>
+    <string name="checkpoint_logger_current_weight">Current Weight</string>
+    <string name="checkpoint_logger_progress_detected">PROGRESS DETECTED!</string>
+    <string name="checkpoint_logger_logging">Logging…</string>
+    <string name="checkpoint_logger_log_button">Log Weight</string>
+    <string name="checkpoint_logger_maintained">You maintained your weight.</string>
+    <string name="checkpoint_logger_closer_to_goal_format">You are now %1$d kg closer to your goal!</string>
+    <string name="checkpoint_logger_on_track">On track — nice.</string>
+    <string name="checkpoint_logger_away_from_goal_format">You\'ve moved %1$d kg away from your goal.</string>
+
+    <string name="checkpoint_manager_title">Checkpoints</string>
+    <string name="checkpoint_manager_next_weighin">Next Weigh In</string>
+    <string name="checkpoint_manager_last_recorded">Last Recorded weight</string>
+    <string name="checkpoint_manager_frequency_title">Checkpoint Frequency</string>
+    <string name="checkpoint_manager_frequency_subtitle">Manage how often you update your weight.</string>
+    <string name="checkpoint_manager_reminders_title">Checkpoint Reminders</string>
+    <string name="checkpoint_manager_reminders_subtitle">Get a notification on weigh-in day.</string>
+    <string name="checkpoint_manager_upcoming_title">Upcoming Checkpoints</string>
 
 
 </resources>

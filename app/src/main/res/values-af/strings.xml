@@ -197,6 +197,235 @@
     <string name="journal_workouts_kcal_format">%1$d kcal geskat</string>
 
 
+    <!-- Phase 5 Batch D2 PART 2 : Progress Overview + Workouts Overview -->
+
+    <string name="progress_overview_title">Vorderingsoorsig</string>
+    <string name="progress_overview_current_weight">Huidige gewig</string>
+    <string name="progress_overview_goal_weight">Doelgewig</string>
+    <string name="progress_overview_average_intake">Gemiddelde inname</string>
+    <string name="progress_overview_activity">Aktiwiteit</string>
+    <string name="progress_overview_overall_goal">Algehele doelwitvordering</string>
+    <string name="progress_overview_pct_toward_goal">%1$d%% nader aan doelwit</string>
+    <string name="progress_overview_by_category">Vordering per kategorie</string>
+    <string name="progress_overview_intake_analysis">Inname-analise</string>
+    <string name="progress_overview_no_intake">Geen inname hierdie maand aangeteken nie.</string>
+    <string name="progress_overview_avg_daily_intake">Gem. daaglikse inname</string>
+    <string name="progress_overview_daily_calorie_goal">Daaglikse kaloriedoelwit</string>
+    <string name="progress_overview_workout_overview">Oefeningoorsig</string>
+    <string name="progress_overview_no_workout_sessions">Geen oefensessies hierdie maand nie.</string>
+    <string name="progress_overview_planned_sessions_format">%1$d / %2$d beplande sessies voltooi</string>
+    <string name="progress_overview_adherence_format">%1$d%% nakomingskoers.</string>
+    <string name="progress_overview_view_detailed">sien volledige &gt;</string>
+    <string name="progress_overview_prev_desc">Vorige</string>
+    <string name="progress_overview_next_desc">Volgende</string>
+    <string name="progress_overview_week_short_format">W%1$d</string>
+    <string name="progress_overview_week_label_format">Week %1$d</string>
+
+    <string name="workouts_overview_title">Oefeningoorsig</string>
+    <string name="workouts_overview_total_activity">Totale aktiwiteit</string>
+    <string name="workouts_overview_active_time">Aktiewe tyd</string>
+    <string name="workouts_overview_monthly_goal">Maandelikse aktiwiteitsdoelwit</string>
+    <string name="workouts_overview_goal_progress_format">%1$d kcal / %2$d kcal</string>
+    <string name="workouts_overview_pct_of_target_format">%1$d%% van teiken</string>
+    <string name="workouts_overview_remaining_format">%1$d kcal onder maandelikse doelwit</string>
+    <string name="workouts_overview_graph_title">Geskatte kalorieë verbrand</string>
+    <string name="workouts_overview_no_activity">Geen oefenaktiwiteit om te wys nie.</string>
+    <string name="workouts_overview_graph_note">Waardes is gebaseer op voltooide sessies • beramings</string>
+    <string name="workouts_overview_habits_title">Jou oefengewoontes</string>
+    <string name="workouts_overview_training_summary">Oefeningopsomming</string>
+    <string name="workouts_overview_total_sessions_format">Totale sessies voltooi : %1$d</string>
+    <string name="workouts_overview_avg_session_format">Gemiddelde sessieduur : %1$d minute</string>
+    <string name="workouts_overview_longest_session_format">Langste sessie voltooi : %1$d minute</string>
+    <string name="workouts_overview_no_categories">Nog geen kategorieë om te wys nie.</string>
+    <string name="workouts_overview_sessions_format">%1$d sessies</string>
+    <string name="workouts_overview_mode_week">Week</string>
+    <string name="workouts_overview_mode_month">Maand</string>
+    <string name="workouts_overview_mode_year">Jaar</string>
+
+    <string name="weight_journey_latest_tooltip_format">%1$.1f KG</string>
+
+    <!-- Phase 5 Batch C PART 2 : Food & Nutrition (restore) -->
+    <string name="food_add_meal_title">Voeg maaltyd by</string>
+    <string name="food_add_meal_search_placeholder">Soek maaltyd of kos</string>
+    <string name="food_add_meal_scan">Skandeer</string>
+    <string name="food_add_meal_scan_desc">Skandeer streepkode</string>
+    <string name="food_add_meal_results_title">Soekresultate</string>
+    <string name="food_add_meal_searching">Soek tans OpenFoodFacts…</string>
+    <string name="food_add_meal_empty_hint">Soek \'n kos, skandeer \'n streepkode, of kies \'n kategorie.</string>
+
+    <string name="food_details_not_found">Kos nie gevind nie.</string>
+    <string name="food_details_meal_category_label">Maaltydkategorie :</string>
+    <string name="food_details_quantity_label">Hoeveelheid :</string>
+    <string name="food_details_nutritional_info">Voedingsinligting</string>
+    <string name="food_details_calories_format">%1$d cal</string>
+    <string name="food_details_grams_format">%1$d g</string>
+    <string name="food_details_macro_protein">Proteïen</string>
+    <string name="food_details_macro_carbs">Koolhidrate</string>
+    <string name="food_details_macro_fats">Vette</string>
+    <string name="food_details_meal_target_progress">%1$d / %2$d cal</string>
+    <string name="food_details_description_title">Beskrywing</string>
+    <string name="food_details_add_meal_button">Voeg %1$s-maaltyd by</string>
+    <string name="food_details_default_serving_unit">porsie</string>
+
+    <string name="food_list_title_format">Kos · %1$s</string>
+    <string name="food_list_empty_title">Geen kos gevind nie</string>
+    <string name="food_list_empty_body">Probeer \'n ander kategorie of soek vanaf Voeg maaltyd by.</string>
+
+    <string name="food_log_list_title_format">Voeding · %1$s</string>
+    <string name="food_log_list_empty_title">Geen maaltye aangeteken nie</string>
+    <string name="food_log_list_empty_body">Niks vir hierdie dag aangeteken nie.</string>
+    <string name="food_log_row_calories_format">%1$d cal</string>
+
+    <string name="food_scanner_title">Skandeer streepkode</string>
+    <string name="food_scanner_permission_required">Kamermagting is nodig.</string>
+    <string name="food_scanner_hint">Rig die streepkode in die blokkie</string>
+
+    <string name="nutrition_goals_title">Voedingdoelwitte</string>
+    <string name="nutrition_goals_your_details">Jou besonderhede</string>
+    <string name="nutrition_goals_age_label">Ouderdom :</string>
+    <string name="nutrition_goals_current_weight_label">Huidige gewig :</string>
+    <string name="nutrition_goals_height_label">Lengte :</string>
+    <string name="nutrition_goals_lifestyle_label">Lewenstyl :</string>
+    <string name="nutrition_goals_target_weight_label">Teikengewig :</string>
+    <string name="nutrition_goals_kg_format">%1$d kg</string>
+    <string name="nutrition_goals_cm_format">%1$d cm</string>
+    <string name="nutrition_goals_management_title">Voedingsbestuur</string>
+    <string name="nutrition_goals_recommendation_engine">Gebaseer op die Mifflin-St Jeor-vergelyking</string>
+    <string name="nutrition_goals_recommendation_value">Ons beveel %1$d kcal per dag aan</string>
+    <string name="nutrition_goals_daily_calorie_goal">Daaglikse kalorie-inname-doelwit</string>
+    <string name="nutrition_goals_kcal_suffix">kcal</string>
+    <string name="nutrition_goals_kcal_format">%1$d kcal</string>
+    <string name="nutrition_goals_recommended_value">Aanbeveel : %1$d kcal</string>
+    <string name="nutrition_goals_current_value">Huidig : %1$d kcal</string>
+    <string name="nutrition_goals_use_recommendation">Gebruik aanbeveling</string>
+    <string name="nutrition_goals_meal_targets_title">Maaltydteikens</string>
+    <string name="nutrition_goals_meal_targets_subtitle">Verdeel jou daaglikse kalorieë oor maaltye</string>
+    <string name="nutrition_goals_total_label">TOTAAL : </string>
+    <string name="nutrition_goals_total_format">%1$d kcal / %2$d kcal</string>
+    <string name="nutrition_goals_meal_invalid_hint">Pas maaltydteikens aan om by jou daaglikse kalorieë te pas.</string>
+    <string name="nutrition_goals_macro_targets_title">Makroteikens</string>
+    <string name="nutrition_goals_macro_targets_subtitle">Stel jou daaglikse voedingstofteikens</string>
+    <string name="nutrition_goals_reset_macros">Herstel na aanvangsverdeling</string>
+    <string name="nutrition_goals_saving">Stoor tans…</string>
+    <string name="nutrition_goals_confirm">Bevestig doelwitte</string>
+    <string name="nutrition_goals_profile_missing">Profiel nie gevind nie.</string>
+    <string name="nutrition_goals_meal_must_sum">Maaltydteikens moet by jou daaglikse teiken optel.</string>
+
+    <string name="nutrition_overview_title">Voedingsoorsig</string>
+    <string name="nutrition_overview_daily_intake">Daaglikse inname</string>
+    <string name="nutrition_overview_daily_goal">Daaglikse doelwit</string>
+    <string name="nutrition_overview_kcal_format">%1$d kcal</string>
+    <string name="nutrition_overview_progress_title">Daaglikse voedingvordering</string>
+    <string name="nutrition_overview_remaining_format">%1$d kcal oor</string>
+    <string name="nutrition_overview_exceeded_format">%1$d kcal oorskry</string>
+    <string name="nutrition_overview_on_target">Op teiken!</string>
+    <string name="nutrition_overview_pct_of_goal_format">%1$d%% van doelwit</string>
+    <string name="nutrition_overview_macro_goals_title">Makrodoelwitte</string>
+    <string name="nutrition_overview_meals_title">Kalorieë per maaltydtipe</string>
+    <string name="nutrition_overview_meal_kcal_format">%1$d kcal / %2$d kcal</string>
+    <string name="nutrition_overview_under_goal_format">%1$d kcal onder daaglikse doelwit</string>
+    <string name="nutrition_overview_over_goal_format">%1$d kcal oor daaglikse doelwit</string>
+    <string name="nutrition_overview_pct_of_target_format">%1$d%% van teiken</string>
+    <string name="nutrition_overview_edit_goals">✏  Wysig doelwitte</string>
+    <string name="nutrition_overview_prev_day">Vorige dag</string>
+    <string name="nutrition_overview_next_day">Volgende dag</string>
+    <string name="nutrition_overview_today">Vandag</string>
+    <string name="nutrition_overview_consumed">Verbruik</string>
+    <string name="nutrition_overview_donut_target_format">/%1$dg</string>
+
+    <!-- Phase 5 Batch D2 PART 1 (restore) -->
+    <string name="common_dash">—</string>
+    <string name="common_unit_kg">kg</string>
+    <string name="common_unit_kcal">kcal</string>
+    <string name="common_manage_arrow">Bestuur →</string>
+
+    <string name="bmi_underweight">Onder gewig</string>
+    <string name="bmi_healthy">Gesond</string>
+    <string name="bmi_overweight">Oorgewig</string>
+    <string name="bmi_obese">Vetsugtig</string>
+
+    <string name="goals_journey_hero_title">Personaliseer jou fiksheidsreis</string>
+    <string name="goals_journey_hero_body">Stel en bestuur jou doelwitte en teikens om op koers te bly.</string>
+    <string name="goals_my_goal">My doelwit</string>
+    <string name="goals_no_goal_set">Geen doelwit gestel nie</string>
+    <string name="goals_journey_start">BEGIN</string>
+    <string name="goals_journey_current">HUIDIG</string>
+    <string name="goals_journey_goal">DOELWIT</string>
+
+    <string name="goals_nutrition_title">Voedingdoelwitte</string>
+    <string name="goals_nutrition_subtitle">Gem. daaglikse kalorieë</string>
+
+    <string name="goals_workout_title">Oefendoelwitte</string>
+    <string name="goals_workout_days_format">%1$d dae</string>
+    <string name="goals_workout_subtitle">Weeklikse sessiedoelwit</string>
+
+    <string name="checkpoint_card_title">Weegkontrolepunte</string>
+    <string name="checkpoint_card_next_scheduled">Volgende weeg geskeduleer vir : %1$s</string>
+    <string name="checkpoint_card_frequency_format">Kontrolepuntfrekwensie : %1$s</string>
+
+    <string name="checkpoint_frequency_weekly">Weekliks</string>
+    <string name="checkpoint_frequency_biweekly">Elke 2 weke</string>
+    <string name="checkpoint_frequency_monthly">Maandeliks</string>
+
+    <string name="journal_body_kg_format">%1$d kg</string>
+
+    <string name="weight_goal_title">Gewigdoelwit</string>
+    <string name="weight_goal_hero_title">Jou reis begin met twee nommers.</string>
+    <string name="weight_goal_hero_body">Bestuur jou huidige gewig wat deur die stelsel aangeteken is, sowel as jou gewenste teiken.</string>
+    <string name="weight_goal_current_weight">Huidige gewig</string>
+    <string name="weight_goal_no_weighin_warning">Teken \'n weging aan by Liggaam &amp; Gewig voordat jy \'n doelwit stel.</string>
+    <string name="weight_goal_tracked_from_weighin">Volg vanaf jou mees onlangse weging</string>
+    <string name="weight_goal_set_target">Stel jou teikengewig</string>
+    <string name="weight_goal_detect_lose_label">DOELWIT BESPEUR : VERLOOR GEWIG</string>
+    <string name="weight_goal_detect_lose_message">Jy wil %1$d kg verloor</string>
+    <string name="weight_goal_detect_gain_label">DOELWIT BESPEUR : VERDERN GEWIG</string>
+    <string name="weight_goal_detect_gain_message">Jy wil %1$d kg verdien</string>
+    <string name="weight_goal_detect_maintain_label">DOELWIT BESPEUR : HANDHAAF GEWIG</string>
+    <string name="weight_goal_detect_maintain_message">Jy wil rondom jou huidige gewig bly</string>
+    <string name="weight_goal_need_weighin">Teken eers \'n weging aan.</string>
+
+    <string name="workout_goals_title">Oefendoelwitte</string>
+    <string name="workout_goals_weekly_subtitle">Hoeveel dae per week beoog jy om te oefen?</string>
+    <string name="workout_goals_monthly_title">Maandelikse aktiwiteitsdoelwit</string>
+    <string name="workout_goals_monthly_subtitle">Hoeveelheid kalorieë wat jy in \'n maand beoog om te verbrand.</string>
+
+    <string name="body_title">Liggaam &amp; Gewig</string>
+    <string name="body_weight_data">Gewigsdata</string>
+    <string name="body_achieved">Bereik</string>
+    <string name="body_goal_format">DOELWIT: %1$s kg</string>
+    <string name="body_current_weight_format">Huidige gewig : %1$s</string>
+    <string name="body_delta_from_last">%1$s kg vanaf laaste meting</string>
+    <string name="body_journey_title">Jou reis tot dusver</string>
+    <string name="body_not_enough_data_title">Nog nie genoeg data nie</string>
+    <string name="body_not_enough_data_body">Teken ten minste twee wegings aan om jou reis te sien.</string>
+    <string name="body_journey_note">Elke punt wys een van jou aangetekende wegings.</string>
+    <string name="body_log_weight_button">Teken huidige gewig aan</string>
+    <string name="body_bmi_title">Jou BMI</string>
+    <string name="body_bmi_source">Gebaseer op jou laaste gewig</string>
+    <string name="body_next_checkpoint_format">Volgende gewigskontrolepunt : %1$s</string>
+    <string name="body_manage_checkpoints_cta">Klik hier om kontrolepunte te bestuur</string>
+
+    <string name="checkpoint_logger_title">Nuwe weging</string>
+    <string name="checkpoint_logger_hero_title">Konsekwentheid bring resultate</string>
+    <string name="checkpoint_logger_hero_body">Elke weging is deel van jou fiksheidsreis</string>
+    <string name="checkpoint_logger_current_weight">Huidige gewig</string>
+    <string name="checkpoint_logger_progress_detected">VORDERING BESPEUR!</string>
+    <string name="checkpoint_logger_logging">Teken tans aan…</string>
+    <string name="checkpoint_logger_log_button">Teken gewig aan</string>
+    <string name="checkpoint_logger_maintained">Jy het jou gewig gehandhaaf.</string>
+    <string name="checkpoint_logger_closer_to_goal_format">Jy is nou %1$d kg nader aan jou doelwit!</string>
+    <string name="checkpoint_logger_on_track">Op koers — mooi.</string>
+    <string name="checkpoint_logger_away_from_goal_format">Jy het %1$d kg wegbeweeg van jou doelwit.</string>
+
+    <string name="checkpoint_manager_title">Kontrolepunte</string>
+    <string name="checkpoint_manager_next_weighin">Volgende weging</string>
+    <string name="checkpoint_manager_last_recorded">Laas aangetekende gewig</string>
+    <string name="checkpoint_manager_frequency_title">Kontrolepuntfrekwensie</string>
+    <string name="checkpoint_manager_frequency_subtitle">Bestuur hoe gereeld jy jou gewig opdateer.</string>
+    <string name="checkpoint_manager_reminders_title">Kontrolepunt-herinneringe</string>
+    <string name="checkpoint_manager_reminders_subtitle">Kry \'n kennisgewing op weegdag.</string>
+    <string name="checkpoint_manager_upcoming_title">Komende kontrolepunte</string>
+
 
 
 

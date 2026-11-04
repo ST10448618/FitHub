@@ -17,11 +17,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.ui.theme.FitHubPrimary
-import com.example.fithub.ui.theme.SuccessGreen
 import com.example.fithub.ui.theme.TextOnPrimary
 import com.example.fithub.ui.theme.TextSecondary
 
@@ -29,16 +30,16 @@ import com.example.fithub.ui.theme.TextSecondary
  * Weight journey chart.
  *
  * @param values weights in kg, oldest → newest
- * @param startLabel the label under the first point (e.g. "Start")
- * @param currentLabel the label under the last point (e.g. "Current")
- * @param goalKg optional horizontal goal line
- * @param highlightLatest whether to show the "tooltip" pill on the newest point
+ * @param startLabel the label under the first point; `null` uses the localised
+ *        default ("START" → translated via `R.string.goals_journey_start`)
+ * @param currentLabel the label under the last point; `null` uses the
+ *        localised default
  */
 @Composable
 fun WeightJourneyChart(
     values: List<Double>,
-    startLabel: String = "START",
-    currentLabel: String = "CURRENT",
+    startLabel: String? = null,
+    currentLabel: String? = null,
     goalKg: Double? = null,
     highlightLatest: Boolean = true,
     modifier: Modifier = Modifier,
@@ -47,9 +48,10 @@ fun WeightJourneyChart(
     fillColor: Color = FitHubPrimary.copy(alpha = 0.20f)
 ) {
     if (values.isEmpty()) return
+    val resolvedStart = startLabel ?: stringResource(R.string.goals_journey_start)
+    val resolvedCurrent = currentLabel ?: stringResource(R.string.goals_journey_current)
 
     Column(modifier = modifier) {
-        // Chart area + goal pill on top
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,12 +64,10 @@ fun WeightJourneyChart(
 
                 val minVal = values.minOrNull() ?: 0.0
                 val maxVal = values.maxOrNull() ?: 1.0
-                // Give the chart some breathing room
                 val span = (maxVal - minVal).takeIf { it > 0.01 } ?: 1.0
                 val yMin = minVal - span * 0.20
                 val yMax = maxVal + span * 0.20
 
-                // Also factor in the goal, so the goal line is visible
                 val yFloor = minOf(yMin, goalKg ?: yMin)
                 val yCeil = maxOf(yMax, goalKg ?: yMax)
 
@@ -78,7 +78,6 @@ fun WeightJourneyChart(
 
                 val stepX = if (values.size > 1) (width - pad * 2) / (values.size - 1) else 0f
 
-                // Goal line
                 if (goalKg != null) {
                     val gy = yFor(goalKg)
                     drawLine(
@@ -90,7 +89,6 @@ fun WeightJourneyChart(
                     )
                 }
 
-                // Build fill + line paths
                 val linePath = Path()
                 val fillPath = Path()
                 values.forEachIndexed { idx, v ->
@@ -108,39 +106,25 @@ fun WeightJourneyChart(
                 fillPath.lineTo(pad + (values.size - 1) * stepX, height)
                 fillPath.close()
 
-                // Fill
                 drawPath(
                     path = fillPath,
-                    brush = Brush.verticalGradient(
-                        listOf(fillColor, Color.Transparent)
-                    )
+                    brush = Brush.verticalGradient(listOf(fillColor, Color.Transparent))
                 )
 
-                // Line
                 drawPath(
                     path = linePath,
                     color = lineColor,
                     style = Stroke(width = 4f, cap = StrokeCap.Round)
                 )
 
-                // Dots
                 values.forEachIndexed { idx, v ->
                     val x = pad + idx * stepX
                     val y = yFor(v)
-                    drawCircle(
-                        color = lineColor,
-                        radius = 6f,
-                        center = Offset(x, y)
-                    )
-                    drawCircle(
-                        color = Color.White,
-                        radius = 3f,
-                        center = Offset(x, y)
-                    )
+                    drawCircle(color = lineColor, radius = 6f, center = Offset(x, y))
+                    drawCircle(color = Color.White, radius = 3f, center = Offset(x, y))
                 }
             }
 
-            // Floating pill above the latest point
             if (highlightLatest && values.isNotEmpty()) {
                 val latest = values.last()
                 Box(
@@ -152,7 +136,10 @@ fun WeightJourneyChart(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "${latest} KG",
+                        text = stringResource(
+                            R.string.weight_journey_latest_tooltip_format,
+                            latest
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextOnPrimary,
                         fontWeight = FontWeight.Bold
@@ -163,18 +150,17 @@ fun WeightJourneyChart(
 
         Spacer(Modifier.height(6.dp))
 
-        // Bottom axis labels
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                startLabel,
+                resolvedStart,
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
             Text(
-                currentLabel,
+                resolvedCurrent,
                 style = MaterialTheme.typography.labelSmall,
                 color = TextSecondary
             )
