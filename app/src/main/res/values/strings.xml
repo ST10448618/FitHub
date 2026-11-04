@@ -716,4 +716,51 @@
     <string name="session_completed_particles_format">%1$d Particles Added</string>
     <string name="session_completed_tap_to_continue">Tap anywhere to continue</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH E PART 2 : Rewards + Catalog content -->
+    <!-- ========================================== -->
+
+    <!-- Rewards chrome -->
+    <string name="rewards_title">Rewards</string>
+    <string name="rewards_trophy_desc">Rewards</string>
+    <string name="rewards_current_particles">Current Particles:</string>
+    <string name="rewards_earn_title">Earn Particles</string>
+    <string name="rewards_earn_body">while completing achievements by meeting goals!</string>
+    <string name="rewards_open_achievements_desc">Open achievements</string>
+    <string name="rewards_on_offer">Rewards on offer</string>
+    <string name="rewards_status_available">Available!</string>
+    <string name="rewards_status_claimed">Claimed</string>
+    <string name="rewards_status_insufficient">Insufficient Amount</string>
+    <string name="rewards_toast_already_claimed">Already claimed.</string>
+    <string name="rewards_toast_need_format">Need %1$d ✨ to claim.</string>
+    <string name="rewards_toast_claimed_format">%1$s claimed!</string>
+
+    <!-- Reward catalog content (Option 2 scope: English-only today, ready for translation) -->
+    <string name="reward_bun_n_bite_title">Bun n Bite</string>
+    <string name="reward_bun_n_bite_subtitle">Meal voucher</string>
+    <string name="reward_noosh_title">NOOSH</string>
+    <string name="reward_noosh_subtitle">Snack voucher</string>
+    <string name="reward_planet_fitness_title">Planet Fitness</string>
+    <string name="reward_planet_fitness_subtitle">1 month membership</string>
+    <string name="reward_steam_title">Steam Voucher</string>
+    <string name="reward_steam_subtitle">R100 wallet top-up</string>
+
+    <!-- Achievement catalog content (Option 2 scope: English-only today, ready for translation) -->
+    <string name="achievement_first_log_title">First Log</string>
+    <string name="achievement_first_log_desc">Logged your first meal.</string>
+    <string name="achievement_hit_goal_title">Hit Goal</string>
+    <string name="achievement_hit_goal_desc">Reached your daily target.</string>
+    <string name="achievement_perfect_week_title">Perfect Week</string>
+    <string name="achievement_perfect_week_desc">Hit your goals 7 days straight.</string>
+    <string name="achievement_monthly_streak_title">Monthly Streak</string>
+    <string name="achievement_monthly_streak_desc">Logged calories all month.</string>
+    <string name="achievement_first_session_title">First Session</string>
+    <string name="achievement_first_session_desc">Completed first workout.</string>
+    <string name="achievement_weekly_goal_title">Weekly Goal</string>
+    <string name="achievement_weekly_goal_desc">Hit weekly session target.</string>
+    <string name="achievement_workout_streak_title">Workout Streak</string>
+    <string name="achievement_workout_streak_desc">Trained 4 weeks in a row.</string>
+    <string name="achievement_monthly_milestone_title">Monthly Milestone</string>
+    <string name="achievement_monthly_milestone_desc">Hit monthly activity goal.</string>
+
 </resources>

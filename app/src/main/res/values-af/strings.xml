@@ -423,7 +423,47 @@
     <string name="checkpoint_manager_reminders_subtitle">Kry \'n kennisgewing op weegdag.</string>
     <string name="checkpoint_manager_upcoming_title">Komende kontrolepunte</string>
 
+    <!-- Phase 5 Batch E PART 2 : Rewards + Catalog content -->
 
+    <string name="rewards_title">Belonings</string>
+    <string name="rewards_trophy_desc">Belonings</string>
+    <string name="rewards_current_particles">Huidige deeltjies:</string>
+    <string name="rewards_earn_title">Verdien deeltjies</string>
+    <string name="rewards_earn_body">terwyl jy prestasies voltooi deur doelwitte te bereik!</string>
+    <string name="rewards_open_achievements_desc">Maak prestasies oop</string>
+    <string name="rewards_on_offer">Belonings beskikbaar</string>
+    <string name="rewards_status_available">Beskikbaar!</string>
+    <string name="rewards_status_claimed">Geëis</string>
+    <string name="rewards_status_insufficient">Onvoldoende bedrag</string>
+    <string name="rewards_toast_already_claimed">Reeds geëis.</string>
+    <string name="rewards_toast_need_format">Jy het %1$d ✨ nodig om te eis.</string>
+    <string name="rewards_toast_claimed_format">%1$s geëis!</string>
+
+    <string name="reward_bun_n_bite_title">Bun n Bite</string>
+    <string name="reward_bun_n_bite_subtitle">Maaltydbewys</string>
+    <string name="reward_noosh_title">NOOSH</string>
+    <string name="reward_noosh_subtitle">Peuselhappiebewys</string>
+    <string name="reward_planet_fitness_title">Planet Fitness</string>
+    <string name="reward_planet_fitness_subtitle">1 maand lidmaatskap</string>
+    <string name="reward_steam_title">Steam-bewys</string>
+    <string name="reward_steam_subtitle">R100 beursie-aanvulling</string>
+
+    <string name="achievement_first_log_title">Eerste log</string>
+    <string name="achievement_first_log_desc">Jou eerste maaltyd aangeteken.</string>
+    <string name="achievement_hit_goal_title">Doel bereik</string>
+    <string name="achievement_hit_goal_desc">Jou daaglikse teiken bereik.</string>
+    <string name="achievement_perfect_week_title">Perfekte week</string>
+    <string name="achievement_perfect_week_desc">Jou doelwitte 7 dae lank reguit bereik.</string>
+    <string name="achievement_monthly_streak_title">Maandelikse reeks</string>
+    <string name="achievement_monthly_streak_desc">Kalorieë die hele maand aangeteken.</string>
+    <string name="achievement_first_session_title">Eerste sessie</string>
+    <string name="achievement_first_session_desc">Eerste oefening voltooi.</string>
+    <string name="achievement_weekly_goal_title">Weeklikse doelwit</string>
+    <string name="achievement_weekly_goal_desc">Weeklikse sessieteiken bereik.</string>
+    <string name="achievement_workout_streak_title">Oefenreeks</string>
+    <string name="achievement_workout_streak_desc">4 weke in \'n ry geoefen.</string>
+    <string name="achievement_monthly_milestone_title">Maandelikse mylpaal</string>
+    <string name="achievement_monthly_milestone_desc">Maandelikse aktiwiteitsdoel bereik.</string>
 
 
 </resources>

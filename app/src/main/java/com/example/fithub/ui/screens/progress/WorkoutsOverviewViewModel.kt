@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -139,9 +140,11 @@ class WorkoutsOverviewViewModel : ViewModel() {
         val locale = Locale.forLanguageTag(
             LocaleManager.currentCode(ServiceLocator.appContext())
         )
+        val ctx = ServiceLocator.appContext()
 
         val points: List<GraphPoint> = when (mode) {
             GraphMode.WEEK -> {
+                // Day labels (Mon/Tue/…) via DateTimeFormatter — already localised.
                 val dayFormatter = DateTimeFormatter.ofPattern("EEE", locale)
                 val anchor = month.atDay(15)
                 WorkoutProgressCalculator.weekGraph(allSessions, anchor).map { day ->
@@ -152,22 +155,30 @@ class WorkoutsOverviewViewModel : ViewModel() {
                 }
             }
             GraphMode.MONTH -> {
-                val short = DateTimeFormatter.ofPattern("d MMM", locale)
-                WorkoutProgressCalculator.monthGraph(allSessions, month.atDay(1)).map { week ->
-                    GraphPoint(
-                        label = week.label,
-                        value = week.activityKcal.toFloat()
-                    )
-                }
+                // Week labels via resource format (W%1$d) — the calculator's own
+                // "Wk N" label is English and is deliberately ignored.
+                val weekLabelTemplate = ctx.getString(R.string.progress_overview_week_short_format)
+                WorkoutProgressCalculator.monthGraph(allSessions, month.atDay(1))
+                    .mapIndexed { idx, week ->
+                        GraphPoint(
+                            label = String.format(weekLabelTemplate, idx + 1),
+                            value = week.activityKcal.toFloat()
+                        )
+                    }
             }
             GraphMode.YEAR -> {
+                // Month labels via DateTimeFormatter — replaces the calculator's
+                // hard-coded "Jan"/"Feb" English array.
                 val monthFormatter = DateTimeFormatter.ofPattern("MMM", locale)
-                WorkoutProgressCalculator.yearGraph(allSessions, month.year).map { m ->
-                    GraphPoint(
-                        label = m.label,
-                        value = m.activityKcal.toFloat()
-                    )
-                }
+                val year = month.year
+                WorkoutProgressCalculator.yearGraph(allSessions, year)
+                    .map { m ->
+                        val date = LocalDate.of(year, m.month, 1)
+                        GraphPoint(
+                            label = date.format(monthFormatter),
+                            value = m.activityKcal.toFloat()
+                        )
+                    }
             }
         }
 

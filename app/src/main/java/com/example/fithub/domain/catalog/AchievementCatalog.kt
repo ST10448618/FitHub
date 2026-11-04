@@ -1,11 +1,15 @@
 package com.example.fithub.domain.catalog
 
+import com.example.fithub.R
 import com.example.fithub.domain.model.Achievement
 import com.example.fithub.domain.model.AchievementCategory
 
 /**
  * Static definitions of every achievement in FitHub.
  * Progress state is per-user and lives in UserAchievement.
+ *
+ * As with `RewardCatalog`, `title`/`description` keep the English fallback
+ * while `titleRes`/`descriptionRes` are the ready-made localisation hooks.
  */
 object AchievementCatalog {
 
@@ -28,7 +32,9 @@ object AchievementCatalog {
             category = AchievementCategory.NUTRITION,
             goalValue = 1,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_first_log_title,
+            descriptionRes = R.string.achievement_first_log_desc
         ),
         Achievement(
             id = HIT_GOAL,
@@ -37,7 +43,9 @@ object AchievementCatalog {
             category = AchievementCategory.NUTRITION,
             goalValue = 1,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_hit_goal_title,
+            descriptionRes = R.string.achievement_hit_goal_desc
         ),
         Achievement(
             id = PERFECT_WEEK,
@@ -46,7 +54,9 @@ object AchievementCatalog {
             category = AchievementCategory.NUTRITION,
             goalValue = 7,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_perfect_week_title,
+            descriptionRes = R.string.achievement_perfect_week_desc
         ),
         Achievement(
             id = MONTHLY_STREAK,
@@ -55,7 +65,9 @@ object AchievementCatalog {
             category = AchievementCategory.NUTRITION,
             goalValue = 20,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_monthly_streak_title,
+            descriptionRes = R.string.achievement_monthly_streak_desc
         ),
 
         // ---- Workout ----
@@ -66,7 +78,9 @@ object AchievementCatalog {
             category = AchievementCategory.WORKOUT,
             goalValue = 1,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_first_session_title,
+            descriptionRes = R.string.achievement_first_session_desc
         ),
         Achievement(
             id = WEEKLY_GOAL,
@@ -75,7 +89,9 @@ object AchievementCatalog {
             category = AchievementCategory.WORKOUT,
             goalValue = 1,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_weekly_goal_title,
+            descriptionRes = R.string.achievement_weekly_goal_desc
         ),
         Achievement(
             id = WORKOUT_STREAK,
@@ -84,7 +100,9 @@ object AchievementCatalog {
             category = AchievementCategory.WORKOUT,
             goalValue = 4,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_workout_streak_title,
+            descriptionRes = R.string.achievement_workout_streak_desc
         ),
         Achievement(
             id = MONTHLY_MILESTONE,
@@ -93,7 +111,9 @@ object AchievementCatalog {
             category = AchievementCategory.WORKOUT,
             goalValue = 1,
             rewardParticles = 150,
-            iconName = "medal"
+            iconName = "medal",
+            titleRes = R.string.achievement_monthly_milestone_title,
+            descriptionRes = R.string.achievement_monthly_milestone_desc
         )
     )
 
@@ -101,8 +121,6 @@ object AchievementCatalog {
     fun byCategory(category: AchievementCategory): List<Achievement> =
         ALL.filter { it.category == category }
 
-    // ---- Level formula ----
-    // Every 300 lifetime particles = 1 level. Starting at Level 1.
     const val PARTICLES_PER_LEVEL = 300
 
     fun levelFromLifetimeParticles(lifetimeEarned: Int): Int =

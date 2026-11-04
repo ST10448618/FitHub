@@ -706,4 +706,46 @@
     <string name="session_completed_particles_format">%1$d ama-Particles Engeziwe</string>
     <string name="session_completed_tap_to_continue">Thepha noma kuphi ukuze uqhubeke</string>
 
+    <!-- Phase 5 Batch E PART 2 : Rewards + Catalog content -->
+
+    <string name="rewards_title">Imiklomelo</string>
+    <string name="rewards_trophy_desc">Imiklomelo</string>
+    <string name="rewards_current_particles">Ama-Particles amanje:</string>
+    <string name="rewards_earn_title">Zuza Ama-Particles</string>
+    <string name="rewards_earn_body">ngenkathi uqeda izimpumelelo ngokuhlangabezana nezinhloso!</string>
+    <string name="rewards_open_achievements_desc">Vula izimpumelelo</string>
+    <string name="rewards_on_offer">Imiklomelo ekhona</string>
+    <string name="rewards_status_available">Iyatholakala!</string>
+    <string name="rewards_status_claimed">Kufunyenwe</string>
+    <string name="rewards_status_insufficient">Inani elinganele</string>
+    <string name="rewards_toast_already_claimed">Kuvele kufunyenwe.</string>
+    <string name="rewards_toast_need_format">Udinga ama-%1$d ✨ ukuze ufune.</string>
+    <string name="rewards_toast_claimed_format">%1$s kufunyenwe!</string>
+
+    <string name="reward_bun_n_bite_title">Bun n Bite</string>
+    <string name="reward_bun_n_bite_subtitle">Ivawusha yokudla</string>
+    <string name="reward_noosh_title">NOOSH</string>
+    <string name="reward_noosh_subtitle">Ivawusha yokudla okulula</string>
+    <string name="reward_planet_fitness_title">Planet Fitness</string>
+    <string name="reward_planet_fitness_subtitle">Ubulungu benyanga engu-1</string>
+    <string name="reward_steam_title">Ivawusha ye-Steam</string>
+    <string name="reward_steam_subtitle">Ukugcwaliswa kwesikhwama se-R100</string>
+
+    <string name="achievement_first_log_title">Ilogi Yokuqala</string>
+    <string name="achievement_first_log_desc">Ulotshé isidlo sakho sokuqala.</string>
+    <string name="achievement_hit_goal_title">Ufinyelela Inhloso</string>
+    <string name="achievement_hit_goal_desc">Ufinyelele ithagethi yakho yansuku.</string>
+    <string name="achievement_perfect_week_title">Iviki Eliphelele</string>
+    <string name="achievement_perfect_week_desc">Ufinyelele izinhloso zakho izinsuku ezi-7 zilandelana.</string>
+    <string name="achievement_monthly_streak_title">Ukulandelana Kwenyanga</string>
+    <string name="achievement_monthly_streak_desc">Ulotshé ama-kcal inyanga yonke.</string>
+    <string name="achievement_first_session_title">Iseshini Yokuqala</string>
+    <string name="achievement_first_session_desc">Uqede ukuzivocavoca kokuqala.</string>
+    <string name="achievement_weekly_goal_title">Inhloso Yeviki</string>
+    <string name="achievement_weekly_goal_desc">Ufinyelele ithagethi yeviki yamaseshini.</string>
+    <string name="achievement_workout_streak_title">Ukulandelana Kokuzivocavoca</string>
+    <string name="achievement_workout_streak_desc">Uqeqeshe amaviki ama-4 elandelana.</string>
+    <string name="achievement_monthly_milestone_title">Isigaba Senyanga</string>
+    <string name="achievement_monthly_milestone_desc">Ufinyelele inhloso yomsebenzi wenyanga.</string>
+
 </resources>
