@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.ui.components.PrimaryButton
 import com.example.fithub.ui.components.RoundedProgressBar
 import com.example.fithub.ui.components.SecondaryButton
@@ -30,10 +32,11 @@ fun OnboardingScaffold(
     subtitle: String,
     onCancel: () -> Unit,
     onNext: (() -> Unit)?,
-    nextButtonText: String = "Next Step",
+    nextButtonText: String? = null,
     nextEnabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val resolvedNextText = nextButtonText ?: stringResource(R.string.onboarding_next)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +49,7 @@ fun OnboardingScaffold(
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Text(
-                "STEP $stepNumber OF $totalSteps",
+                stringResource(R.string.onboarding_step_counter, stepNumber, totalSteps),
                 style = MaterialTheme.typography.labelSmall,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -70,7 +73,7 @@ fun OnboardingScaffold(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                "Onboarding",
+                stringResource(R.string.onboarding_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold,
@@ -139,13 +142,13 @@ fun OnboardingScaffold(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             SecondaryButton(
-                text = "Cancel",
+                text = stringResource(R.string.generic_cancel),
                 onClick = onCancel,
                 modifier = Modifier.weight(1f)
             )
             if (onNext != null) {
                 PrimaryButton(
-                    text = "$nextButtonText  ▶",
+                    text = "$resolvedNextText  ▶",
                     onClick = onNext,
                     enabled = nextEnabled,
                     modifier = Modifier.weight(1f)

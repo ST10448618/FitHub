@@ -26,4 +26,113 @@
     <string name="settings_push_title">Push-kennisgewings</string>
     <string name="settings_push_subtitle_on">Huidig : GEAAKTIWEER</string>
     <string name="settings_push_subtitle_off">Huidig : GEDEAAKTIWEER</string>
+
+    <!-- Phase 5 Batch B : Onboarding -->
+    <string name="onboarding_title">Aanboord</string>
+    <string name="onboarding_step_counter">STAP %1$d VAN %2$d</string>
+    <string name="onboarding_next">Volgende stap</string>
+    <string name="onboarding_username_fallback">daar</string>
+    <string name="onboarding_info_hint">Hierdie inligting is nodig sodat ons jou ervaring kan personaliseer.</string>
+
+    <string name="onboarding_step1_subtitle">Voer jou gebruikersnaam en e-pos in, en stel jou wagwoord op.</string>
+
+    <string name="onboarding_step2_title">Biometriese aanmelding</string>
+    <string name="onboarding_step2_subtitle">Het jy geweet jy kan jou vingerafdruk gebruik om FitHub te ontsluit en tyd te bespaar?</string>
+    <string name="onboarding_step2_card_title">Aktiveer vinnige aanmelding?</string>
+    <string name="onboarding_step2_card_body">Gebruik jou vingerafdruk om volgende keer vinniger aan te meld! Jy kan dit later in instellings aktiveer.</string>
+    <string name="onboarding_step2_btn_enable">AKTIVEER</string>
+    <string name="onboarding_step2_btn_enabled">GEAAKTIWEER</string>
+
+    <string name="onboarding_step3_title">Voer jou ouderdom in</string>
+    <string name="onboarding_step3_subtitle">Hulle sê 30 is die nuwe 20. Maar ons het steeds jou werklike ouderdom nodig.</string>
+    <string name="onboarding_step3_label">VOER JOU HUIDIGE OUDERDOM IN</string>
+    <string name="onboarding_step3_placeholder">20</string>
+
+    <string name="onboarding_step4_title">Waarmee identifiseer jy?</string>
+    <string name="onboarding_step4_subtitle">Daar was nie genoeg spasie vir almal nie, so kies asseblief uit twee.</string>
+    <string name="onboarding_step4_label">Watter geslag is jy?</string>
+
+    <string name="onboarding_step5_title">Wat is jou huidige lengte?</string>
+    <string name="onboarding_step5_subtitle">Nie die een op jou datingprofiel nie.</string>
+    <string name="onboarding_step5_question">Hoe lank is jy?</string>
+    <string name="onboarding_step5_label">VOER JOU HUIDIGE LENGTE IN</string>
+    <string name="onboarding_step5_placeholder">169 cm</string>
+
+    <string name="onboarding_step6_title">Voer jou huidige gewig in</string>
+    <string name="onboarding_step6_subtitle">Almal hou tog van \'n Voor-en-Na foto!</string>
+    <string name="onboarding_step6_question">Hoeveel weeg jy tans?</string>
+    <string name="onboarding_step6_label">VOER JOU HUIDIGE GEWIG IN</string>
+    <string name="onboarding_step6_placeholder">60 kg</string>
+
+    <string name="onboarding_step7_title">Hoe aktief is jy?</string>
+    <string name="onboarding_step7_subtitle">Geen oordeel nie. Ons vra net 100% eerlikheid.</string>
+    <string name="onboarding_step7_next">Voltooi</string>
+    <string name="onboarding_step7_desc_sedentary">Min tot geen oefening</string>
+    <string name="onboarding_step7_desc_lightly">Ligte oefening 1 - 3 dae per week</string>
+    <string name="onboarding_step7_desc_moderately">Matige oefening 3 - 5 dae per week</string>
+    <string name="onboarding_step7_desc_very">Swaar oefening 6 - 7 dae per week</string>
+    <string name="onboarding_step7_desc_extremely">Intensiewe fisiese werk daagliks</string>
+
+    <string name="onboarding_complete_success">SUKSES!</string>
+    <string name="onboarding_complete_title">Aanboord Voltooi</string>
+    <string name="onboarding_complete_body">Ons het al die begininligting wat ons nodig het. Jy kan jou persoonlike doelwitte by die Doelwitte-afdeling stel.</string>
+    <string name="onboarding_complete_setting_up">Stel tans op…</string>
+    <string name="onboarding_complete_confirm">Bevestig</string>
+
+    <!-- Phase 5 : Enum labels -->
+    <string name="enum_gender_male">Manlik</string>
+    <string name="enum_gender_female">Vroulik</string>
+    <string name="enum_gender_other">Ander</string>
+
+    <string name="enum_activity_sedentary">Sittende lewenstyl</string>
+    <string name="enum_activity_lightly">Effens aktief</string>
+    <string name="enum_activity_moderately">Matig aktief</string>
+    <string name="enum_activity_very">Baie aktief</string>
+    <string name="enum_activity_extremely">Uiters aktief</string>
+
+    <string name="enum_goal_lose">Verloor</string>
+    <string name="enum_goal_maintain">Handhaaf</string>
+    <string name="enum_goal_gain">Verdien</string>
+
+    <string name="enum_meal_breakfast">Ontbyt</string>
+    <string name="enum_meal_lunch">Middagete</string>
+    <string name="enum_meal_dinner">Aandete</string>
+    <string name="enum_meal_snack">Peuselhappie</string>
+
+    <string name="enum_source_barcode">Streepkode</string>
+    <string name="enum_source_search">Soek</string>
+    <string name="enum_source_ai">KI-herkenning</string>
+    <string name="enum_source_manual">Handmatig</string>
+
+    <string name="enum_difficulty_beginner">Beginner</string>
+    <string name="enum_difficulty_intermediate">Gevorderd</string>
+    <string name="enum_difficulty_advanced">Gevorderd</string>
+
+    <string name="enum_category_general">Algemene fiksheid</string>
+    <string name="enum_category_cardio">Kardio</string>
+    <string name="enum_category_strength">Krag</string>
+    <string name="enum_category_endurance">Uithouvermoë</string>
+    <string name="enum_category_mobility">Mobiliteit</string>
+    <string name="enum_category_created">Geskep</string>
+
+    <string name="enum_exercise_chest">Bors</string>
+    <string name="enum_exercise_back">Rug</string>
+    <string name="enum_exercise_legs">Bene</string>
+    <string name="enum_exercise_arms">Arm</string>
+    <string name="enum_exercise_core">Kern</string>
+    <string name="enum_exercise_cardio">Kardio</string>
+    <string name="enum_exercise_mobility">Mobiliteit</string>
+    <string name="enum_exercise_gym">Gim</string>
+
+    <string name="enum_session_completed">Voltooi</string>
+    <string name="enum_session_partial">Gedeeltelik</string>
+    <string name="enum_session_discarded">Verwerp</string>
+
+    <string name="enum_ach_cat_nutrition">Voeding</string>
+    <string name="enum_ach_cat_workout">Oefening</string>
+
+
+
+
+
 </resources>

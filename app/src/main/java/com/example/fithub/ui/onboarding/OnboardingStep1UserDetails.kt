@@ -1,8 +1,6 @@
 package com.example.fithub.ui.screens.onboarding
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +14,6 @@ import com.example.fithub.R
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.ui.components.FitHubPasswordField
 import com.example.fithub.ui.components.FitHubTextField
-import com.example.fithub.ui.theme.TextSecondary
 
 @Composable
 fun OnboardingStep1UserDetails(
@@ -34,13 +31,17 @@ fun OnboardingStep1UserDetails(
             email.contains("@") &&
             (isGoogle || password.length >= 6)
 
+    val displayFallback = stringResource(R.string.onboarding_username_fallback)
     OnboardingScaffold(
         stepNumber = 1,
-        title = stringResource(R.string.onboarding_google_welcome_title, username.ifBlank { "there" }),
+        title = stringResource(
+            R.string.onboarding_google_welcome_title,
+            username.ifBlank { displayFallback }
+        ),
         subtitle = if (isGoogle) {
             stringResource(R.string.onboarding_google_welcome_body)
         } else {
-            "Enter your Username and Email, as well as set up your password."
+            stringResource(R.string.onboarding_step1_subtitle)
         },
         onCancel = onCancel,
         onNext = {

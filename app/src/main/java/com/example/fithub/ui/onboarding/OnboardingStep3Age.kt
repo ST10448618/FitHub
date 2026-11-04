@@ -6,13 +6,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.ui.components.FitHubTextField
 import com.example.fithub.ui.theme.FitHubPrimary
-import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun OnboardingStep3Age(
@@ -23,8 +25,8 @@ fun OnboardingStep3Age(
 
     OnboardingScaffold(
         stepNumber = 3,
-        title = "Enter your age",
-        subtitle = "They say 30 is the new 20. But we still need your actual age though.",
+        title = stringResource(R.string.onboarding_step3_title),
+        subtitle = stringResource(R.string.onboarding_step3_subtitle),
         onCancel = onCancel,
         onNext = {
             OnboardingSession.age = age.toIntOrNull()
@@ -33,7 +35,7 @@ fun OnboardingStep3Age(
         nextEnabled = age.toIntOrNull()?.let { it in 1..120 } == true
     ) {
         Text(
-            "ENTER YOUR CURRENT AGE",
+            stringResource(R.string.onboarding_step3_label),
             style = MaterialTheme.typography.labelMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold,
@@ -44,7 +46,7 @@ fun OnboardingStep3Age(
         FitHubTextField(
             value = age,
             onValueChange = { if (it.all(Char::isDigit)) age = it },
-            placeholder = "20",
+            placeholder = stringResource(R.string.onboarding_step3_placeholder),
             keyboardType = KeyboardType.Number
         )
         Spacer(Modifier.height(28.dp))
@@ -54,11 +56,14 @@ fun OnboardingStep3Age(
 
 @Composable
 internal fun InfoHint() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text("ⓘ", style = MaterialTheme.typography.titleLarge, color = FitHubPrimary)
         Spacer(Modifier.height(6.dp))
         Text(
-            "This information is needed for us to personalize your experience.",
+            stringResource(R.string.onboarding_info_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Medium,

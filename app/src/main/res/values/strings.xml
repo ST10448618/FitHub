@@ -70,7 +70,7 @@
 
     <string name="profile_edit_details">Edit Details</string>
     <string name="profile_settings">Settings</string>
-    <string name="profile_logout">Log out</string>
+    <string name="profile_logout" translatable="false">Log out</string>
     <string name="profile_logout_confirm_title">Log out of FitHub?</string>
     <string name="profile_logout_confirm_body">You will need to sign in again next time.</string>
     <string name="profile_logout_confirm_yes">Log out</string>
@@ -133,7 +133,7 @@
     <string name="default_web_client_id" translatable="false">STUB_REPLACE_AFTER_GOOGLE_PROVIDER_ENABLED</string>
 
     <!-- ========================================== -->
-    <!-- PHASE 5 BATCH A : Components               -->
+    <!-- PHASE 5 BATCH A1 : Components               -->
     <!-- ========================================== -->
     <string name="common_back">Back</string>
     <string name="common_error_title">Something went wrong</string>
@@ -156,5 +156,125 @@
     <string name="settings_push_title">Push Notifications</string>
     <string name="settings_push_subtitle_on">Current : ENABLED</string>
     <string name="settings_push_subtitle_off">Current : DISABLED</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 BATCH B : Onboarding               -->
+    <!-- ========================================== -->
+    <string name="onboarding_title">Onboarding</string>
+    <string name="onboarding_step_counter">STEP %1$d OF %2$d</string>
+    <string name="onboarding_next">Next Step</string>
+    <string name="onboarding_username_fallback">there</string>
+    <string name="onboarding_info_hint">This information is needed for us to personalize your experience.</string>
+
+    <!-- Step 1 -->
+    <string name="onboarding_step1_subtitle">Enter your Username and Email, as well as set up your password.</string>
+
+    <!-- Step 2 -->
+    <string name="onboarding_step2_title">Biometric Login</string>
+    <string name="onboarding_step2_subtitle">Did you know you could use your Fingerprint to unlock Fit Hub and save time?</string>
+    <string name="onboarding_step2_card_title">Enable Quick Login?</string>
+    <string name="onboarding_step2_card_body">Use your Fingerprint to log in faster next time! You can skip this and enable it later in settings</string>
+    <string name="onboarding_step2_btn_enable">ENABLE</string>
+    <string name="onboarding_step2_btn_enabled">ENABLED</string>
+
+    <!-- Step 3 -->
+    <string name="onboarding_step3_title">Enter your age</string>
+    <string name="onboarding_step3_subtitle">They say 30 is the new 20. But we still need your actual age though.</string>
+    <string name="onboarding_step3_label">ENTER YOUR CURRENT AGE</string>
+    <string name="onboarding_step3_placeholder">20</string>
+
+    <!-- Step 4 -->
+    <string name="onboarding_step4_title">What do you identify as?</string>
+    <string name="onboarding_step4_subtitle">There wasn\'t enough space to fit all of them so please pick from two.</string>
+    <string name="onboarding_step4_label">What gender are you?</string>
+
+    <!-- Step 5 -->
+    <string name="onboarding_step5_title">What is your current height?</string>
+    <string name="onboarding_step5_subtitle">Not the one on your dating profile.</string>
+    <string name="onboarding_step5_question">How tall are you?</string>
+    <string name="onboarding_step5_label">ENTER YOUR CURRENT HEIGHT</string>
+    <string name="onboarding_step5_placeholder">169 cm</string>
+
+    <!-- Step 6 -->
+    <string name="onboarding_step6_title">Enter your current weight</string>
+    <string name="onboarding_step6_subtitle">Everyone loves a Before and After picture after all!</string>
+    <string name="onboarding_step6_question">How much do you currently weigh?</string>
+    <string name="onboarding_step6_label">ENTER YOUR CURRENT WEIGHT</string>
+    <string name="onboarding_step6_placeholder">60 kg</string>
+
+    <!-- Step 7 -->
+    <string name="onboarding_step7_title">How active are you?</string>
+    <string name="onboarding_step7_subtitle">No judgement. We just ask for 100% honesty.</string>
+    <string name="onboarding_step7_next">Finish</string>
+    <string name="onboarding_step7_desc_sedentary">Little to no exercise</string>
+    <string name="onboarding_step7_desc_lightly">Light exercise 1 - 3 days a week</string>
+    <string name="onboarding_step7_desc_moderately">Moderate exercise 3 - 5 days a week</string>
+    <string name="onboarding_step7_desc_very">Hard exercise 6 - 7 days a week</string>
+    <string name="onboarding_step7_desc_extremely">Intensive physical work daily</string>
+
+    <!-- Complete -->
+    <string name="onboarding_complete_success">SUCCESS!</string>
+    <string name="onboarding_complete_title">Onboarding Completed</string>
+    <string name="onboarding_complete_body">We have all the startup information we need. You can set your personal goals from the Goals section.</string>
+    <string name="onboarding_complete_setting_up">Setting up…</string>
+    <string name="onboarding_complete_confirm">Confirm</string>
+
+
+    <!-- ========================================== -->
+    <!-- PHASE 5 : Enum labels (all batches)        -->
+    <!-- ========================================== -->
+    <string name="enum_gender_male">Male</string>
+    <string name="enum_gender_female">Female</string>
+    <string name="enum_gender_other">Other</string>
+
+    <string name="enum_activity_sedentary">Sedentary Lifestyle</string>
+    <string name="enum_activity_lightly">Lightly Active</string>
+    <string name="enum_activity_moderately">Moderately Active</string>
+    <string name="enum_activity_very">Very Active</string>
+    <string name="enum_activity_extremely">Extremely Active</string>
+
+    <string name="enum_goal_lose">Lose</string>
+    <string name="enum_goal_maintain">Maintain</string>
+    <string name="enum_goal_gain">Gain</string>
+
+    <string name="enum_meal_breakfast">Breakfast</string>
+    <string name="enum_meal_lunch">Lunch</string>
+    <string name="enum_meal_dinner">Dinner</string>
+    <string name="enum_meal_snack">Snack</string>
+
+    <string name="enum_source_barcode">Barcode</string>
+    <string name="enum_source_search">Search</string>
+    <string name="enum_source_ai">AI Recognition</string>
+    <string name="enum_source_manual">Manual</string>
+
+    <string name="enum_difficulty_beginner">Beginner</string>
+    <string name="enum_difficulty_intermediate">Intermediate</string>
+    <string name="enum_difficulty_advanced">Advanced</string>
+
+    <string name="enum_category_general">General Fitness</string>
+    <string name="enum_category_cardio">Cardio</string>
+    <string name="enum_category_strength">Strength</string>
+    <string name="enum_category_endurance">Endurance</string>
+    <string name="enum_category_mobility">Mobility</string>
+    <string name="enum_category_created">Created</string>
+
+    <string name="enum_exercise_chest">Chest</string>
+    <string name="enum_exercise_back">Back</string>
+    <string name="enum_exercise_legs">Legs</string>
+    <string name="enum_exercise_arms">Arms</string>
+    <string name="enum_exercise_core">Core</string>
+    <string name="enum_exercise_cardio">Cardio</string>
+    <string name="enum_exercise_mobility">Mobility</string>
+    <string name="enum_exercise_gym">Gym</string>
+
+    <string name="enum_session_completed">Completed</string>
+    <string name="enum_session_partial">Partial</string>
+    <string name="enum_session_discarded">Discarded</string>
+
+    <string name="enum_ach_cat_nutrition">Nutrition</string>
+    <string name="enum_ach_cat_workout">Workout</string>
+
+
+
 
 </resources>

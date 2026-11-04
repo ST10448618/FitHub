@@ -10,8 +10,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.ui.components.PrimaryButton
 import com.example.fithub.ui.components.RoundedCard
@@ -27,8 +29,8 @@ fun OnboardingStep2Biometric(
 
     OnboardingScaffold(
         stepNumber = 2,
-        title = "Biometric Login",
-        subtitle = "Did you know you could use your Fingerprint to unlock Fit Hub and save time?",
+        title = stringResource(R.string.onboarding_step2_title),
+        subtitle = stringResource(R.string.onboarding_step2_subtitle),
         onCancel = onCancel,
         onNext = {
             OnboardingSession.biometricEnabled = enabled
@@ -37,7 +39,7 @@ fun OnboardingStep2Biometric(
     ) {
         RoundedCard(modifier = Modifier.fillMaxWidth()) {
             Text(
-                "Enable Quick Login?",
+                stringResource(R.string.onboarding_step2_card_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold,
@@ -45,14 +47,17 @@ fun OnboardingStep2Biometric(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                "Use your Fingerprint to log in faster next time! You can skip this and enable it later in settings",
+                stringResource(R.string.onboarding_step2_card_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(Modifier.height(20.dp))
             PrimaryButton(
-                text = if (enabled) "ENABLED" else "ENABLE",
+                text = stringResource(
+                    if (enabled) R.string.onboarding_step2_btn_enabled
+                    else R.string.onboarding_step2_btn_enable
+                ),
                 onClick = {
                     enabled = true
                     // TODO(Track A): prompt BiometricPrompt when API available

@@ -12,14 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.domain.model.ActivityLevel
 import com.example.fithub.ui.theme.CardWhite
 import com.example.fithub.ui.theme.FitHubPrimary
-import com.example.fithub.ui.theme.TextPrimary
 import com.example.fithub.ui.theme.TextSecondary
+import com.example.fithub.util.localized
 
 @Composable
 fun OnboardingStep7Lifestyle(
@@ -30,27 +32,28 @@ fun OnboardingStep7Lifestyle(
 
     OnboardingScaffold(
         stepNumber = 7,
-        title = "How active are you?",
-        subtitle = "No judgement. We just ask for 100% honesty.",
+        title = stringResource(R.string.onboarding_step7_title),
+        subtitle = stringResource(R.string.onboarding_step7_subtitle),
         onCancel = onCancel,
         onNext = {
             OnboardingSession.activityLevel = selected
             onNext()
         },
-        nextEnabled = selected != null
+        nextEnabled = selected != null,
+        nextButtonText = stringResource(R.string.onboarding_step7_next)
     ) {
         val options = listOf(
-            ActivityLevel.SEDENTARY to "Little to no exercise",
-            ActivityLevel.LIGHTLY_ACTIVE to "Light exercise 1 - 3 days a week",
-            ActivityLevel.MODERATELY_ACTIVE to "Moderate exercise 3 - 5 days a week",
-            ActivityLevel.VERY_ACTIVE to "Hard exercise 6 - 7 days a week",
-            ActivityLevel.EXTREMELY_ACTIVE to "Intensive physical work daily"
+            ActivityLevel.SEDENTARY to R.string.onboarding_step7_desc_sedentary,
+            ActivityLevel.LIGHTLY_ACTIVE to R.string.onboarding_step7_desc_lightly,
+            ActivityLevel.MODERATELY_ACTIVE to R.string.onboarding_step7_desc_moderately,
+            ActivityLevel.VERY_ACTIVE to R.string.onboarding_step7_desc_very,
+            ActivityLevel.EXTREMELY_ACTIVE to R.string.onboarding_step7_desc_extremely
         )
 
-        options.forEach { (level, description) ->
+        options.forEach { (level, descriptionRes) ->
             LifestyleRow(
-                title = level.label,
-                description = description,
+                title = level.localized(),
+                description = stringResource(descriptionRes),
                 selected = selected == level,
                 onClick = { selected = level }
             )

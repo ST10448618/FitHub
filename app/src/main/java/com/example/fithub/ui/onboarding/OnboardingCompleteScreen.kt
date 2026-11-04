@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.ui.components.PrimaryButton
 import com.example.fithub.ui.theme.*
 
@@ -63,13 +65,13 @@ fun OnboardingCompleteScreen(
             }
             Spacer(Modifier.height(20.dp))
             Text(
-                "SUCCESS!",
+                stringResource(R.string.onboarding_complete_success),
                 style = MaterialTheme.typography.labelLarge,
                 color = SuccessGreen,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                "Onboarding Completed",
+                stringResource(R.string.onboarding_complete_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold,
@@ -77,7 +79,7 @@ fun OnboardingCompleteScreen(
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                "We have all the startup information we need. You can set your personal goals from the Goals section.",
+                stringResource(R.string.onboarding_complete_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
@@ -93,7 +95,10 @@ fun OnboardingCompleteScreen(
             }
             Spacer(Modifier.height(24.dp))
             PrimaryButton(
-                text = if (submitState.isSubmitting) "Setting up..." else "Confirm",
+                text = stringResource(
+                    if (submitState.isSubmitting) R.string.onboarding_complete_setting_up
+                    else R.string.onboarding_complete_confirm
+                ),
                 onClick = { if (!submitState.isSubmitting) onFinish() },
                 enabled = !submitState.isSubmitting
             )

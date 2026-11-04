@@ -12,9 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.domain.model.Gender
 import com.example.fithub.ui.theme.*
@@ -28,8 +30,8 @@ fun OnboardingStep4Gender(
 
     OnboardingScaffold(
         stepNumber = 4,
-        title = "What do you identify as?",
-        subtitle = "There wasn't enough space to fit all of them so please pick from two.",
+        title = stringResource(R.string.onboarding_step4_title),
+        subtitle = stringResource(R.string.onboarding_step4_subtitle),
         onCancel = onCancel,
         onNext = {
             OnboardingSession.gender = selected
@@ -38,7 +40,7 @@ fun OnboardingStep4Gender(
         nextEnabled = selected != null
     ) {
         Text(
-            "What gender are you?",
+            stringResource(R.string.onboarding_step4_label),
             style = MaterialTheme.typography.titleSmall,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold,
@@ -48,7 +50,7 @@ fun OnboardingStep4Gender(
         Spacer(Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             GenderCard(
-                label = "Male",
+                label = stringResource(Gender.MALE.labelRes),
                 symbol = "♂",
                 selected = selected == Gender.MALE,
                 color = FitHubPrimary,
@@ -56,7 +58,7 @@ fun OnboardingStep4Gender(
                 modifier = Modifier.weight(1f)
             )
             GenderCard(
-                label = "Female",
+                label = stringResource(Gender.FEMALE.labelRes),
                 symbol = "♀",
                 selected = selected == Gender.FEMALE,
                 color = Color(0xFFE91E63),

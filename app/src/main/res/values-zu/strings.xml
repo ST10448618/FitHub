@@ -26,4 +26,113 @@
     <string name="settings_push_title">Izaziso Ezicindezelayo</string>
     <string name="settings_push_subtitle_on">Okwamanje : KUVULIWE</string>
     <string name="settings_push_subtitle_off">Okwamanje : KUVALIWE</string>
+
+    <!-- Phase 5 Batch B : Onboarding -->
+    <string name="onboarding_title">Ukuqalisa</string>
+    <string name="onboarding_step_counter">ISINYATHELO %1$d KWESIKA-%2$d</string>
+    <string name="onboarding_next">Isinyathelo esilandelayo</string>
+    <string name="onboarding_username_fallback">mhlanganyeli</string>
+    <string name="onboarding_info_hint">Lolu lwazi luyadingeka ukuze sikwazi ukwenza umuzwa wakho ube nguwe.</string>
+
+    <string name="onboarding_step1_subtitle">Faka igama lakho lomsebenzisi ne-imeyili, futhi usethe iphasiwedi yakho.</string>
+
+    <string name="onboarding_step2_title">Ukungena nge-Biometric</string>
+    <string name="onboarding_step2_subtitle">Uyazi ukuthi ungasebenzisa umunwe wakho ukuvula i-FitHub futhi wonge isikhathi?</string>
+    <string name="onboarding_step2_card_title">Nika amandla ukungena ngokushesha?</string>
+    <string name="onboarding_step2_card_body">Sebenzisa umunwe wakho ukungena ngokushesha ngokuzayo! Ungakweqa lokhu bese ukunika amandla kamuva kuzilungiselelo.</string>
+    <string name="onboarding_step2_btn_enable">NIKA AMANDLA</string>
+    <string name="onboarding_step2_btn_enabled">KUNIKWE AMANDLA</string>
+
+    <string name="onboarding_step3_title">Faka iminyaka yakho</string>
+    <string name="onboarding_step3_subtitle">Bathi u-30 ungumusha u-20. Kodwa sisadinga iminyaka yakho yangempela.</string>
+    <string name="onboarding_step3_label">FAKA IMINYAKA YAKHO YAMANJE</string>
+    <string name="onboarding_step3_placeholder">20</string>
+
+    <string name="onboarding_step4_title">Uzibona njengani?</string>
+    <string name="onboarding_step4_subtitle">Akukho isikhala esanele sokufaka zonke, ngakho-ke sicela ukhethe kwezimbili.</string>
+    <string name="onboarding_step4_label">Ubulili bakho buni?</string>
+
+    <string name="onboarding_step5_title">Ubude bakho bamanje bungakanani?</string>
+    <string name="onboarding_step5_subtitle">Hhayi lobo obukuphrofayela yakho yezokuthandana.</string>
+    <string name="onboarding_step5_question">Ude kangakanani?</string>
+    <string name="onboarding_step5_label">FAKA UBUDE BAKHO BAMANJE</string>
+    <string name="onboarding_step5_placeholder">169 cm</string>
+
+    <string name="onboarding_step6_title">Faka isisindo sakho samanje</string>
+    <string name="onboarding_step6_subtitle">Wonke umuntu uthanda isithombe se-Before and After!</string>
+    <string name="onboarding_step6_question">Ukhuluphele kangakanani manje?</string>
+    <string name="onboarding_step6_label">FAKA ISISINDO SAKHO SAMANJE</string>
+    <string name="onboarding_step6_placeholder">60 kg</string>
+
+    <string name="onboarding_step7_title">Umatasa kangakanani?</string>
+    <string name="onboarding_step7_subtitle">Asihluleli. Sicela nje ubuqiniso obuphelele.</string>
+    <string name="onboarding_step7_next">Qeda</string>
+    <string name="onboarding_step7_desc_sedentary">Ukuzivocavoca okuncane noma akukho</string>
+    <string name="onboarding_step7_desc_lightly">Ukuzivocavoca okulula izinsuku ezi-1 - 3 ngesonto</string>
+    <string name="onboarding_step7_desc_moderately">Ukuzivocavoca okuphakathi izinsuku ezi-3 - 5 ngesonto</string>
+    <string name="onboarding_step7_desc_very">Ukuzivocavoca okunzima izinsuku ezi-6 - 7 ngesonto</string>
+    <string name="onboarding_step7_desc_extremely">Umsebenzi onzima womzimba nsuku zonke</string>
+
+    <string name="onboarding_complete_success">KUPHUMELELE!</string>
+    <string name="onboarding_complete_title">Ukuqalisa Kuqediwe</string>
+    <string name="onboarding_complete_body">Sinolwazi lonke lokokuqala esiludingayo. Ungasetha izinhloso zakho zomuntu siqu kusukela kuSigaba Sezinhloso.</string>
+    <string name="onboarding_complete_setting_up">Kuyalungiswa…</string>
+    <string name="onboarding_complete_confirm">Qinisekisa</string>
+
+    <!-- Phase 5 : Enum labels -->
+    <string name="enum_gender_male">Owesilisa</string>
+    <string name="enum_gender_female">Owesifazane</string>
+    <string name="enum_gender_other">Okunye</string>
+
+    <string name="enum_activity_sedentary">Indlela yokuphila yokuhlala phansi</string>
+    <string name="enum_activity_lightly">Umatasa kancane</string>
+    <string name="enum_activity_moderately">Umatasa ngokulingene</string>
+    <string name="enum_activity_very">Umatasa kakhulu</string>
+    <string name="enum_activity_extremely">Umatasa ngokweqile</string>
+
+    <string name="enum_goal_lose">Yehlisa</string>
+    <string name="enum_goal_maintain">Gcina</string>
+    <string name="enum_goal_gain">Nyusa</string>
+
+    <string name="enum_meal_breakfast">Isidlo sasekuseni</string>
+    <string name="enum_meal_lunch">Isidlo sasemini</string>
+    <string name="enum_meal_dinner">Isidlo sakusihlwa</string>
+    <string name="enum_meal_snack">Isidlo esincane</string>
+
+    <string name="enum_source_barcode">I-barcode</string>
+    <string name="enum_source_search">Ukusesha</string>
+    <string name="enum_source_ai">Ukubona kwe-AI</string>
+    <string name="enum_source_manual">Ngesandla</string>
+
+    <string name="enum_difficulty_beginner">Oqalayo</string>
+    <string name="enum_difficulty_intermediate">Ophakathi</string>
+    <string name="enum_difficulty_advanced">Othuthukile</string>
+
+    <string name="enum_category_general">Ukuqina okuvamile</string>
+    <string name="enum_category_cardio">I-cardio</string>
+    <string name="enum_category_strength">Amandla</string>
+    <string name="enum_category_endurance">Ukukhuthazela</string>
+    <string name="enum_category_mobility">Ukunyakaza</string>
+    <string name="enum_category_created">Kudaliwe</string>
+
+    <string name="enum_exercise_chest">Isifuba</string>
+    <string name="enum_exercise_back">Umhlane</string>
+    <string name="enum_exercise_legs">Imilenze</string>
+    <string name="enum_exercise_arms">Izingalo</string>
+    <string name="enum_exercise_core">Isisu</string>
+    <string name="enum_exercise_cardio">I-cardio</string>
+    <string name="enum_exercise_mobility">Ukunyakaza</string>
+    <string name="enum_exercise_gym">I-jimu</string>
+
+    <string name="enum_session_completed">Kuqediwe</string>
+    <string name="enum_session_partial">Ingxenye</string>
+    <string name="enum_session_discarded">Kulahiwe</string>
+
+    <string name="enum_ach_cat_nutrition">Ukudla okunomsoco</string>
+    <string name="enum_ach_cat_workout">Ukuvivinya umzimba</string>
+
+
+
+
+
 </resources>

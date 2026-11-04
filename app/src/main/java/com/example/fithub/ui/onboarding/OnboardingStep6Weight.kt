@@ -5,13 +5,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.ui.components.FitHubTextField
 import com.example.fithub.ui.theme.FitHubPrimary
-import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun OnboardingStep6Weight(
@@ -22,8 +24,8 @@ fun OnboardingStep6Weight(
 
     OnboardingScaffold(
         stepNumber = 6,
-        title = "Enter your current weight",
-        subtitle = "Everyone loves a Before and After picture after all!",
+        title = stringResource(R.string.onboarding_step6_title),
+        subtitle = stringResource(R.string.onboarding_step6_subtitle),
         onCancel = onCancel,
         onNext = {
             OnboardingSession.weightKg = weight.toDoubleOrNull()
@@ -32,7 +34,7 @@ fun OnboardingStep6Weight(
         nextEnabled = weight.toIntOrNull()?.let { it in 20..400 } == true
     ) {
         Text(
-            "How much do you currently weigh?",
+            stringResource(R.string.onboarding_step6_question),
             style = MaterialTheme.typography.titleSmall,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold,
@@ -41,7 +43,7 @@ fun OnboardingStep6Weight(
         )
         Spacer(Modifier.height(14.dp))
         Text(
-            "ENTER YOUR CURRENT WEIGHT",
+            stringResource(R.string.onboarding_step6_label),
             style = MaterialTheme.typography.labelMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold,
@@ -52,7 +54,7 @@ fun OnboardingStep6Weight(
         FitHubTextField(
             value = weight,
             onValueChange = { if (it.all(Char::isDigit)) weight = it },
-            placeholder = "60 kg",
+            placeholder = stringResource(R.string.onboarding_step6_placeholder),
             keyboardType = KeyboardType.Number
         )
         Spacer(Modifier.height(28.dp))

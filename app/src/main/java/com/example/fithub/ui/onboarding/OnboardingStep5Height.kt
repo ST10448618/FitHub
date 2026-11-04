@@ -5,13 +5,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R
 import com.example.fithub.core.OnboardingSession
 import com.example.fithub.ui.components.FitHubTextField
 import com.example.fithub.ui.theme.FitHubPrimary
-import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun OnboardingStep5Height(
@@ -22,8 +24,8 @@ fun OnboardingStep5Height(
 
     OnboardingScaffold(
         stepNumber = 5,
-        title = "What is your current height?",
-        subtitle = "Not the one on your dating profile.",
+        title = stringResource(R.string.onboarding_step5_title),
+        subtitle = stringResource(R.string.onboarding_step5_subtitle),
         onCancel = onCancel,
         onNext = {
             OnboardingSession.heightCm = height.toDoubleOrNull()
@@ -32,7 +34,7 @@ fun OnboardingStep5Height(
         nextEnabled = height.toIntOrNull()?.let { it in 80..250 } == true
     ) {
         Text(
-            "How tall are you?",
+            stringResource(R.string.onboarding_step5_question),
             style = MaterialTheme.typography.titleSmall,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold,
@@ -41,7 +43,7 @@ fun OnboardingStep5Height(
         )
         Spacer(Modifier.height(14.dp))
         Text(
-            "ENTER YOUR CURRENT HEIGHT",
+            stringResource(R.string.onboarding_step5_label),
             style = MaterialTheme.typography.labelMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold,
@@ -52,7 +54,7 @@ fun OnboardingStep5Height(
         FitHubTextField(
             value = height,
             onValueChange = { if (it.all(Char::isDigit)) height = it },
-            placeholder = "169 cm",
+            placeholder = stringResource(R.string.onboarding_step5_placeholder),
             keyboardType = KeyboardType.Number
         )
         Spacer(Modifier.height(28.dp))
