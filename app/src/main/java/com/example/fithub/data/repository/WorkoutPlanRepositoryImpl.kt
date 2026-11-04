@@ -1,9 +1,10 @@
 package com.example.fithub.data.repository
 
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
 import com.example.fithub.core.await
+import com.example.fithub.core.fireAndForget
 import com.example.fithub.data.local.dao.WorkoutPlanDao
-import com.example.fithub.data.local.entity.WorkoutExerciseEntity
 import com.example.fithub.data.local.mapper.WorkoutPlanLocalMapper
 import com.example.fithub.data.remote.FirestorePaths
 import com.example.fithub.data.remote.mapper.WorkoutPlanMapper
@@ -12,7 +13,6 @@ import com.example.fithub.domain.model.WorkoutPlan
 import com.example.fithub.domain.repository.WorkoutPlanRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-
 
 class WorkoutPlanRepositoryImpl(
     private val dao: WorkoutPlanDao,
@@ -49,15 +49,15 @@ class WorkoutPlanRepositoryImpl(
         val entity = WorkoutPlanLocalMapper.toEntity(plan)
         dao.upsert(entity)
 
-        // Delete old exercises for this plan, then insert new ones
         db.workoutExerciseDao().deleteForPlan(plan.id)
         db.workoutExerciseDao().upsertAll(
             WorkoutPlanLocalMapper.toExerciseEntities(plan.id, plan.exercises)
         )
 
+        // FIX: fire and forget
         FirestorePaths.createdPlan(uid, plan.id)
             .set(WorkoutPlanMapper.toMap(plan))
-            .await()
+            .fireAndForget(LogTags.SYNC)
 
         Resource.Success(Unit)
     } catch (e: Exception) {
@@ -71,9 +71,10 @@ class WorkoutPlanRepositoryImpl(
         val updated = plan.copy(isSaved = true, userId = uid)
         dao.upsert(WorkoutPlanLocalMapper.toEntity(updated))
 
+        // FIX: fire and forget
         FirestorePaths.savedPlan(uid, plan.id)
             .set(mapOf("savedAt" to java.time.LocalDateTime.now().toString()))
-            .await()
+            .fireAndForget(LogTags.SYNC)
 
         Resource.Success(Unit)
     } catch (e: Exception) {
@@ -84,14 +85,13 @@ class WorkoutPlanRepositoryImpl(
         val existing = dao.getById(planId)
         if (existing != null) {
             if (existing.isVerified) {
-                // Verified library plan — just flip the flag back
                 dao.upsert(existing.copy(isSaved = false))
             } else {
-                // User-cloned/created plan — delete entirely
                 dao.delete(planId)
             }
         }
-        FirestorePaths.savedPlan(uid, planId).delete().await()
+        // FIX: fire and forget
+        FirestorePaths.savedPlan(uid, planId).delete().fireAndForget(LogTags.SYNC)
         Resource.Success(Unit)
     } catch (e: Exception) {
         Resource.Error(e.message ?: "Failed to unsave plan", e)

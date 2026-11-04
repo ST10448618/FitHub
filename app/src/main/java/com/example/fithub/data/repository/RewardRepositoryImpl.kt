@@ -1,7 +1,9 @@
 package com.example.fithub.data.repository
 
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
 import com.example.fithub.core.await
+import com.example.fithub.core.fireAndForget
 import com.example.fithub.data.local.dao.ParticleBalanceDao
 import com.example.fithub.data.local.dao.UserAchievementDao
 import com.example.fithub.data.local.entity.ParticleBalanceEntity
@@ -18,9 +20,6 @@ class RewardRepositoryImpl(
     private val balanceDao: ParticleBalanceDao,
     private val achievementDao: UserAchievementDao
 ) : RewardRepository {
-
-
-
 
     override fun observeBalance(uid: String): Flow<ParticleBalance?> =
         balanceDao.observe(uid).map { entity ->
@@ -50,15 +49,12 @@ class RewardRepositoryImpl(
         }
 
     override suspend fun addParticles(uid: String, amount: Int): Resource<Unit> = try {
-
-
         val existing = balanceDao.get(uid)
-
         val newBalance = ((existing?.balance ?: 0) + amount).coerceAtLeast(0)
         val newLifetime = if (amount > 0) {
             (existing?.lifetimeEarned ?: 0) + amount
         } else {
-            existing?.lifetimeEarned ?: 0   // spending never reduces lifetime
+            existing?.lifetimeEarned ?: 0
         }
 
         val updated = ParticleBalanceEntity(
@@ -69,13 +65,14 @@ class RewardRepositoryImpl(
         )
         balanceDao.upsert(updated)
 
+        // FIX: fire and forget
         FirestorePaths.particleBalance(uid).set(
             mapOf(
                 "balance" to newBalance,
                 "lifetimeEarned" to newLifetime,
                 "updatedAt" to LocalDateTime.now().toString()
             )
-        ).await()
+        ).fireAndForget(LogTags.SYNC)
 
         Resource.Success(Unit)
     } catch (e: Exception) {
@@ -94,6 +91,7 @@ class RewardRepositoryImpl(
         )
         achievementDao.upsert(entity)
 
+        // FIX: fire and forget
         FirestorePaths.userAchievement(uid, achievement.achievementId).set(
             mapOf(
                 "progress" to achievement.progress,
@@ -102,7 +100,7 @@ class RewardRepositoryImpl(
                 "unlockedAt" to achievement.unlockedAt?.toString(),
                 "claimedAt" to achievement.claimedAt?.toString()
             )
-        ).await()
+        ).fireAndForget(LogTags.SYNC)
 
         Resource.Success(Unit)
     } catch (e: Exception) {
@@ -117,12 +115,14 @@ class RewardRepositoryImpl(
                 claimedAt = LocalDateTime.now()
             )
             achievementDao.upsert(updated)
+
+            // FIX: fire and forget
             FirestorePaths.userAchievement(uid, achievementId).update(
                 mapOf(
                     "isClaimed" to true,
                     "claimedAt" to LocalDateTime.now().toString()
                 )
-            ).await()
+            ).fireAndForget(LogTags.SYNC)
         }
         Resource.Success(Unit)
     } catch (e: Exception) {
@@ -178,6 +178,4 @@ class RewardRepositoryImpl(
                 claimedAt = it.claimedAt
             )
         }
-
-
 }

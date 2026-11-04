@@ -1,7 +1,9 @@
 package com.example.fithub.data.repository
 
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
 import com.example.fithub.core.await
+import com.example.fithub.core.fireAndForget
 import com.example.fithub.data.local.FitHubDatabase
 import com.example.fithub.data.local.dao.WorkoutSessionDao
 import com.example.fithub.data.local.mapper.WorkoutSessionLocalMapper
@@ -47,9 +49,12 @@ class WorkoutSessionRepositoryImpl(
         db.completedExerciseDao().upsertAll(
             WorkoutSessionLocalMapper.toExerciseEntities(session.id, session.exercises)
         )
+
+        // FIX: fire and forget
         FirestorePaths.workoutSession(session.userId, session.id)
             .set(WorkoutSessionMapper.toMap(session))
-            .await()
+            .fireAndForget(LogTags.SYNC)
+
         Resource.Success(Unit)
     } catch (e: Exception) {
         Resource.Error(e.message ?: "Failed to save workout session", e)

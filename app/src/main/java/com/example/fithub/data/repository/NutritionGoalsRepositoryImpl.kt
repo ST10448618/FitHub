@@ -1,7 +1,9 @@
 package com.example.fithub.data.repository
 
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
 import com.example.fithub.core.await
+import com.example.fithub.core.fireAndForget
 import com.example.fithub.data.local.dao.NutritionGoalsDao
 import com.example.fithub.data.local.mapper.NutritionGoalsLocalMapper
 import com.example.fithub.data.remote.FirestorePaths
@@ -22,12 +24,14 @@ class NutritionGoalsRepositoryImpl(
         dao.getCurrent(uid)?.let(NutritionGoalsLocalMapper::toDomain)
 
     override suspend fun save(goals: NutritionGoals): Resource<Unit> = try {
-        // Wipe any stale rows for this user, then insert the single authoritative one
         dao.deleteAllForUser(goals.userId)
         dao.upsert(NutritionGoalsLocalMapper.toEntity(goals))
+
+        // FIX: fire and forget
         FirestorePaths.nutritionGoal(goals.userId, goals.id)
             .set(NutritionGoalsMapper.toMap(goals))
-            .await()
+            .fireAndForget(LogTags.SYNC)
+
         Resource.Success(Unit)
     } catch (e: Exception) {
         Resource.Error(e.message ?: "Failed to save nutrition goals", e)

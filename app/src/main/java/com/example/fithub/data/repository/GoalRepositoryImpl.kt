@@ -1,7 +1,9 @@
 package com.example.fithub.data.repository
 
+import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
 import com.example.fithub.core.await
+import com.example.fithub.core.fireAndForget
 import com.example.fithub.data.local.dao.GoalDao
 import com.example.fithub.data.local.mapper.GoalLocalMapper
 import com.example.fithub.data.remote.FirestorePaths
@@ -22,12 +24,14 @@ class GoalRepositoryImpl(
         dao.getCurrent(uid)?.let(GoalLocalMapper::toDomain)
 
     override suspend fun setGoal(goal: Goal): Resource<Unit> = try {
-        // Wipe any old goal rows for this user, then insert the single authoritative one
         dao.deleteAllForUser(goal.userId)
         dao.upsert(GoalLocalMapper.toEntity(goal))
+
+        // FIX: fire and forget
         FirestorePaths.goal(goal.userId, goal.id)
             .set(GoalMapper.toMap(goal))
-            .await()
+            .fireAndForget(LogTags.SYNC)
+
         Resource.Success(Unit)
     } catch (e: Exception) {
         Resource.Error(e.message ?: "Failed to save goal", e)

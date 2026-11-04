@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.fithub.core.LogTags
 import com.example.fithub.core.Resource
 import com.example.fithub.core.await
+import com.example.fithub.core.fireAndForget
 import com.example.fithub.data.local.dao.UserProfileDao
 import com.example.fithub.data.local.mapper.ProfileLocalMapper
 import com.example.fithub.data.remote.FirestorePaths
@@ -25,17 +26,9 @@ class UserRepositoryImpl(
     override suspend fun getProfile(uid: String): UserProfile? =
         dao.getById(uid)?.let(ProfileLocalMapper::toDomain)
 
-    /**
-     * Writes Room first (immediate), then Firestore with a 15 s guard.
-     * A timeout is not a failure — the local write is authoritative until a
-     * later sync window. This prevents onboarding from hanging when Firestore
-     * is slow or the user is on a flaky network.
-     *
-     * Reference: https://developer.android.com/topic/architecture/data-layer/offline-first#write-through
-     * (accessed February 2026)
-     */
     override suspend fun createProfile(profile: UserProfile): Resource<Unit> = try {
         dao.upsert(ProfileLocalMapper.toEntity(profile))
+        // Keep the 15s timeout for initial onboarding so it doesn't hang
         val pushOk = withTimeoutOrNull(15_000L) {
             FirestorePaths.user(profile.id).set(UserMapper.toMap(profile)).await()
         }
@@ -53,7 +46,7 @@ class UserRepositoryImpl(
     override suspend fun updateProfile(profile: UserProfile): Resource<Unit> = try {
         val updated = profile.copy(updatedAt = LocalDateTime.now())
         dao.upsert(ProfileLocalMapper.toEntity(updated))
-        FirestorePaths.user(updated.id).set(UserMapper.toMap(updated)).await()
+        FirestorePaths.user(updated.id).set(UserMapper.toMap(updated)).fireAndForget(LogTags.SYNC)
         Resource.Success(Unit)
     } catch (e: Exception) {
         Log.e(LogTags.SYNC, "updateProfile failed", e)
@@ -62,7 +55,7 @@ class UserRepositoryImpl(
 
     override suspend fun updateCurrentWeight(uid: String, weightKg: Double): Resource<Unit> = try {
         dao.updateCurrentWeight(uid, weightKg, LocalDateTime.now().toString())
-        FirestorePaths.user(uid).update("currentWeightKg", weightKg).await()
+        FirestorePaths.user(uid).update("currentWeightKg", weightKg).fireAndForget(LogTags.SYNC)
         Resource.Success(Unit)
     } catch (e: Exception) {
         Log.e(LogTags.SYNC, "updateCurrentWeight failed", e)
@@ -71,7 +64,8 @@ class UserRepositoryImpl(
 
     override suspend fun markOnboardingComplete(uid: String): Resource<Unit> = try {
         dao.markOnboardingComplete(uid)
-        FirestorePaths.user(uid).update("onboardingComplete", true).await()
+        // FIX: Changed from await() to fireAndForget() so onboarding doesn't hang offline
+        FirestorePaths.user(uid).update("onboardingComplete", true).fireAndForget(LogTags.SYNC)
         Resource.Success(Unit)
     } catch (e: Exception) {
         Log.e(LogTags.SYNC, "markOnboardingComplete failed", e)
