@@ -1,6 +1,7 @@
 package com.example.fithub.core.i18n
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Build
 import android.os.LocaleList
@@ -12,6 +13,38 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 /**
+ * Single source of truth for the app's chosen language.
+ *
+ * ### Two storage backends, one invariant
+ *  • DataStore `fithub_prefs.language` — user-facing, `Flow<String>`, consumed
+ *    by [com.example.fithub.core.PreferencesManager.language].
+ *  • SharedPreferences `fithub_locale.current_language` — **synchronous**,
+ *    read by [wrap] inside `attachBaseContext` on every Activity / Worker /
+ *    Service. The DataStore actor isn't ready at that point, so the mirror is
+ *    what actually drives the resource locale on the very first frame.
+ *
+ * Both are written by [persistSync]. Never write one without the other — the
+ * mirror is only a cache.
+ *
+ * ### Why `getSharedPreferences` is called on the raw context
+ * [wrap] is invoked from `Application.attachBaseContext`. At that point the
+ * framework has **not** yet populated `applicationContext` — that field is set
+ * after `Application.attach()` completes. Reading
+ * `context.applicationContext` here throws NPE (verified on-device: crash
+ * trace `NullPointerException ... on a null object reference` at `prefs()`).
+ *
+ * The base context handed to `attachBaseContext` IS a fully-bound
+ * `ContextImpl` — its data directory is already set up by the framework — so
+ * calling `context.getSharedPreferences(...)` on it directly works, and is the
+ * documented pattern (the SharedPreferences cache is process-scoped anyway;
+ * whichever context is used first populates it).
+ *
+ * ### Why not AppCompatDelegate.setApplicationLocales()
+ * The app theme is `android:Theme.Material.Light.NoActionBar`, not AppCompat.
+ * `AppCompatDelegate` requires an AppCompatActivity for the LocaleList API to
+ * change the running activity's configuration. Per official docs we use the
+ * `attachBaseContext` wrapper pattern instead.
+ *
  * References:
  *  • https://developer.android.com/guide/topics/resources/app-languages
  *  • https://developer.android.com/reference/android/content/Context#createConfigurationContext(android.content.res.Configuration)
@@ -25,8 +58,13 @@ object LocaleManager {
 
     // ---- Synchronous mirror ----
 
-    private fun prefs(context: Context) =
-        context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    /**
+     * Returns the app-scoped SharedPreferences file that holds the language
+     * mirror. Uses the passed [context] directly — see class KDoc for why
+     * `context.applicationContext` cannot be used here.
+     */
+    private fun prefs(context: Context): SharedPreferences =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     /**
      * Current language code, guaranteed to be one of
