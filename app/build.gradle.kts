@@ -8,6 +8,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:\\Users\\emeris\\Documents\\POE\\fithub-release.jks")
+            storePassword = "Perez12"
+            keyAlias = "fithub"
+            keyPassword = "Perez12"
+        }
+    }
     namespace = "com.example.fithub"
     compileSdk = 37
 
@@ -68,6 +76,11 @@ android {
         }
 
 
+    }
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+        }
     }
 
 
