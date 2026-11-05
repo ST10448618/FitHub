@@ -81,14 +81,7 @@ class WeightRepositoryImpl(
 
     override suspend fun updatePhotoUrl(entryId: String, photoUrl: String?): Resource<Unit> = try {
         dao.updatePhotoUrl(entryId, photoUrl)
-        // Mirror into Firestore so the field survives re-install.
-        val entity = dao.getById(entryId)
-        if (entity != null) {
-            FirestorePaths.weightEntry(entity.userId, entryId)
-                .update("photoUrl", photoUrl)
-                .await()
-        }
-        Log.d(LogTags.STORAGE, "photoUrl updated for id=${entryId.take(8)}…")
+        Log.d(LogTags.STORAGE, "photoUrl updated locally for id=${entryId.take(8)}…")
         Resource.Success(Unit)
     } catch (e: Exception) {
         Log.e(LogTags.STORAGE, "updatePhotoUrl failed", e)

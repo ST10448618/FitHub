@@ -856,4 +856,6 @@
     <string name="dashboard_insights_streak_value">izinsuku ezingu-%1$d (okuhle kakhulu %2$d)</string>
     <string name="dashboard_insights_no_data">—</string>
 
+    <string name="checkpoint_logger_photo_attached_local">Isithombe sinanyathiselwe — sizogcinwa kule divayisi.</string>
+
 </resources>

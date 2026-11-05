@@ -1,20 +1,14 @@
 package com.example.fithub.ui.screens.body
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fithub.core.LogTags
-import com.example.fithub.core.Resource
 import com.example.fithub.core.ServiceLocator
 import com.example.fithub.core.SessionManager
-import com.example.fithub.domain.model.WeightEntry
-import com.example.fithub.util.ImageCompressor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
 import java.time.LocalDate
 
 data class ProgressGalleryUiState(
@@ -30,6 +24,7 @@ class ProgressGalleryViewModel : ViewModel() {
 
     data class PhotoTile(
         val id: String,
+        /** Absolute local path, e.g. `/data/user/0/com.example.fithub/files/progress_photos/xyz.jpg`. */
         val photoUrl: String,
         val weightKg: Double,
         val date: LocalDate
@@ -37,18 +32,11 @@ class ProgressGalleryViewModel : ViewModel() {
 
     private val uid = SessionManager.currentUserId ?: ""
     private val weightRepo = ServiceLocator.weightRepository
-    private val storage = ServiceLocator.storageDataSource
-    private val isOnlineFlow = ServiceLocator.connectivityMonitor.isOnline
 
     private val _uiState = MutableStateFlow(ProgressGalleryUiState())
     val uiState: StateFlow<ProgressGalleryUiState> = _uiState.asStateFlow()
 
-    init {
-        // 1. Try to flush any pending offline photos first.
-        viewModelScope.launch { retryPendingPhotos() }
-        // 2. Then observe the gallery.
-        observe()
-    }
+    init { observe() }
 
     private fun observe() {
         viewModelScope.launch {
@@ -76,32 +64,6 @@ class ProgressGalleryViewModel : ViewModel() {
                         deltaKg = delta
                     )
                 }
-            }
-        }
-    }
-
-    /**
-     * If the user logged a weigh-in while offline, its compressed photo lives
-     * at `filesDir/pending_photos/{entryId}.jpg`. If we're online now, upload
-     * those, update the row's `photoUrl`, delete the local file.
-     */
-    private suspend fun retryPendingPhotos() {
-        if (!isOnlineFlow.value) return
-        val pendingDir = File(ServiceLocator.appContext().filesDir, "pending_photos")
-        val files = pendingDir.listFiles()?.filter { it.extension == "jpg" } ?: return
-        if (files.isEmpty()) return
-
-        for (file in files) {
-            val entryId = file.nameWithoutExtension
-            val bytes = file.readBytes()
-            when (val result = storage.uploadProgressPhoto(uid, entryId, bytes)) {
-                is Resource.Success -> {
-                    weightRepo.updatePhotoUrl(entryId, result.data)
-                    file.delete()
-                    Log.i(LogTags.STORAGE, "pending photo uploaded for $entryId")
-                }
-                is Resource.Error -> Log.w(LogTags.STORAGE, "retry upload failed for $entryId: ${result.message}")
-                Resource.Loading -> Unit
             }
         }
     }
