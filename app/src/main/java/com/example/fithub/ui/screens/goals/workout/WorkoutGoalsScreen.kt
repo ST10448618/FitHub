@@ -15,10 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource          // ← ADDED
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R                            // ← ADDED
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
 
@@ -39,7 +41,7 @@ fun WorkoutGoalsScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Workout Goals", onBack = onBack)
+        AppHeader(title = stringResource(R.string.workout_goals_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -57,13 +59,13 @@ fun WorkoutGoalsScreen(
             // Weekly session goal card
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Weekly Workout Goal",
+                    stringResource(R.string.dashboard_weekly_workout_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    "How many days a week do you aim to train for?",
+                    stringResource(R.string.workout_goals_weekly_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary
                 )
@@ -89,13 +91,13 @@ fun WorkoutGoalsScreen(
             // Monthly activity goal card
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Monthly Activity Goal",
+                    stringResource(R.string.workout_goals_monthly_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    "Amount of calories you aim to burn in a month.",
+                    stringResource(R.string.workout_goals_monthly_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = TextSecondary
                 )
@@ -108,7 +110,7 @@ fun WorkoutGoalsScreen(
                     step = 500,
                     min = 500,
                     max = 100000,
-                    unit = "kcal"
+                    unit = stringResource(R.string.common_unit_kcal)
                 )
             }
 
@@ -121,12 +123,13 @@ fun WorkoutGoalsScreen(
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 SecondaryButton(
-                    text = "Cancel",
+                    text = stringResource(R.string.generic_cancel),
                     onClick = onBack,
                     modifier = Modifier.weight(1f)
                 )
                 PrimaryButton(
-                    text = if (state.isSaving) "Saving..." else "Confirm Goals",
+                    text = if (state.isSaving) stringResource(R.string.nutrition_goals_saving)
+                    else stringResource(R.string.nutrition_goals_confirm),
                     onClick = viewModel::save,
                     enabled = !state.isSaving,
                     modifier = Modifier.weight(1f)

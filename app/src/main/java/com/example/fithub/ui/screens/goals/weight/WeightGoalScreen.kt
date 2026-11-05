@@ -14,11 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
 import com.example.fithub.domain.calculator.GoalDirectionCalculator
 import com.example.fithub.domain.model.GoalDirection
 import com.example.fithub.ui.components.*
@@ -32,6 +34,9 @@ fun WeightGoalScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // FIX: Extract delegated property to a local val to allow smart casting
+    val currentWeightKg = state.currentWeightKg
+
     LaunchedEffect(state.saveComplete) {
         if (state.saveComplete) onSaved()
     }
@@ -41,7 +46,7 @@ fun WeightGoalScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Weight Goal", onBack = onBack)
+        AppHeader(title = stringResource(R.string.weight_goal_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -72,7 +77,7 @@ fun WeightGoalScreen(
                     Text("🎯", style = MaterialTheme.typography.headlineLarge)
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Your journey begins with two numbers.",
+                        stringResource(R.string.weight_goal_hero_title),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
@@ -80,7 +85,7 @@ fun WeightGoalScreen(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Manage your current weight logged by the system as well as your desired target.",
+                        stringResource(R.string.weight_goal_hero_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.85f),
                         textAlign = TextAlign.Center
@@ -92,17 +97,17 @@ fun WeightGoalScreen(
 
             // Current weight (read-only — comes from checkpoints)
             Text(
-                "Current Weight",
+                stringResource(R.string.weight_goal_current_weight),
                 style = MaterialTheme.typography.titleSmall,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(8.dp))
 
-            if (state.currentWeightKg == null) {
+            if (currentWeightKg == null) {
                 InfoBanner(backgroundColor = WarningOrange.copy(alpha = 0.15f)) {
                     Text(
-                        "Log a weigh-in from Body & Weight before setting a goal.",
+                        stringResource(R.string.weight_goal_no_weighin_warning),
                         style = MaterialTheme.typography.bodyMedium,
                         color = WarningOrange
                     )
@@ -116,7 +121,8 @@ fun WeightGoalScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "${state.currentWeightKg} kg",
+                        // FIX: Now we use the local val 'currentWeightKg' which is smart-cast
+                        stringResource(R.string.journal_body_kg_format, currentWeightKg.toInt()),
                         style = MaterialTheme.typography.headlineMedium,
                         color = FitHubPrimary,
                         fontWeight = FontWeight.Bold
@@ -124,7 +130,7 @@ fun WeightGoalScreen(
                 }
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "Tracked from your latest weigh-in",
+                    stringResource(R.string.weight_goal_tracked_from_weighin),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextSecondary,
                     modifier = Modifier.fillMaxWidth(),
@@ -136,7 +142,7 @@ fun WeightGoalScreen(
 
             // Target weight (editable)
             Text(
-                "Set Your Target Weight",
+                stringResource(R.string.weight_goal_set_target),
                 style = MaterialTheme.typography.titleSmall,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -149,14 +155,14 @@ fun WeightGoalScreen(
                 step = 1,
                 min = 20,
                 max = 400,
-                unit = "kg",
-                enabled = state.currentWeightKg != null
+                unit = stringResource(R.string.common_unit_kg),
+                enabled = currentWeightKg != null
             )
 
             Spacer(Modifier.height(20.dp))
 
             // Direction banner
-            if (state.currentWeightKg != null) {
+            if (currentWeightKg != null) {
                 DirectionBanner(
                     direction = state.direction,
                     differenceKg = state.differenceKg
@@ -172,14 +178,15 @@ fun WeightGoalScreen(
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 SecondaryButton(
-                    text = "Cancel",
+                    text = stringResource(R.string.generic_cancel),
                     onClick = onBack,
                     modifier = Modifier.weight(1f)
                 )
                 PrimaryButton(
-                    text = if (state.isSaving) "Saving..." else "Confirm Goals",
+                    text = if (state.isSaving) stringResource(R.string.nutrition_goals_saving)
+                    else stringResource(R.string.nutrition_goals_confirm),
                     onClick = viewModel::save,
-                    enabled = !state.isSaving && state.currentWeightKg != null,
+                    enabled = !state.isSaving && currentWeightKg != null,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -195,20 +202,20 @@ private fun DirectionBanner(direction: GoalDirection, differenceKg: Int) {
         GoalDirection.LOSE -> Quad(
             FitHubLightBlue,
             FitHubPrimary,
-            "GOAL DETECTED : LOSE WEIGHT",
-            "You want to lose ${kotlin.math.abs(differenceKg)} kg"
+            stringResource(R.string.weight_goal_detect_lose_label),
+            stringResource(R.string.weight_goal_detect_lose_message, kotlin.math.abs(differenceKg))
         )
         GoalDirection.GAIN -> Quad(
             FitHubLightBlue,
             FitHubPrimary,
-            "GOAL DETECTED : GAIN WEIGHT",
-            "You want to gain $differenceKg kg"
+            stringResource(R.string.weight_goal_detect_gain_label),
+            stringResource(R.string.weight_goal_detect_gain_message, differenceKg)
         )
         GoalDirection.MAINTAIN -> Quad(
             FitHubLightBlue,
             FitHubPrimary,
-            "GOAL DETECTED : MAINTAIN WEIGHT",
-            "You want to stay around your current weight"
+            stringResource(R.string.weight_goal_detect_maintain_label),
+            stringResource(R.string.weight_goal_detect_maintain_message)
         )
     }
 
