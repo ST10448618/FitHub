@@ -126,6 +126,13 @@ fun DashboardScreen(
             target = state.challengeTarget
         )
 
+        Spacer(Modifier.height(12.dp))
+
+        WeeklyInsightsCard(
+            insights = state.insights,
+            isLoading = state.insightsLoading
+        )
+
         Spacer(Modifier.height(20.dp))
 
         TodaysOverviewSection(

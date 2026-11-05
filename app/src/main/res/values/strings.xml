@@ -125,13 +125,6 @@
     <string name="settings_language_change">Change &gt;</string>
     <string name="settings_language_dialog_title">Choose your language</string>
 
-    <!--
-      TEMPORARY STUB — delete after regenerating google-services.json
-      (see Phase 2 manual steps). Only needed while the Google provider is
-      not enabled in Firebase. Delete this comment + the string once you
-      re-download google-services.json. -->
-    <string name="default_web_client_id" translatable="false">STUB_REPLACE_AFTER_GOOGLE_PROVIDER_ENABLED</string>
-
     <!-- ========================================== -->
     <!-- PHASE 5 BATCH A1 : Components               -->
     <!-- ========================================== -->
@@ -859,5 +852,21 @@
     <string name="achievement_streak_3_desc">Logged activity three days in a row.</string>
     <string name="achievement_streak_30_title">30-Day Streak</string>
     <string name="achievement_streak_30_desc">One full month of daily activity.</string>
+
+    <!-- ========================================== -->
+    <!-- PHASE 6B : Server-side weekly insights     -->
+    <!-- ========================================== -->
+    <string name="dashboard_insights_title">This Week</string>
+    <string name="dashboard_insights_source">from server</string>
+    <string name="dashboard_insights_offline">Offline — showing local data only.</string>
+    <string name="dashboard_insights_avg_calories_label">Avg. daily calories</string>
+    <string name="dashboard_insights_avg_calories_value">%1$d kcal</string>
+    <string name="dashboard_insights_weight_change_label">Weight change</string>
+    <string name="dashboard_insights_weight_change_value">%1$s%2$.1f kg</string>
+    <string name="dashboard_insights_sessions_label">Workouts this week</string>
+    <string name="dashboard_insights_sessions_value">%1$d</string>
+    <string name="dashboard_insights_streak_label">Streak</string>
+    <string name="dashboard_insights_streak_value">%1$d days (best %2$d)</string>
+    <string name="dashboard_insights_no_data">—</string>
 
 </resources>

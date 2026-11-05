@@ -49,6 +49,7 @@ class DashboardViewModel : ViewModel() {
         loadRecommendations()
         observeWeeklyCalories()
         observeStreakAndChallenge()
+        loadWeeklyInsights()
     }
 
     private fun observeWeeklyCalories() {
@@ -254,6 +255,25 @@ class DashboardViewModel : ViewModel() {
                     )
                 )
                 Log.i(LogTags.STREAK, "Achievement unlocked: $achievementId at $days days")
+            }
+        }
+    }
+
+    /**
+     * Phase 6B: fetches the server-side weekly insights once per ViewModel
+     * lifetime. Server failure → EMPTY → the card silently hides. The
+     * dashboard's own Room-backed cards still render, so no functional
+     * regression when offline.
+     */
+    private fun loadWeeklyInsights() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(insightsLoading = true) }
+            val insights = ServiceLocator.insightsRepository.fetchWeeklyInsights(days = 7)
+            _uiState.update {
+                it.copy(
+                    insights = if (insights === com.example.fithub.domain.model.WeeklyInsights.EMPTY) null else insights,
+                    insightsLoading = false,
+                )
             }
         }
     }

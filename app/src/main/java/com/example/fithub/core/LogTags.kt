@@ -17,4 +17,5 @@ object LogTags {
     const val NET: String       = "FitHub/Net"
     const val NAV: String       = "FitHub/Nav"
     const val STREAK: String    = "FitHub/Streak"
+    const val NETWORK = "FitHub/Network"
 }

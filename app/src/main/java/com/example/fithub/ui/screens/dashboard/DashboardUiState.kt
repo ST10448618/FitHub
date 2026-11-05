@@ -3,6 +3,7 @@ package com.example.fithub.ui.screens.dashboard
 import com.example.fithub.domain.calculator.NutritionProgressCalculator
 import com.example.fithub.domain.model.*
 import java.time.LocalDate
+import com.example.fithub.domain.model.WeeklyInsights
 
 data class DashboardUiState(
     val isLoading: Boolean = true,
@@ -25,7 +26,9 @@ data class DashboardUiState(
     val todayDone: Boolean = false,
     val streakAtRisk: Boolean = false,
     val challengeCompleted: Int = 0,
-    val challengeTarget: Int = 0
+    val challengeTarget: Int = 0,
+    val insights: WeeklyInsights? = null,
+    val insightsLoading: Boolean = false
 )
 
 /**

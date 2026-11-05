@@ -113,6 +113,16 @@ object ServiceLocator {
     }
 
     // ---------- Phase 1: Food API ----------
+    // ---------- Phase 6B: REST API ----------
+
+    /** Retrofit-backed client. Initialised once; reused across calls. */
+    val retrofitApi: com.example.fithub.data.remote.api.FitHubApi by lazy {
+        com.example.fithub.core.network.RetrofitClient.api
+    }
+
+    val insightsRepository: com.example.fithub.domain.repository.InsightsRepository by lazy {
+        com.example.fithub.data.repository.InsightsRepositoryImpl(retrofitApi)
+    }
 
     val foodRepository: com.example.fithub.domain.repository.FoodRepository by lazy {
         com.example.fithub.data.repository.FoodRepositoryImpl(
