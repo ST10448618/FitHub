@@ -1,4 +1,3 @@
-// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.ui.screens.body
 
 import androidx.compose.foundation.background
@@ -34,9 +33,18 @@ import com.example.fithub.ui.components.AppHeader
 import com.example.fithub.ui.components.EmptyState
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.theme.*
+import java.io.File
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+
+/**
+ * Phase 6B (revised): resolves a `photoUrl` string to either a [File] (local
+ * path) or a String (legacy https URL). Coil supports both — this helper just
+ * prevents the local path from being interpreted as a malformed URI.
+ */
+private fun photoModel(url: String): Any =
+    if (url.startsWith("/")) File(url) else url
 
 @Composable
 fun ProgressGalleryScreen(
@@ -68,7 +76,7 @@ fun ProgressGalleryScreen(
                 EmptyState(
                     title = stringResource(R.string.progress_gallery_empty_title),
                     message = stringResource(R.string.progress_gallery_empty_body),
-                    emoji = "📸"
+                    emoji = "\uD83D\uDCF8" // 📸
                 )
             }
             return@Column
@@ -165,7 +173,7 @@ fun ProgressGalleryScreen(
                     .background(CardWhite)
             ) {
                 AsyncImage(
-                    model = url,
+                    model = photoModel(url),
                     contentDescription = stringResource(R.string.progress_gallery_photo_desc),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxSize()
@@ -199,7 +207,7 @@ private fun CompareColumn(
                 .background(SurfaceGray)
         ) {
             AsyncImage(
-                model = photoUrl,
+                model = photoUrl?.let(::photoModel),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -233,7 +241,7 @@ private fun PhotoTile(
                 .height(180.dp)
         ) {
             AsyncImage(
-                model = photo.photoUrl,
+                model = photoModel(photo.photoUrl),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

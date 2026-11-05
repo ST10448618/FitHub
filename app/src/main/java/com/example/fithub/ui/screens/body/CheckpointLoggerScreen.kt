@@ -1,4 +1,3 @@
-// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.ui.screens.body
 
 import android.net.Uri
@@ -33,6 +32,7 @@ import coil.compose.AsyncImage
 import com.example.fithub.R
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
+
 
 @Composable
 fun CheckpointLoggerScreen(
@@ -85,7 +85,11 @@ fun CheckpointLoggerScreen(
                     .padding(20.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("◎", style = MaterialTheme.typography.headlineLarge, color = Color.White)
+                    Text(
+                        text = "\u25CE", // ◉
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = Color.White
+                    )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         stringResource(R.string.checkpoint_logger_hero_title),
@@ -173,10 +177,13 @@ fun CheckpointLoggerScreen(
                     }
                 }
                 Spacer(Modifier.height(8.dp))
+                // No progress bar: the local copy is instantaneous. Just
+                // confirm the photo is attached and will be saved with the log.
                 Text(
-                    stringResource(R.string.checkpoint_logger_photo_progress, state.photoUploadPercent),
+                    stringResource(R.string.checkpoint_logger_photo_attached_local),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TextSecondary
+                    color = SuccessGreen,
+                    fontWeight = FontWeight.Bold
                 )
             } else {
                 Box(
@@ -212,7 +219,11 @@ fun CheckpointLoggerScreen(
                         .padding(14.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("ⓘ", style = MaterialTheme.typography.titleLarge, color = FitHubPrimary)
+                        Text(
+                            text = "\u24D8", // ⓘ
+                            style = MaterialTheme.typography.titleLarge,
+                            color = FitHubPrimary
+                        )
                         Spacer(Modifier.width(12.dp))
                         Column {
                             Text(

@@ -1,4 +1,3 @@
-// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.ui.screens.body
 
 import android.net.Uri
@@ -21,6 +20,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -32,9 +33,14 @@ data class CheckpointLoggerUiState(
     val targetWeightKg: Double? = null,
     val goalDirection: GoalDirection = GoalDirection.MAINTAIN,
 
-    /** The photo the user just picked (not yet uploaded). */
+    /** The photo the user just picked (not yet saved locally). */
     val pendingPhotoUri: Uri? = null,
-    /** Compression + upload progress, 0..100, for the label under the preview. */
+    /**
+     * Phase 6B (revised): photos are now stored locally — the "progress"
+     * field is kept for API compatibility with the screen but is never
+     * incremented during a local file copy. It exists only if we ever
+     * reintroduce remote sync in a future phase.
+     */
     val photoUploadPercent: Int = 0,
 
     val isSaving: Boolean = false,
@@ -47,8 +53,6 @@ class CheckpointLoggerViewModel : ViewModel() {
     private val uid = SessionManager.currentUserId ?: ""
     private val weightRepo = ServiceLocator.weightRepository
     private val goalRepo = ServiceLocator.goalRepository
-    private val storage = ServiceLocator.storageDataSource
-    private val isOnlineFlow = ServiceLocator.connectivityMonitor.isOnline
 
     private val _uiState = MutableStateFlow(CheckpointLoggerUiState())
     val uiState: StateFlow<CheckpointLoggerUiState> = _uiState.asStateFlow()
@@ -94,8 +98,9 @@ class CheckpointLoggerViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, errorMessage = null) }
 
-            // 1. If a photo was picked, compress it and try to upload.
-            var photoUrl: String? = null
+            // 1. If a photo was picked, compress + copy to the app's private
+            //    storage. No network. No Firebase Storage billing required.
+            var localPhotoPath: String? = null
             if (pendingUri != null) {
                 val bytes = withContext(Dispatchers.IO) {
                     ImageCompressor.compress(ServiceLocator.appContext(), pendingUri)
@@ -103,35 +108,25 @@ class CheckpointLoggerViewModel : ViewModel() {
                 if (bytes == null) {
                     Log.w(LogTags.STORAGE, "compress returned null — saving entry without photo")
                 } else {
-                    val online = isOnlineFlow.value
-                    if (!online) {
-                        // Stash locally, ProgressGalleryViewModel retries later.
-                        withContext(Dispatchers.IO) {
-                            ImageCompressor.saveBytesToPendingDir(
-                                ServiceLocator.appContext(), entryId, bytes
-                            )
-                        }
-                        Log.i(LogTags.STORAGE, "Offline — photo queued for later (entry ${entryId.take(8)}…)")
+                    localPhotoPath = withContext(Dispatchers.IO) {
+                        savePhotoLocally(entryId, bytes)
+                    }
+                    if (localPhotoPath == null) {
+                        Log.w(LogTags.STORAGE, "local photo save failed — saving entry without photo")
                     } else {
-                        when (val result = storage.uploadProgressPhoto(uid, entryId, bytes) { pct ->
-                            _uiState.update { it.copy(photoUploadPercent = (pct * 100).toInt()) }
-                        }) {
-                            is Resource.Success -> photoUrl = result.data
-                            is Resource.Error -> Log.w(LogTags.STORAGE, "photo upload failed: ${result.message}")
-                            Resource.Loading -> Unit
-                        }
+                        Log.i(LogTags.STORAGE, "photo saved locally: $localPhotoPath")
                     }
                 }
             }
 
-            // 2. Write the entry (with photoUrl if it made it to the cloud).
+            // 2. Write the entry, with the local photo path if we got one.
             val entry = WeightEntry(
                 id = entryId,
                 userId = uid,
                 weightKg = state.weight.toDouble(),
                 date = LocalDate.now(),
                 createdAt = now,
-                photoUrl = photoUrl
+                photoUrl = localPhotoPath
             )
 
             when (val result = weightRepo.addEntry(entry)) {
@@ -143,6 +138,25 @@ class CheckpointLoggerViewModel : ViewModel() {
                 }
                 Resource.Loading -> Unit
             }
+        }
+    }
+
+    /**
+     * Copies compressed JPEG bytes into `filesDir/progress_photos/{entryId}.jpg`
+     * and returns the absolute path. The path is safe to store in Room — it's
+     * what `AsyncImage(model = File(path))` in the gallery uses.
+     *
+     * Returns null on any IO failure (caller saves the entry without a photo).
+     */
+    private fun savePhotoLocally(entryId: String, bytes: ByteArray): String? {
+        return try {
+            val dir = File(ServiceLocator.appContext().filesDir, "progress_photos").apply { mkdirs() }
+            val file = File(dir, "$entryId.jpg")
+            FileOutputStream(file).use { out -> out.write(bytes) }
+            file.absolutePath
+        } catch (e: Exception) {
+            Log.e(LogTags.STORAGE, "savePhotoLocally failed", e)
+            null
         }
     }
 
