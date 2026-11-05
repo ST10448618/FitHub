@@ -1,0 +1,43 @@
+Index: backend/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Dependencies\r\nnode_modules/\r\n\r\n# Build output\r\ndist/\r\n\r\n# Environment (never commit real values)\r\n.env\r\n.env.local\r\n.env.*.local\r\n\r\n# Logs\r\n*.log\r\nnpm-debug.log*\r\n\r\n# Firebase service-account keys — MUST never be committed\r\nserviceAccount*.json\r\n*-firebase-adminsdk-*.json\r\n\r\n# OS cruft\r\n.DS_Store\r\nThumbs.db
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/.gitignore b/backend/.gitignore
+--- a/backend/.gitignore	(revision aea8b217f18f562ff68baef5d3f7b5a84e623fc7)
++++ b/backend/.gitignore	(date 1793899935540)
+@@ -19,4 +19,5 @@
+ 
+ # OS cruft
+ .DS_Store
+-Thumbs.db
+\ No newline at end of file
++Thumbs.db
++serviceAccountKey.json
+\ No newline at end of file
+Index: app/src/main/java/com/example/fithub/domain/calculator/WeeklyChallengeCalculatorTest.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/domain/calculator/WeeklyChallengeCalculatorTest.kt b/app/src/main/java/com/example/fithub/domain/calculator/WeeklyChallengeCalculatorTest.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/fithub/domain/calculator/WeeklyChallengeCalculatorTest.kt	(revision aea8b217f18f562ff68baef5d3f7b5a84e623fc7)
++++ /dev/null	(revision aea8b217f18f562ff68baef5d3f7b5a84e623fc7)
+@@ -1,4 +0,0 @@
+-package com.example.fithub.domain.calculator
+-
+-class WeeklyChallengeCalculatorTest {
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/fithub/domain/calculator/StreakCalculatorTest.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/fithub/domain/calculator/StreakCalculatorTest.kt b/app/src/main/java/com/example/fithub/domain/calculator/StreakCalculatorTest.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/fithub/domain/calculator/StreakCalculatorTest.kt	(revision aea8b217f18f562ff68baef5d3f7b5a84e623fc7)
++++ /dev/null	(revision aea8b217f18f562ff68baef5d3f7b5a84e623fc7)
+@@ -1,4 +0,0 @@
+-package com.example.fithub.domain.calculator
+-
+-class StreakCalculatorTest {
+-}
+\ No newline at end of file

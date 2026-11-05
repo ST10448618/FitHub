@@ -1,0 +1,471 @@
+openapi: 3.0.3
+info:
+  title: FitHub API
+  version: 1.1.0
+  description: |
+    REST API for the FitHub Android app (PROG7314 Final POE).
+
+    **Design rules**
+    - Identity is a Firebase ID token (`Authorization: Bearer <token>`). The user id always comes from the
+      verified token, never from the URL or body, so one user can never address another user's data.
+    - Writes are idempotent upserts (`PUT /resource/{id}`) with a client-generated id. This lets the app
+      retry safely and replay an offline outbox without creating duplicates.
+    - Conflict rule is last-write-wins on `updatedAt`. A stale write is not applied; the stored document is
+      returned with the header `X-Applied: false`.
+    - Missing nutrition values are `null`, never `0`. `0` means "known to be zero".
+    - Calculations (calories, macros, goal direction, daily totals, rewards, streaks) are done on the server.
+    - Errors use one shape: `{ "error": { "code", "message", "details?", "requestId" } }`.
+
+    **Phase 6B additions**
+    - `GET /api/v1/me/summary?days=N` — aggregated calories/weight/workouts/streak
+    - `POST /api/v1/me/fcm-token` — register the push token
+    - `POST /api/v1/me/feedback` — one-shot user feedback
+    - `POST /api/v1/admin/broadcast` — admin-only FCM topic broadcast
+servers:
+  - url: https://fithub-api.onrender.com
+    description: Production (Render). Replace with the real service URL after deploy.
+  - url: http://localhost:8080
+    description: Local development
+security:
+  - bearerAuth: []
+tags:
+  - name: System
+  - name: Profile
+  - name: Body
+  - name: Nutrition
+  - name: Workouts
+  - name: Rewards
+paths:
+  /health:
+    get:
+      tags: [System]
+      summary: Liveness check (no auth)
+      security: []
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, time]
+                properties:
+                  status: { type: string, example: ok }
+                  time: { type: string, format: date-time }
+  /api/v1/me:
+    get:
+      tags: [Profile]
+      summary: Get the signed-in user's profile
+      responses:
+        '200': { description: Profile, content: { application/json: { schema: { $ref: '#/components/schemas/Profile' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Profile]
+      summary: Create or update the signed-in user's profile
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ProfileInput' } } }
+      responses:
+        '200': { description: Stored profile, headers: { X-Applied: { $ref: '#/components/headers/XApplied' } }, content: { application/json: { schema: { $ref: '#/components/schemas/Profile' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/me/onboarding:
+    post:
+      tags: [Profile]
+      summary: Complete onboarding in one call
+      description: |
+        Creates the profile, the starting weight entry, the weight goal (direction derived on the server),
+        nutrition goals (calories, macros and meal split calculated on the server), default workout goals and the
+        default weigh-in schedule in one transaction. `targetWeightKg` is optional; when it is left out the goal
+        is to maintain the current weight. Calling it again for the same user returns the existing result
+        (idempotent).
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/OnboardingInput' } } }
+      responses:
+        '200': { description: Everything created for the user, content: { application/json: { schema: { $ref: '#/components/schemas/OnboardingResult' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/me/summary:
+    get:
+      tags: [Profile]
+      summary: Aggregated 7-day health summary (Phase 6B)
+      description: |
+        Aggregates the caller's food logs, weight entries and workout sessions over the last N days.
+        The streak is computed over the user's entire history (union of any food-log or completed-session
+        day) with the same algorithm the Android app uses, so the two values always agree.
+      parameters:
+        - { name: days, in: query, schema: { type: integer, minimum: 1, maximum: 90, default: 7 }, description: Inclusive window ending today (UTC). }
+      responses:
+        '200': { description: Summary, content: { application/json: { schema: { $ref: '#/components/schemas/Summary' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/me/fcm-token:
+    post:
+      tags: [Profile]
+      summary: Register the FCM push token for the signed-in user
+      description: |
+        Stores the token under `users/{uid}`. Safe to call on every app launch (idempotent with a fully-replacing body).
+        Keeps the last 5 distinct tokens in `fcmTokenHistory` for audit. The `token` field must be 20–4096 characters
+        (real FCM tokens are ~150 chars).
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FcmTokenInput' } } } }
+      responses:
+        '200': { description: Stored, content: { application/json: { schema: { $ref: '#/components/schemas/FcmTokenResult' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/me/feedback:
+    post:
+      tags: [Profile]
+      summary: Submit one-shot user feedback
+      description: |
+        Stores a 1–5 star rating and optional free-text comment under `feedback/{id}`. The uid and email come
+        from the verified token, not the body — an attacker cannot forge another user's feedback.
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/FeedbackInput' } } } }
+      responses:
+        '201': { description: Recorded, content: { application/json: { schema: { $ref: '#/components/schemas/FeedbackResult' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/admin/broadcast:
+    post:
+      tags: [Rewards]
+      summary: Admin-only FCM topic broadcast (requires custom claim admin=true)
+      description: |
+        Sends a notification to a fixed set of FCM topics. Requires the caller's Firebase ID token to carry
+        the custom claim `admin: true`; every other caller gets 403. The admin claim is set on the test account
+        via `backend/scripts/set-admin-claim.md`.
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BroadcastInput' } } } }
+      responses:
+        '200': { description: Broadcast accepted by FCM, content: { application/json: { schema: { $ref: '#/components/schemas/BroadcastResult' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { description: Caller lacks admin claim, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /api/v1/weight-entries:
+    get:
+      tags: [Body]
+      summary: List weight entries (newest first)
+      parameters:
+        - { $ref: '#/components/parameters/From' }
+        - { $ref: '#/components/parameters/To' }
+      responses:
+        '200': { description: Entries, content: { application/json: { schema: { $ref: '#/components/schemas/WeightEntryList' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/weight-entries/{id}:
+    parameters: [{ $ref: '#/components/parameters/Id' }]
+    put:
+      tags: [Body]
+      summary: Upsert a weight entry (also refreshes the profile's current weight)
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/WeightEntryInput' } } } }
+      responses:
+        '200': { description: Stored entry, headers: { X-Applied: { $ref: '#/components/headers/XApplied' } }, content: { application/json: { schema: { $ref: '#/components/schemas/WeightEntry' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      tags: [Body]
+      summary: Delete a weight entry
+      responses:
+        '204': { description: Deleted (or already absent) }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/goals/current:
+    get:
+      tags: [Body]
+      summary: Current weight goal
+      responses:
+        '200': { description: Goal, content: { application/json: { schema: { $ref: '#/components/schemas/Goal' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/nutrition-goals/current:
+    get:
+      tags: [Nutrition]
+      summary: Current nutrition goals
+      responses:
+        '200': { description: Goals, content: { application/json: { schema: { $ref: '#/components/schemas/NutritionGoals' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/workout-goals/current:
+    get:
+      tags: [Workouts]
+      summary: Current workout goals
+      responses:
+        '200': { description: Goals, content: { application/json: { schema: { $ref: '#/components/schemas/WorkoutGoals' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /api/v1/food-logs:
+    get:
+      tags: [Nutrition]
+      summary: List food logs for a day or a range
+      parameters:
+        - { name: date, in: query, schema: { type: string, format: date }, description: One day. Takes priority over from/to. }
+        - { $ref: '#/components/parameters/From' }
+        - { $ref: '#/components/parameters/To' }
+      responses:
+        '200': { description: Logs, content: { application/json: { schema: { $ref: '#/components/schemas/FoodLogList' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/nutrition/summary:
+    get:
+      tags: [Nutrition]
+      summary: Daily totals, remaining calories and per-meal progress (calculated on the server)
+      parameters:
+        - { name: date, in: query, required: true, schema: { type: string, format: date } }
+      responses:
+        '200': { description: Summary, content: { application/json: { schema: { $ref: '#/components/schemas/DailySummary' } } } }
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/workout-sessions:
+    get:
+      tags: [Workouts]
+      summary: List workout sessions (newest first)
+      parameters:
+        - { $ref: '#/components/parameters/From' }
+        - { $ref: '#/components/parameters/To' }
+      responses:
+        '200': { description: Sessions, content: { application/json: { schema: { $ref: '#/components/schemas/WorkoutSessionList' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/v1/rewards:
+    get:
+      tags: [Rewards]
+      summary: Particle wallet, level and reward offers with per-user status
+      responses:
+        '200': { description: Rewards, content: { application/json: { schema: { $ref: '#/components/schemas/RewardsOverview' } } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: Firebase ID token }
+  headers:
+    XApplied:
+      description: '`false` when the write was older than the stored data and was ignored (last-write-wins).'
+      schema: { type: string, enum: ['true', 'false'] }
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: 'Client-generated id (UUID recommended). Letters, digits and the characters _ - : . only, max 128.'
+      schema: { type: string, pattern: '^[A-Za-z0-9_:.-]{1,128}$' }
+    From: { name: from, in: query, schema: { type: string, format: date }, description: Inclusive start date. }
+    To: { name: to, in: query, schema: { type: string, format: date }, description: Inclusive end date. }
+  responses:
+    Unauthorized: { description: Missing, malformed or expired token, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    NotFound: { description: Not found, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    ValidationError: { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId]
+          properties:
+            code: { type: string, example: VALIDATION_FAILED }
+            message: { type: string }
+            details: { type: array, items: { type: object, properties: { field: { type: string }, message: { type: string } } } }
+            requestId: { type: string }
+    Gender: { type: string, enum: [MALE, FEMALE, OTHER] }
+    ActivityLevel: { type: string, enum: [SEDENTARY, LIGHTLY_ACTIVE, MODERATELY_ACTIVE, VERY_ACTIVE, EXTREMELY_ACTIVE] }
+    GoalDirection: { type: string, enum: [LOSE, MAINTAIN, GAIN] }
+    MealType: { type: string, enum: [BREAKFAST, LUNCH, DINNER, SNACK] }
+    Timestamp: { type: string, format: date-time, description: ISO-8601. Used for last-write-wins. }
+    ProfileInput:
+      type: object
+      required: [firstName, gender, age, heightCm, activityLevel, updatedAt]
+      properties:
+        firstName: { type: string, minLength: 1, maxLength: 50, description: Not blank after trimming. }
+        surname: { type: string, maxLength: 50 }
+        email: { type: string, format: email }
+        gender: { $ref: '#/components/schemas/Gender' }
+        age: { type: integer, minimum: 1, maximum: 120 }
+        heightCm: { type: number, minimum: 80, maximum: 250 }
+        activityLevel: { $ref: '#/components/schemas/ActivityLevel' }
+        profileImageUrl: { type: string, nullable: true }
+        biometricEnabled: { type: boolean }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+    Profile:
+      allOf:
+        - $ref: '#/components/schemas/ProfileInput'
+        - type: object
+          required: [id, startingWeightKg, currentWeightKg, onboardingComplete, createdAt]
+          properties:
+            id: { type: string, description: Firebase UID }
+            startingWeightKg: { type: number }
+            currentWeightKg: { type: number }
+            onboardingComplete: { type: boolean }
+            createdAt: { $ref: '#/components/schemas/Timestamp' }
+    OnboardingInput:
+      type: object
+      required: [firstName, gender, age, heightCm, weightKg, activityLevel]
+      properties:
+        firstName: { type: string, minLength: 1, maxLength: 50 }
+        surname: { type: string, maxLength: 50 }
+        email: { type: string, format: email }
+        gender: { $ref: '#/components/schemas/Gender' }
+        age: { type: integer, minimum: 1, maximum: 120 }
+        heightCm: { type: number, minimum: 80, maximum: 250 }
+        weightKg: { type: number, minimum: 20, maximum: 400 }
+        targetWeightKg: { type: number, minimum: 20, maximum: 400, nullable: true }
+        activityLevel: { $ref: '#/components/schemas/ActivityLevel' }
+        biometricEnabled: { type: boolean }
+        localDate: { type: string, format: date, description: The phone's local date, used for dated records. Defaults to the server's UTC date. }
+    OnboardingResult:
+      type: object
+      required: [profile, weightEntry, goal, nutritionGoals, workoutGoals, checkpointSchedule, recommendation]
+      properties:
+        profile: { $ref: '#/components/schemas/Profile' }
+        weightEntry: { $ref: '#/components/schemas/WeightEntry' }
+        goal: { $ref: '#/components/schemas/Goal' }
+        nutritionGoals: { $ref: '#/components/schemas/NutritionGoals' }
+        workoutGoals: { $ref: '#/components/schemas/WorkoutGoals' }
+        checkpointSchedule: { type: object }
+        recommendation: { type: object }
+    WeightEntryInput:
+      type: object
+      required: [weightKg, date, updatedAt]
+      properties:
+        weightKg: { type: number, minimum: 20, maximum: 400 }
+        date: { type: string, format: date }
+        note: { type: string, maxLength: 200, nullable: true }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+    WeightEntry:
+      allOf:
+        - $ref: '#/components/schemas/WeightEntryInput'
+        - { type: object, required: [id], properties: { id: { type: string } } }
+    WeightEntryList: { type: object, required: [items], properties: { items: { type: array, items: { $ref: '#/components/schemas/WeightEntry' } } } }
+    Goal:
+      type: object
+      required: [id, targetWeightKg, direction, effectiveDate, currentWeightKgAtGoalSet, updatedAt]
+      properties:
+        id: { type: string }
+        targetWeightKg: { type: number }
+        direction: { $ref: '#/components/schemas/GoalDirection' }
+        effectiveDate: { type: string, format: date }
+        currentWeightKgAtGoalSet: { type: number }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+    NutritionGoals:
+      type: object
+      required: [id, recommendedDailyCalories, userDailyCalories, mealTargets, macroTargets, effectiveDate, updatedAt]
+      properties:
+        id: { type: string }
+        recommendedDailyCalories: { type: integer }
+        userDailyCalories: { type: integer }
+        mealTargets: { type: object }
+        macroTargets: { type: object }
+        effectiveDate: { type: string, format: date }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+    WorkoutGoals:
+      type: object
+      required: [id, sessionsPerWeek, monthlyActivityGoalKcal, updatedAt]
+      properties:
+        id: { type: string }
+        sessionsPerWeek: { type: integer }
+        monthlyActivityGoalKcal: { type: integer }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+    FoodLogList: { type: object, required: [items], properties: { items: { type: array, items: { type: object } } } }
+    DailySummary:
+      type: object
+      required: [date, totals, targetCalories, remainingCalories, meals]
+      properties:
+        date: { type: string, format: date }
+        totals: { type: object }
+        targetCalories: { type: integer, nullable: true }
+        remainingCalories: { type: number, nullable: true }
+        meals: { type: array, items: { type: object } }
+    WorkoutSessionList: { type: object, required: [items], properties: { items: { type: array, items: { type: object } } } }
+    RewardOffer:
+      type: object
+      required: [id, title, subtitle, costParticles, status]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        subtitle: { type: string }
+        costParticles: { type: integer }
+        status: { type: string, enum: [AVAILABLE, CLAIMED, INSUFFICIENT] }
+    RewardsOverview:
+      type: object
+      required: [balance, lifetimeEarned, level, particlesToNextLevel, offers]
+      properties:
+        balance: { type: integer }
+        lifetimeEarned: { type: integer }
+        level: { type: integer }
+        particlesToNextLevel: { type: integer }
+        offers: { type: array, items: { $ref: '#/components/schemas/RewardOffer' } }
+    ClaimResult:
+      type: object
+      required: [balance, lifetimeEarned]
+      properties:
+        balance: { type: integer }
+        lifetimeEarned: { type: integer }
+        claimedId: { type: string }
+    Summary:
+      type: object
+      required: [fromDate, toDate, calories, weightTrend, sessionsThisWeek, streak]
+      properties:
+        fromDate: { type: string, format: date }
+        toDate: { type: string, format: date }
+        calories:
+          type: array
+          items:
+            type: object
+            required: [date, kcal]
+            properties:
+              date: { type: string, format: date }
+              kcal: { type: integer }
+        weightTrend:
+          type: array
+          items:
+            type: object
+            required: [date, weightKg]
+            properties:
+              date: { type: string, format: date }
+              weightKg: { type: number }
+        sessionsThisWeek: { type: integer }
+        streak:
+          type: object
+          required: [current, longest, todayDone, atRisk]
+          properties:
+            current: { type: integer }
+            longest: { type: integer }
+            todayDone: { type: boolean }
+            atRisk: { type: boolean }
+    FcmTokenInput:
+      type: object
+      required: [token]
+      properties:
+        token: { type: string, minLength: 20, maxLength: 4096 }
+        language: { type: string, enum: [en, zu, af] }
+    FcmTokenResult:
+      type: object
+      required: [ok, updatedAt, tokenPrefix, previousTokenPrefix]
+      properties:
+        ok: { type: boolean }
+        updatedAt: { $ref: '#/components/schemas/Timestamp' }
+        tokenPrefix: { type: string, description: First 8 chars of the new token. }
+        previousTokenPrefix: { type: string, nullable: true, description: First 8 chars of the previous token, or null on first registration. }
+    FeedbackInput:
+      type: object
+      required: [rating]
+      properties:
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        message: { type: string, maxLength: 2000 }
+        appVersion: { type: string, maxLength: 32 }
+    FeedbackResult:
+      type: object
+      required: [ok, id, createdAt]
+      properties:
+        ok: { type: boolean }
+        id: { type: string }
+        createdAt: { $ref: '#/components/schemas/Timestamp' }
+    BroadcastInput:
+      type: object
+      required: [title, body, topic]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 120 }
+        body: { type: string, minLength: 1, maxLength: 500 }
+        topic: { type: string, enum: [fithub_all, fithub_reminders, fithub_streaks] }
+    BroadcastResult:
+      type: object
+      required: [ok, messageId, topic]
+      properties:
+        ok: { type: boolean }
+        messageId: { type: string }
+        topic: { type: string }
