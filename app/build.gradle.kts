@@ -43,6 +43,10 @@ android {
             targetCompatibility = JavaVersion.VERSION_17
         }
 
+        // Use for testing
+        testOptions {
+            unitTests.isReturnDefaultValues = true
+        }
 
         buildFeatures {
             compose = true;
@@ -66,10 +70,6 @@ android {
 
     }
 
-    /*jvm tool
-kotlin {
-    jvmToolchain(17)
-}*/
 
     dependencies {
         // Core
