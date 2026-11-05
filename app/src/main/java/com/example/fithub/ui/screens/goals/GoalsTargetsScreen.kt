@@ -22,7 +22,10 @@ fun GoalsTargetsScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (state.isLoading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             CircularProgressIndicator()
         }
         return
@@ -38,28 +41,36 @@ fun GoalsTargetsScreen(
             startingWeightKg = state.startingWeightKg,
             currentWeightKg = state.currentWeightKg,
             goal = state.goal,
-            onManageClick = { onNavigate(Screen.WEIGHT_GOAL) }
+            onManageClick = {
+                onNavigate(Screen.WEIGHT_GOAL)
+            }
         )
 
         Spacer(Modifier.height(16.dp))
 
         NutritionGoalsCard(
             goals = state.nutritionGoals,
-            onManageClick = { onNavigate(Screen.NUTRITION_GOALS) }
+            onManageClick = {
+                onNavigate(Screen.NUTRITION_GOALS)
+            }
         )
 
         Spacer(Modifier.height(16.dp))
 
         WorkoutGoalsCard(
             goals = state.workoutGoals,
-            onManageClick = { onNavigate(Screen.WORKOUT_GOALS) }
+            onManageClick = {
+                onNavigate(Screen.WORKOUT_GOALS)
+            }
         )
 
         Spacer(Modifier.height(16.dp))
 
         CheckpointSummaryCard(
             nextCheckpointDate = state.nextCheckpointDate,
-            onManageClick = { onNavigate(Screen.CHECKPOINT_MANAGER) }
+            onManageClick = {
+                onNavigate(Screen.CHECKPOINT_MANAGER)
+            }
         )
 
         Spacer(Modifier.height(24.dp))

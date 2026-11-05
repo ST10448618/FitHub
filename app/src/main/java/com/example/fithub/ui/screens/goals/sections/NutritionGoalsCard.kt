@@ -6,17 +6,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource          // ← ADDED
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.fithub.R                            // ← ADDED
 import com.example.fithub.domain.model.NutritionGoals
 import com.example.fithub.ui.components.RoundedCard
 import com.example.fithub.ui.components.SmallActionButton
 import com.example.fithub.ui.theme.FitHubPrimary
 import com.example.fithub.ui.theme.TextSecondary
 
-// ============================================================
-// OWNER: Track A (Perez) — nutrition goals
-// ============================================================
+
 @Composable
 fun NutritionGoalsCard(
     goals: NutritionGoals?,
@@ -28,23 +28,26 @@ fun NutritionGoalsCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Nutrition Goals",
+                stringResource(R.string.goals_nutrition_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-            SmallActionButton(text = "Manage →", onClick = onManageClick)
+            SmallActionButton(
+                text = stringResource(R.string.common_manage_arrow),
+                onClick = onManageClick
+            )
         }
         Spacer(Modifier.height(8.dp))
         Text(
-            "${goals?.userDailyCalories ?: 0} kcal",
+            stringResource(R.string.nutrition_overview_kcal_format, goals?.userDailyCalories ?: 0),
             style = MaterialTheme.typography.headlineMedium,
             color = FitHubPrimary,
             fontWeight = FontWeight.Bold
         )
         Text(
-            "Avg. Daily Calories",
+            stringResource(R.string.goals_nutrition_subtitle),
             style = MaterialTheme.typography.labelSmall,
             color = TextSecondary
         )
