@@ -1,0 +1,25 @@
+# AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
+# Phase 6B: Render.com free-tier deployment for the FitHub REST API.
+# Reference: https://render.com/docs/yaml-spec (accessed February 2026)
+
+services:
+  - type: web
+    name: fithub-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22.18.0
+      - key: NODE_ENV
+        value: production
+      - key: FIREBASE_SERVICE_ACCOUNT_B64
+        sync: false   # set in Render dashboard — never commit
+      - key: FIREBASE_PROJECT_ID
+        value: fithub-prog7314

@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment (never commit real values)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Firebase service-account keys — MUST never be committed
+serviceAccount*.json
+*-firebase-adminsdk-*.json
+
+# OS cruft
+.DS_Store
+Thumbs.db
