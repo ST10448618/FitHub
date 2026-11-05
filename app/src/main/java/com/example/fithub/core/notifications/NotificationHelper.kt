@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -13,17 +12,10 @@ import androidx.core.app.NotificationManagerCompat
 import com.example.fithub.MainActivity
 import com.example.fithub.R
 import com.example.fithub.core.LogTags
+import com.example.fithub.ui.navigation.Screen
 
 /**
  * Factory for every user-visible notification.
- *
- * Responsibilities:
- *  • idempotently create the two channels ([NotificationChannels.GENERAL],
- *    [NotificationChannels.REMINDERS]) at app start;
- *  • build a valid `NotificationCompat.Builder` with an immutable
- *    `PendingIntent` pointing at [MainActivity] and carrying an optional
- *    `route` extra for deep linking;
- *  • degrade gracefully when the user has revoked notification permission.
  *
  * References:
  *  • https://developer.android.com/develop/ui/views/notifications/build-notification
@@ -33,7 +25,6 @@ import com.example.fithub.core.LogTags
  */
 object NotificationHelper {
 
-    /** Called from `FitHubApplication.onCreate`. Safe to call repeatedly. */
     fun createChannels(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -58,12 +49,6 @@ object NotificationHelper {
         Log.i(LogTags.PUSH, "Notification channels registered (general + reminders)")
     }
 
-    /**
-     * Posts a notification through [NotificationManagerCompat].
-     *
-     * @param route optional deep-link target; sanitised before it is put in the
-     *   intent so only whitelisted destinations can be reached from a push.
-     */
     fun showNotification(
         context: Context,
         channelId: String = NotificationChannels.GENERAL,
@@ -83,7 +68,7 @@ object NotificationHelper {
         }
         val pendingIntent = PendingIntent.getActivity(
             context,
-            /* requestCode = */ notificationId, // unique per notification → no reuse
+            notificationId,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -100,22 +85,30 @@ object NotificationHelper {
             .build()
 
         try {
-            NotificationManagerCompat.from(context)
-                .notify(notificationId, notification)
-            Log.i(
-                LogTags.PUSH,
-                "Notification posted channel=$channelId id=$notificationId route=${safeRoute ?: "null"}"
-            )
+            NotificationManagerCompat.from(context).notify(notificationId, notification)
+            Log.i(LogTags.PUSH, "Notification posted channel=$channelId id=$notificationId route=${safeRoute ?: "null"}")
         } catch (t: SecurityException) {
-            // POST_NOTIFICATIONS was revoked between the check above and now.
             Log.e(LogTags.PUSH, "Notification post failed — permission revoked", t)
         }
     }
 
-    /** Extra key used by [MainActivity] to read the deep-link route. */
-    const val EXTRA_ROUTE: String = "com.example.fithub.extra.ROUTE"
+    /**
+     * Phase 6 (UDF 5): fires the streak-milestone congratulation notification.
+     * Respects the in-app push preference; the caller is responsible for
+     * having created the channels in `FitHubApplication.onCreate`.
+     */
+    fun showStreakMilestone(context: Context, days: Int) {
+        if (days <= 0) return
+        showNotification(
+            context = context,
+            channelId = NotificationChannels.GENERAL,
+            notificationId = 9000 + days,
+            title = context.getString(R.string.streak_milestone_notification_title),
+            body = context.getString(R.string.streak_milestone_notification_body, days),
+            route = Screen.DASHBOARD
+        )
+        Log.i(LogTags.STREAK, "Milestone notification fired for $days days")
+    }
 
-    /** Optional test accent colour (unchanged in production). */
-    @Suppress("unused")
-    private const val ACCENT_HEX = "#212C99"
+    const val EXTRA_ROUTE: String = "com.example.fithub.extra.ROUTE"
 }

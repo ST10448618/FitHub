@@ -17,7 +17,15 @@ data class DashboardUiState(
     val recentSessions: List<WorkoutSession> = emptyList(),
     val recommendedPlans: List<WorkoutPlan> = emptyList(),
     val weeklyCalories: List<DailyCalorieBar> = emptyList(),
-    val dailyCalorieTarget: Int = 0
+    val dailyCalorieTarget: Int = 0,
+
+    // ---------- Phase 6 (UDF 5): streaks + weekly challenge ----------
+    val currentStreak: Int = 0,
+    val longestStreak: Int = 0,
+    val todayDone: Boolean = false,
+    val streakAtRisk: Boolean = false,
+    val challengeCompleted: Int = 0,
+    val challengeTarget: Int = 0
 )
 
 /**

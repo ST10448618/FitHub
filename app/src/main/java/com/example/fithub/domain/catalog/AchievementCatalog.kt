@@ -22,6 +22,9 @@ object AchievementCatalog {
     const val WEEKLY_GOAL = "weekly_goal"
     const val WORKOUT_STREAK = "workout_streak"
     const val MONTHLY_MILESTONE = "monthly_milestone"
+    // ---- Streak milestones (UDF 5) ----
+    const val STREAK_3 = "streak_3"
+    const val STREAK_30 = "streak_30"
 
     val ALL: List<Achievement> = listOf(
         // ---- Nutrition ----
@@ -114,6 +117,30 @@ object AchievementCatalog {
             iconName = "medal",
             titleRes = R.string.achievement_monthly_milestone_title,
             descriptionRes = R.string.achievement_monthly_milestone_desc
+        )
+        ,
+        // ---- Streak milestones (UDF 5) ----
+        Achievement(
+            id = STREAK_3,
+            title = "3-Day Streak",
+            description = "Logged activity three days in a row.",
+            category = AchievementCategory.NUTRITION,
+            goalValue = 3,
+            rewardParticles = 100,
+            iconName = "medal",
+            titleRes = R.string.achievement_streak_3_title,
+            descriptionRes = R.string.achievement_streak_3_desc
+        ),
+        Achievement(
+            id = STREAK_30,
+            title = "30-Day Streak",
+            description = "One full month of daily activity.",
+            category = AchievementCategory.NUTRITION,
+            goalValue = 30,
+            rewardParticles = 500,
+            iconName = "medal",
+            titleRes = R.string.achievement_streak_30_title,
+            descriptionRes = R.string.achievement_streak_30_desc
         )
     )
 

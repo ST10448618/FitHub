@@ -111,6 +111,23 @@ fun DashboardScreen(
 
         Spacer(Modifier.height(16.dp))
 
+        // Phase 6 (UDF 5): streaks + weekly challenge
+        StreakCard(
+            currentStreak = state.currentStreak,
+            longestStreak = state.longestStreak,
+            todayDone = state.todayDone,
+            atRisk = state.streakAtRisk
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        WeeklyChallengeCard(
+            completed = state.challengeCompleted,
+            target = state.challengeTarget
+        )
+
+        Spacer(Modifier.height(20.dp))
+
         TodaysOverviewSection(
             snapshot = state.nutritionSnapshot,
             onAddMealClick = { onNavigate(Screen.ADD_MEAL) },

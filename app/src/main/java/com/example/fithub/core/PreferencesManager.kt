@@ -22,6 +22,9 @@ class PreferencesManager(private val context: Context) {
         val CLAIMED_REWARDS = stringPreferencesKey("claimed_rewards")
         val FCM_TOKEN = stringPreferencesKey("fcm_token")
         val NOTIFICATION_RATIONALE_SHOWN = booleanPreferencesKey("notification_rationale_shown")
+
+        /** Phase 6 (UDF 5): set of streak milestones already awarded. */
+        val STREAK_MILESTONES_HIT = stringPreferencesKey("streak_milestones_hit")
     }
 
     private val securityPrefs = context.applicationContext
@@ -42,17 +45,8 @@ class PreferencesManager(private val context: Context) {
     val pushNotificationsEnabled: Flow<Boolean> =
         context.dataStore.data.map { it[Keys.PUSH_NOTIFICATIONS] ?: true }
 
-    /**
-     * Language as a canonical ISO code (`en`, `zu`, `af`).
-     *
-     * Reads from DataStore (source of truth) but the value is normalised so
-     * that callers never see legacy `"ENGLISH"`/`"ZULU"`/`"AFRIKAANS"` values.
-     * New writes via [setLanguage] always store the canonical form.
-     */
     val language: Flow<String> =
-        context.dataStore.data.map {
-            LocaleCodes.normalise(it[Keys.LANGUAGE])
-        }
+        context.dataStore.data.map { LocaleCodes.normalise(it[Keys.LANGUAGE]) }
 
     val biometricEnabled: Flow<Boolean> =
         context.dataStore.data.map { it[Keys.BIOMETRIC_ENABLED] ?: false }
@@ -63,20 +57,35 @@ class PreferencesManager(private val context: Context) {
     val notificationRationaleShown: Flow<Boolean> =
         context.dataStore.data.map { it[Keys.NOTIFICATION_RATIONALE_SHOWN] ?: false }
 
+    // ---------- Phase 6 (UDF 5) ----------
+
+    /** Streak milestone IDs already awarded on this device ("3", "7", "14", "30"). */
+    val streakMilestonesHit: Flow<Set<String>> = context.dataStore.data.map { prefs ->
+        prefs[Keys.STREAK_MILESTONES_HIT]
+            ?.split(",")
+            ?.filter { it.isNotBlank() }
+            ?.toSet()
+            ?: emptySet()
+    }
+
+    suspend fun markStreakMilestoneHit(id: String) {
+        context.dataStore.edit { prefs ->
+            val current = prefs[Keys.STREAK_MILESTONES_HIT]
+                ?.split(",")
+                ?.filter { it.isNotBlank() }
+                .orEmpty()
+            val updated = (current + id).distinct()
+            prefs[Keys.STREAK_MILESTONES_HIT] = updated.joinToString(",")
+            Log.i(LogTags.STREAK, "Milestone awarded: $id (all=${updated.joinToString(",")})")
+        }
+    }
+
+    // ---------- Existing setters ----------
+
     suspend fun setPushNotifications(enabled: Boolean) {
         context.dataStore.edit { it[Keys.PUSH_NOTIFICATIONS] = enabled }
     }
 
-    /**
-     * Persists the language to DataStore AND to the synchronous mirror read
-     * by [LocaleManager.wrap] inside `attachBaseContext`.
-     *
-     * The mirror write is synchronous (`apply()` — cheap, asynchronous disk
-     * flush) so the **next** cold start picks up the new language even if the
-     * DataStore actor hasn't fully committed. Order matters: mirror first so a
-     * crash between the two still leaves the app in the correct language on
-     * restart.
-     */
     suspend fun setLanguage(language: String) {
         val normalised = LocaleCodes.normalise(language)
         LocaleManager.persistSync(context, normalised)

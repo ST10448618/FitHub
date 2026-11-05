@@ -524,6 +524,33 @@
     <string name="checkpoint_logger_photo_progress">Oplaai-vordering: %1$d%%</string>
     <string name="checkpoint_logger_photo_desc">Gekose vorderingsfoto</string>
 
+    <!-- Phase 6 PART 2 : Streaks + Weekly Challenge (draft translation) -->
+
+    <plurals name="dashboard_streak_days_format">
+        <item quantity="one">%1$d-dag reeks</item>
+        <item quantity="other">%1$d-dag reeks</item>
+    </plurals>
+    <string name="dashboard_streak_empty_hint">Teken \'n maaltyd of oefening aan om jou reeks te begin.</string>
+    <string name="dashboard_streak_at_risk_hint">Teken vandag iets aan om dit lewendig te hou!</string>
+    <string name="dashboard_streak_today_done_hint">Vandag klaar ✓ — sien jou môre.</string>
+    <string name="dashboard_streak_keep_going_hint">Hou so aan!</string>
+    <string name="dashboard_streak_best_label">Beste</string>
+    <string name="dashboard_streak_best_format">%1$d dae</string>
+
+    <string name="dashboard_challenge_title">Weeklikse uitdaging</string>
+    <string name="dashboard_challenge_subtitle">Voltooi jou weeklikse oefendoelwit.</string>
+    <string name="dashboard_challenge_done">Voltooi! 🎉</string>
+    <string name="dashboard_challenge_remaining">%1$d oor</string>
+    <string name="dashboard_challenge_progress_format">%1$d / %2$d oefeninge hierdie week</string>
+
+    <string name="streak_milestone_notification_title">🔥 Reeksmylpaal!</string>
+    <string name="streak_milestone_notification_body">Jy het \'n %1$d-dag reeks bereik. Hou so aan!</string>
+
+    <string name="achievement_streak_3_title">3-dag reeks</string>
+    <string name="achievement_streak_3_desc">Aktiwiteit drie dae in \'n ry aangeteken.</string>
+    <string name="achievement_streak_30_title">30-dag reeks</string>
+    <string name="achievement_streak_30_desc">\'n Volle maand van daaglikse aktiwiteit.</string>
+
 
 
 
