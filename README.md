@@ -38,7 +38,8 @@ This repository represents the **Final POE (v2.0.0)** submission. Building upon 
 - 🔔 **Real-time Push Notifications:** Implemented Firebase Cloud Messaging (FCM) with deep-linking, local checkpoint reminders (WorkManager), and an in-app diagnostics panel.
 - 🌍 **Multi-Language Support:** Full localisation infrastructure supporting **English**, **isiZulu (zu)**, and **Afrikaans (af)** using system locales and `stringResource`.
 - ☁️ **Custom REST API (Blob Storage & NoSQL):** Replaced prototype mocks with a custom hosted Express/Node.js API on Firebase Cloud Functions. Integrated Firebase Storage for profile and progress photos.
-- 🏆 **User-Defined Features:** "Daily Streak & Weekly Challenge" tracking and a "Progress Photo Timeline" gallery.
+- 🏆 **User-Defined Feature 1 :** "Daily Streak & Weekly Challenge" tracking
+- 🏆 **User-Defined Feature 2 :** "Progress Photo Timeline" gallery.
 
 ---
 
