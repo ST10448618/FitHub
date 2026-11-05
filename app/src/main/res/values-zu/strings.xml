@@ -748,4 +748,27 @@
     <string name="achievement_monthly_milestone_title">Isigaba Senyanga</string>
     <string name="achievement_monthly_milestone_desc">Ufinyelele inhloso yomsebenzi wenyanga.</string>
 
+    <!-- Phase 6 PART 1 : Progress Photo Timeline (draft translation) -->
+
+    <string name="progress_gallery_title">Izithombe Zenqubekela Phambili</string>
+    <string name="progress_gallery_empty_title">Azikho izithombe okwamanje</string>
+    <string name="progress_gallery_empty_body">Namathisela isithombe uma ulotha isisindo futhi sizovela lapha.</string>
+    <string name="progress_gallery_compare_title">Ngaphambili vs Manje</string>
+    <string name="progress_gallery_before">Ngaphambili</string>
+    <string name="progress_gallery_now">Manje</string>
+    <string name="progress_gallery_kg_at_date">%1$d kg · %2$s</string>
+    <string name="progress_gallery_kg_format">%1$d kg</string>
+    <string name="progress_gallery_delta_format">%1$s kg ushintsho</string>
+    <string name="progress_gallery_all_photos">Zonke izithombe</string>
+    <string name="progress_gallery_photo_desc">Isithombe senqubekela phambili</string>
+    <string name="progress_gallery_entry_title">Izithombe Zenqubekela Phambili</string>
+    <string name="progress_gallery_entry_subtitle">Izithombe ezingu-%1$d — thepha ukuze ubone</string>
+
+    <string name="checkpoint_logger_photo_title">Isithombe senqubekela phambili (kungokuzithandela)</string>
+    <string name="checkpoint_logger_photo_subtitle">Khetha isithombe kugalari yakho. Akukho okulayishwayo ngaphandle kokuthi uthepha u-Bhala Isisindo.</string>
+    <string name="checkpoint_logger_photo_pick">📷  Khetha isithombe</string>
+    <string name="checkpoint_logger_photo_remove">Susa</string>
+    <string name="checkpoint_logger_photo_progress">Inqubekela phambili yokulayisha: %1$d%%</string>
+    <string name="checkpoint_logger_photo_desc">Isithombe senqubekela phambili esikhethiwe</string>
+
 </resources>

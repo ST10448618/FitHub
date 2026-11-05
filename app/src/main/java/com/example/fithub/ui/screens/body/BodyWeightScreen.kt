@@ -1,3 +1,4 @@
+// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.ui.screens.body
 
 import androidx.compose.foundation.background
@@ -16,32 +17,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fithub.R
+import com.example.fithub.core.i18n.LocaleManager
 import com.example.fithub.ui.charts.DonutProgress
 import com.example.fithub.ui.charts.WeightJourneyChart
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @Composable
 fun BodyWeightScreen(
     onBack: () -> Unit,
     onLogWeightClick: () -> Unit,
     onManageCheckpointsClick: () -> Unit,
+    onOpenProgressGallery: () -> Unit = {},
     viewModel: BodyWeightViewModel = viewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val locale = Locale.forLanguageTag(LocaleManager.currentCode(context))
+    val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "Body & Weight", onBack = onBack)
+        AppHeader(title = stringResource(R.string.body_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -56,20 +67,17 @@ fun BodyWeightScreen(
         ) {
             Spacer(Modifier.height(4.dp))
 
-            // ---- Weight Data Card ----
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Weight Data",
+                    stringResource(R.string.body_weight_data),
                     style = MaterialTheme.typography.titleMedium,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
-
                 Spacer(Modifier.height(12.dp))
 
-                // Donut progress toward goal
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
@@ -78,15 +86,21 @@ fun BodyWeightScreen(
                         progress = state.progressPercent / 100f,
                         size = 150.dp,
                         strokeWidth = 18.dp,
-                        centerValue = "${state.progressPercent}%",
-                        centerLabel = "Achieved"
+                        centerValue = stringResource(
+                            R.string.dashboard_percent_format,
+                            state.progressPercent
+                        ),
+                        centerLabel = stringResource(R.string.body_achieved)
                     )
                 }
 
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = "GOAL: ${state.targetWeightKg?.toInt() ?: "—"} kg",
+                    text = stringResource(
+                        R.string.body_goal_format,
+                        state.targetWeightKg?.toInt() ?: stringResource(R.string.common_dash)
+                    ),
                     style = MaterialTheme.typography.labelMedium,
                     color = TextSecondary,
                     modifier = Modifier.fillMaxWidth(),
@@ -96,7 +110,12 @@ fun BodyWeightScreen(
                 Spacer(Modifier.height(16.dp))
 
                 Text(
-                    text = "Current Weight : ${state.currentWeightKg?.let { "${it.toInt()} kg" } ?: "—"}",
+                    text = stringResource(
+                        R.string.body_current_weight_format,
+                        state.currentWeightKg?.let {
+                            stringResource(R.string.journal_body_kg_format, it.toInt())
+                        } ?: stringResource(R.string.common_dash)
+                    ),
                     style = MaterialTheme.typography.titleLarge,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold,
@@ -104,11 +123,13 @@ fun BodyWeightScreen(
                     textAlign = TextAlign.Center
                 )
 
-                if (state.deltaFromLastMeasureKg != null) {
-                    val delta = state.deltaFromLastMeasureKg!!
+                state.deltaFromLastMeasureKg?.let { delta ->
                     val sign = if (delta >= 0) "+" else ""
                     Text(
-                        text = "$sign${String.format("%.1f", delta)} kg from last measure",
+                        text = stringResource(
+                            R.string.body_delta_from_last,
+                            "$sign${String.format(locale, "%.1f", delta)}"
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary,
                         modifier = Modifier.fillMaxWidth(),
@@ -118,9 +139,8 @@ fun BodyWeightScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Journey chart
                 Text(
-                    text = "Your Journey So Far",
+                    text = stringResource(R.string.body_journey_title),
                     style = MaterialTheme.typography.titleSmall,
                     color = FitHubPrimary,
                     fontWeight = FontWeight.Bold
@@ -136,8 +156,8 @@ fun BodyWeightScreen(
                     )
                 } else {
                     EmptyState(
-                        title = "Not enough data yet",
-                        message = "Log at least two weigh-ins to see your journey.",
+                        title = stringResource(R.string.body_not_enough_data_title),
+                        message = stringResource(R.string.body_not_enough_data_body),
                         emoji = "📉"
                     )
                 }
@@ -145,7 +165,7 @@ fun BodyWeightScreen(
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = "Every point shows one of your recorded weigh-ins.",
+                    text = stringResource(R.string.body_journey_note),
                     style = MaterialTheme.typography.labelSmall,
                     color = TextSecondary,
                     modifier = Modifier.fillMaxWidth(),
@@ -155,12 +175,55 @@ fun BodyWeightScreen(
                 Spacer(Modifier.height(16.dp))
 
                 PrimaryButton(
-                    text = "⚖  Log Current Weight",
+                    text = "⚖  " + stringResource(R.string.body_log_weight_button),
                     onClick = onLogWeightClick
                 )
             }
 
             Spacer(Modifier.height(16.dp))
+
+            // ---- Progress Photos tile (Phase 6 / UDF 4) ----
+            if (state.photoCount > 0) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(CardWhite)
+                        .clickable(onClick = onOpenProgressGallery)
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(FitHubLightBlue),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("📸", style = MaterialTheme.typography.titleLarge)
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.progress_gallery_entry_title),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = FitHubPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                stringResource(
+                                    R.string.progress_gallery_entry_subtitle,
+                                    state.photoCount
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextSecondary
+                            )
+                        }
+                        Text("›", color = FitHubPrimary, style = MaterialTheme.typography.titleLarge)
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+            }
 
             // ---- BMI Card ----
             RoundedCard(modifier = Modifier.fillMaxWidth()) {
@@ -169,14 +232,14 @@ fun BodyWeightScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Your BMI",
+                        stringResource(R.string.body_bmi_title),
                         style = MaterialTheme.typography.titleMedium,
                         color = FitHubPrimary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        "Based on your last weight in",
+                        stringResource(R.string.body_bmi_source),
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )
@@ -186,13 +249,14 @@ fun BodyWeightScreen(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        state.bmi?.let { String.format("%.2f", it) } ?: "—",
+                        state.bmi?.let { String.format(locale, "%.2f", it) }
+                            ?: stringResource(R.string.common_dash),
                         style = MaterialTheme.typography.headlineLarge,
                         color = FitHubPrimary,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(Modifier.width(12.dp))
-                    BmiBadge(state.bmiLabel)
+                    state.bmiLabelRes?.let { BmiBadge(stringResource(it)) }
                 }
 
                 Spacer(Modifier.height(16.dp))
@@ -205,16 +269,15 @@ fun BodyWeightScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    BmiLegendDot("Under weight", WarningOrange)
-                    BmiLegendDot("Healthy", SuccessGreen)
-                    BmiLegendDot("Overweight", Color(0xFFFFC107))
-                    BmiLegendDot("Obese", ErrorRed)
+                    BmiLegendDot(stringResource(R.string.bmi_underweight), WarningOrange)
+                    BmiLegendDot(stringResource(R.string.bmi_healthy), SuccessGreen)
+                    BmiLegendDot(stringResource(R.string.bmi_overweight), Color(0xFFFFC107))
+                    BmiLegendDot(stringResource(R.string.bmi_obese), ErrorRed)
                 }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // ---- Next Checkpoint Banner ----
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -236,16 +299,17 @@ fun BodyWeightScreen(
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Next Weight In Checkpoint : " +
-                                    (state.nextCheckpointDate?.format(
-                                        DateTimeFormatter.ofPattern("d MMMM yyyy")
-                                    ) ?: "—"),
+                            stringResource(
+                                R.string.body_next_checkpoint_format,
+                                state.nextCheckpointDate?.format(dateFormatter)
+                                    ?: stringResource(R.string.common_dash)
+                            ),
                             style = MaterialTheme.typography.titleSmall,
                             color = FitHubPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Click Here to Manage Checkpoints",
+                            stringResource(R.string.body_manage_checkpoints_cta),
                             style = MaterialTheme.typography.labelSmall,
                             color = TextSecondary
                         )
@@ -260,11 +324,15 @@ fun BodyWeightScreen(
 
 @Composable
 private fun BmiBadge(label: String) {
+    val under = stringResource(R.string.bmi_underweight)
+    val healthy = stringResource(R.string.bmi_healthy)
+    val overweight = stringResource(R.string.bmi_overweight)
+    val obese = stringResource(R.string.bmi_obese)
     val (bg, fg) = when (label) {
-        "Under weight" -> WarningOrange.copy(alpha = 0.15f) to WarningOrange
-        "Healthy" -> SuccessGreen.copy(alpha = 0.15f) to SuccessGreen
-        "Overweight" -> Color(0xFFFFC107).copy(alpha = 0.15f) to Color(0xFF996A00)
-        "Obese" -> ErrorRed.copy(alpha = 0.15f) to ErrorRed
+        under -> WarningOrange.copy(alpha = 0.15f) to WarningOrange
+        healthy -> SuccessGreen.copy(alpha = 0.15f) to SuccessGreen
+        overweight -> Color(0xFFFFC107).copy(alpha = 0.15f) to Color(0xFF996A00)
+        obese -> ErrorRed.copy(alpha = 0.15f) to ErrorRed
         else -> SurfaceGray to TextSecondary
     }
     Box(
@@ -291,22 +359,13 @@ private fun BmiScaleBar(bmi: Double?) {
             .clip(RoundedCornerShape(6.dp))
             .background(
                 Brush.horizontalGradient(
-                    colors = listOf(
-                        WarningOrange,
-                        SuccessGreen,
-                        Color(0xFFFFC107),
-                        ErrorRed
-                    )
+                    colors = listOf(WarningOrange, SuccessGreen, Color(0xFFFFC107), ErrorRed)
                 )
             )
     ) {
         if (bmi != null) {
-            // Position marker on the scale (very rough mapping: 15..40 BMI)
             val frac = ((bmi - 15.0) / 25.0).coerceIn(0.0, 1.0).toFloat()
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(frac)
-            ) {
+            Box(modifier = Modifier.fillMaxWidth(frac)) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
@@ -320,7 +379,7 @@ private fun BmiScaleBar(bmi: Double?) {
 }
 
 @Composable
-private fun BmiLegendDot(label: String, color: androidx.compose.ui.graphics.Color) {
+private fun BmiLegendDot(label: String, color: Color) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier

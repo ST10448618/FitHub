@@ -1,3 +1,4 @@
+// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.data.local.mapper
 
 import com.example.fithub.data.local.entity.WeightEntryEntity
@@ -10,7 +11,8 @@ object WeightLocalMapper {
         weightKg = e.weightKg,
         date = e.date,
         note = e.note,
-        createdAt = e.createdAt
+        createdAt = e.createdAt,
+        photoUrl = e.photoUrl
     )
 
     fun toEntity(d: WeightEntry) = WeightEntryEntity(
@@ -19,6 +21,7 @@ object WeightLocalMapper {
         weightKg = d.weightKg,
         date = d.date,
         note = d.note,
-        createdAt = d.createdAt
+        createdAt = d.createdAt,
+        photoUrl = d.photoUrl
     )
 }

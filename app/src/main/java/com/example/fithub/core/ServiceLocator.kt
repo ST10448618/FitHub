@@ -8,6 +8,7 @@ import com.example.fithub.core.sync.PendingSyncStoreImpl
 import com.example.fithub.core.sync.RemoteGateway
 import com.example.fithub.core.sync.SyncManager
 import com.example.fithub.data.local.FitHubDatabase
+import com.example.fithub.data.remote.storage.StorageDataSource
 import com.example.fithub.data.repository.*
 import com.example.fithub.data.seed.SeedManager
 import com.example.fithub.domain.repository.*
@@ -103,6 +104,12 @@ object ServiceLocator {
             remote = remoteGateway,
             isOnline = { connectivityMonitor.isOnline.value }
         )
+    }
+
+    // ---------- Phase 6 (UDF 4): Blob Storage ----------
+
+    val storageDataSource: StorageDataSource by lazy {
+        StorageDataSource()
     }
 
     // ---------- Phase 1: Food API ----------

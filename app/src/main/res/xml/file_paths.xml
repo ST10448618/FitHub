@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FileProvider paths for FitHub.
+  Only the `pending_photos` subdirectory of the app-private `filesDir` is
+  exposed to external apps — used by the camera `TakePicture` flow, which
+  writes directly into a FileProvider URI in `files/pending_photos/`.
+  Reference: https://developer.android.com/training/camera/photobasics#TaskPath
+  (accessed February 2026)
+-->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path
+        name="pending_photos"
+        path="pending_photos/" />
+</paths>

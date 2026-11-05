@@ -54,6 +54,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+          Phase 6 (UDF 4): FileProvider for the camera "Take photo" flow.
+          Not used by the current PickVisualMedia picker, but wired now so a
+          future camera button only needs a new button in the Compose screen.
+          Reference: https://developer.android.com/training/camera/photobasics#TaskPath
+          (accessed February 2026)
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

@@ -1,3 +1,4 @@
+// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.data.remote.mapper
 
 import com.example.fithub.domain.model.WeightEntry
@@ -10,7 +11,8 @@ object WeightMapper {
         "weightKg" to w.weightKg,
         "date" to w.date.toString(),
         "note" to w.note,
-        "createdAt" to w.createdAt.toString()
+        "createdAt" to w.createdAt.toString(),
+        "photoUrl" to w.photoUrl
     )
 
     fun fromMap(id: String, userId: String, map: Map<String, Any?>): WeightEntry =
@@ -24,6 +26,7 @@ object WeightMapper {
             note = map["note"] as? String,
             createdAt = (map["createdAt"] as? String)?.let {
                 runCatching { LocalDateTime.parse(it) }.getOrNull()
-            } ?: LocalDateTime.now()
+            } ?: LocalDateTime.now(),
+            photoUrl = map["photoUrl"] as? String
         )
 }

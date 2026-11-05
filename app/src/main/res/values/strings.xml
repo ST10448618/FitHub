@@ -806,4 +806,29 @@
     <string name="achievement_monthly_milestone_title">Monthly Milestone</string>
     <string name="achievement_monthly_milestone_desc">Hit monthly activity goal.</string>
 
+    <!-- ========================================== -->
+    <!-- PHASE 6 PART 1 : Progress Photo Timeline   -->
+    <!-- ========================================== -->
+
+    <string name="progress_gallery_title">Progress Photos</string>
+    <string name="progress_gallery_empty_title">No photos yet</string>
+    <string name="progress_gallery_empty_body">Attach a photo when logging a weigh-in and it will show up here.</string>
+    <string name="progress_gallery_compare_title">Before vs Now</string>
+    <string name="progress_gallery_before">Before</string>
+    <string name="progress_gallery_now">Now</string>
+    <string name="progress_gallery_kg_at_date">%1$d kg · %2$s</string>
+    <string name="progress_gallery_kg_format">%1$d kg</string>
+    <string name="progress_gallery_delta_format">%1$s kg change</string>
+    <string name="progress_gallery_all_photos">All photos</string>
+    <string name="progress_gallery_photo_desc">Progress photo</string>
+    <string name="progress_gallery_entry_title">Progress Photos</string>
+    <string name="progress_gallery_entry_subtitle">%1$d photo(s) — tap to view</string>
+
+    <string name="checkpoint_logger_photo_title">Progress photo (optional)</string>
+    <string name="checkpoint_logger_photo_subtitle">Pick a photo from your gallery. Nothing is uploaded unless you tap Log Weight.</string>
+    <string name="checkpoint_logger_photo_pick">📷  Pick a photo</string>
+    <string name="checkpoint_logger_photo_remove">Remove</string>
+    <string name="checkpoint_logger_photo_progress">Upload progress: %1$d%%</string>
+    <string name="checkpoint_logger_photo_desc">Selected progress photo</string>
+
 </resources>

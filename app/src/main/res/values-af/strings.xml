@@ -501,6 +501,29 @@
     <string name="achievements_claim_format">Eis ✨ %1$d</string>
     <string name="achievements_progress_format">%1$d/%2$d  ✨ %3$d</string>
 
+    <!-- Phase 6 PART 1 : Progress Photo Timeline (draft translation) -->
+
+    <string name="progress_gallery_title">Vorderingsfoto\'s</string>
+    <string name="progress_gallery_empty_title">Nog geen foto\'s nie</string>
+    <string name="progress_gallery_empty_body">Heg \'n foto aan wanneer jy \'n weging aanteken en dit sal hier verskyn.</string>
+    <string name="progress_gallery_compare_title">Voor vs Nou</string>
+    <string name="progress_gallery_before">Voor</string>
+    <string name="progress_gallery_now">Nou</string>
+    <string name="progress_gallery_kg_at_date">%1$d kg · %2$s</string>
+    <string name="progress_gallery_kg_format">%1$d kg</string>
+    <string name="progress_gallery_delta_format">%1$s kg verandering</string>
+    <string name="progress_gallery_all_photos">Alle foto\'s</string>
+    <string name="progress_gallery_photo_desc">Vorderingsfoto</string>
+    <string name="progress_gallery_entry_title">Vorderingsfoto\'s</string>
+    <string name="progress_gallery_entry_subtitle">%1$d foto(\'s) — tik om te sien</string>
+
+    <string name="checkpoint_logger_photo_title">Vorderingsfoto (opsioneel)</string>
+    <string name="checkpoint_logger_photo_subtitle">Kies \'n foto uit jou galery. Niks word opgelaai tensy jy Tik Gewig druk nie.</string>
+    <string name="checkpoint_logger_photo_pick">📷  Kies \'n foto</string>
+    <string name="checkpoint_logger_photo_remove">Verwyder</string>
+    <string name="checkpoint_logger_photo_progress">Oplaai-vordering: %1$d%%</string>
+    <string name="checkpoint_logger_photo_desc">Gekose vorderingsfoto</string>
+
 
 
 

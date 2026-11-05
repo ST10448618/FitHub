@@ -1,3 +1,4 @@
+// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.ui.navigation
 
 object Screen {
@@ -6,7 +7,6 @@ object Screen {
     const val SPLASH = "splash"
     const val LANDING = "landing"
     const val LOGIN = "login"
-    /** Phase 1: biometric unlock screen shown on cold start when lock is on. */
     const val BIOMETRIC_GATE = "biometric_gate"
 
     const val ONBOARDING_USER_DETAILS = "onboarding/user_details"
@@ -35,6 +35,9 @@ object Screen {
     const val CHECKPOINT_LOGGER = "checkpoint_logger"
     const val CHECKPOINT_MANAGER = "checkpoint_manager"
     const val WEIGHT_GOAL = "weight_goal"
+
+    /** Phase 6 (UDF 4): progress photo gallery. */
+    const val PROGRESS_GALLERY = "progress_gallery"
 
     // ---------- Food ----------
     const val ADD_MEAL = "add_meal"
@@ -79,7 +82,7 @@ object Screen {
     // ---------- Achievements ----------
     const val ACHIEVEMENTS = "achievements"
 
-    // ---------- Builders (for parameterised routes) ----------
+    // ---------- Builders ----------
     fun foodDetails(foodId: String) = "food_details/$foodId"
     fun listFood(category: String) = "list_food/$category"
     fun workoutDetails(planId: String) = "workout_details/$planId"
@@ -88,15 +91,11 @@ object Screen {
     fun sessionCompleted(sessionId: String) = "session_completed/$sessionId"
 
     // ---------- Route groups ----------
-    /**
-     * Routes that display the permanent bottom navigation.
-     * Anything not in here hides the bottom bar (auth, onboarding, modals, sessions).
-     */
     val routesWithBottomBar: Set<String> = setOf(
         LIST_FOOD_LOGS,
         DASHBOARD, JOURNAL, PLANS, GOALS, REWARDS,
         PROGRESS_OVERVIEW, NUTRITION_OVERVIEW, WORKOUTS_OVERVIEW,
-        BODY_WEIGHT,
+        BODY_WEIGHT, PROGRESS_GALLERY,
         ADD_MEAL,
         VERIFIED_PLANS,
         PROFILE, EDIT_PROFILE, SETTINGS,
@@ -104,7 +103,6 @@ object Screen {
         BARCODE_SCANNER
     )
 
-    /** Main bottom-nav tab routes only. */
     val mainTabRoutes: Set<String> = setOf(
         DASHBOARD, JOURNAL, PLANS, GOALS, REWARDS
     )

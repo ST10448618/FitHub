@@ -1,3 +1,4 @@
+// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.data.repository
 
 import android.util.Log
@@ -29,9 +30,7 @@ class WeightRepositoryImpl(
 ) : WeightRepository {
 
     override fun observeAll(uid: String): Flow<List<WeightEntry>> =
-        dao.observeAll(uid).map { list ->
-            list.map(WeightLocalMapper::toDomain)
-        }
+        dao.observeAll(uid).map { list -> list.map(WeightLocalMapper::toDomain) }
 
     override fun observeLatest(uid: String): Flow<WeightEntry?> =
         dao.observeLatest(uid).map { it?.let(WeightLocalMapper::toDomain) }
@@ -39,10 +38,6 @@ class WeightRepositoryImpl(
     override suspend fun getLatest(uid: String): WeightEntry? =
         dao.getLatest(uid)?.let(WeightLocalMapper::toDomain)
 
-    /**
-     * Offline-first add. Room write + local profile `currentWeightKg` update +
-     * outbox UPSERT + SyncWorker enqueue. Never awaits Firestore.
-     */
     override suspend fun addEntry(entry: WeightEntry): Resource<Unit> = try {
         dao.upsert(WeightLocalMapper.toEntity(entry))
         userDao.updateCurrentWeight(
@@ -58,12 +53,6 @@ class WeightRepositoryImpl(
         Resource.Error(e.message ?: "Failed to save weight entry", e)
     }
 
-    /**
-     * Offline-first delete. Room delete + outbox DELETE. `entityId` is enough
-     * for the gateway to reconstruct the Firestore document path because it
-     * reads the userId from the local row at push time — if the row is already
-     * gone the remote delete is a no-op (documented behaviour).
-     */
     override suspend fun deleteEntry(entryId: String): Resource<Unit> = try {
         val entity = dao.getById(entryId)
             ?: return Resource.Error("Weight entry not found")
@@ -88,6 +77,22 @@ class WeightRepositoryImpl(
     } catch (e: Exception) {
         Log.e(LogTags.SYNC, "Weight syncFromRemote failed", e)
         Resource.Error(e.message ?: "Failed to sync weight entries", e)
+    }
+
+    override suspend fun updatePhotoUrl(entryId: String, photoUrl: String?): Resource<Unit> = try {
+        dao.updatePhotoUrl(entryId, photoUrl)
+        // Mirror into Firestore so the field survives re-install.
+        val entity = dao.getById(entryId)
+        if (entity != null) {
+            FirestorePaths.weightEntry(entity.userId, entryId)
+                .update("photoUrl", photoUrl)
+                .await()
+        }
+        Log.d(LogTags.STORAGE, "photoUrl updated for id=${entryId.take(8)}…")
+        Resource.Success(Unit)
+    } catch (e: Exception) {
+        Log.e(LogTags.STORAGE, "updatePhotoUrl failed", e)
+        Resource.Error(e.message ?: "Failed to save photo URL", e)
     }
 
     private suspend fun enqueueOutbox(userId: String, entityId: String, operation: String) {

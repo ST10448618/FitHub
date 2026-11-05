@@ -141,4 +141,6 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 }

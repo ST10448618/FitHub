@@ -1,6 +1,13 @@
+// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.ui.screens.body
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,13 +19,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.example.fithub.R
 import com.example.fithub.ui.components.*
 import com.example.fithub.ui.theme.*
 
@@ -30,6 +42,13 @@ fun CheckpointLoggerScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // Photo picker: no storage permission needed (uses the system photo picker).
+    val photoPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) viewModel.attachPhoto(uri)
+    }
+
     LaunchedEffect(state.saved) {
         if (state.saved) onSaved()
     }
@@ -39,7 +58,7 @@ fun CheckpointLoggerScreen(
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        AppHeader(title = "New Weigh In", onBack = onBack)
+        AppHeader(title = stringResource(R.string.checkpoint_logger_title), onBack = onBack)
 
         if (state.isLoading) {
             LoadingState()
@@ -54,7 +73,6 @@ fun CheckpointLoggerScreen(
         ) {
             Spacer(Modifier.height(8.dp))
 
-            // Hero banner
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -67,14 +85,10 @@ fun CheckpointLoggerScreen(
                     .padding(20.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "◎",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = Color.White
-                    )
+                    Text("◎", style = MaterialTheme.typography.headlineLarge, color = Color.White)
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Consistency brings results",
+                        stringResource(R.string.checkpoint_logger_hero_title),
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
@@ -82,7 +96,7 @@ fun CheckpointLoggerScreen(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Every weigh in is a part of your fitness journey",
+                        stringResource(R.string.checkpoint_logger_hero_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.9f),
                         textAlign = TextAlign.Center
@@ -93,7 +107,7 @@ fun CheckpointLoggerScreen(
             Spacer(Modifier.height(24.dp))
 
             Text(
-                "Current Weight",
+                stringResource(R.string.checkpoint_logger_current_weight),
                 style = MaterialTheme.typography.titleSmall,
                 color = FitHubPrimary,
                 fontWeight = FontWeight.Bold
@@ -107,12 +121,89 @@ fun CheckpointLoggerScreen(
                 step = 1,
                 min = 20,
                 max = 400,
-                unit = state.unit
+                unit = stringResource(R.string.common_unit_kg)
             )
+
+            Spacer(Modifier.height(20.dp))
+
+            // ---- Progress photo picker (Phase 6 / UDF 4) ----
+            Text(
+                stringResource(R.string.checkpoint_logger_photo_title),
+                style = MaterialTheme.typography.titleSmall,
+                color = FitHubPrimary,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                stringResource(R.string.checkpoint_logger_photo_subtitle),
+                style = MaterialTheme.typography.labelSmall,
+                color = TextSecondary
+            )
+            Spacer(Modifier.height(10.dp))
+
+            if (state.pendingPhotoUri != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(CardWhite)
+                ) {
+                    AsyncImage(
+                        model = state.pendingPhotoUri,
+                        contentDescription = stringResource(R.string.checkpoint_logger_photo_desc),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.Black.copy(alpha = 0.6f))
+                            .clickable { viewModel.clearPhoto() }
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.checkpoint_logger_photo_remove),
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    stringResource(R.string.checkpoint_logger_photo_progress, state.photoUploadPercent),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextSecondary
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(CardWhite)
+                        .border(1.dp, SurfaceGray, RoundedCornerShape(16.dp))
+                        .clickable {
+                            photoPicker.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        stringResource(R.string.checkpoint_logger_photo_pick),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = FitHubPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             Spacer(Modifier.height(16.dp))
 
-            // Progress banner
             viewModel.progressMessage()?.let { message ->
                 Box(
                     modifier = Modifier
@@ -121,15 +212,11 @@ fun CheckpointLoggerScreen(
                         .padding(14.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            "ⓘ",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = FitHubPrimary
-                        )
+                        Text("ⓘ", style = MaterialTheme.typography.titleLarge, color = FitHubPrimary)
                         Spacer(Modifier.width(12.dp))
                         Column {
                             Text(
-                                "PROGRESS DETECTED!",
+                                stringResource(R.string.checkpoint_logger_progress_detected),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = FitHubPrimary,
                                 fontWeight = FontWeight.Bold
@@ -144,21 +231,24 @@ fun CheckpointLoggerScreen(
                 }
             }
 
-            if (state.errorMessage != null) {
+            state.errorMessage?.let { err ->
                 Spacer(Modifier.height(12.dp))
-                Text(state.errorMessage!!, color = ErrorRed)
+                Text(err, color = ErrorRed)
             }
 
             Spacer(Modifier.height(28.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 SecondaryButton(
-                    text = "Cancel",
+                    text = stringResource(R.string.generic_cancel),
                     onClick = onBack,
                     modifier = Modifier.weight(1f)
                 )
                 PrimaryButton(
-                    text = if (state.isSaving) "Logging..." else "Log Weight",
+                    text = stringResource(
+                        if (state.isSaving) R.string.checkpoint_logger_logging
+                        else R.string.checkpoint_logger_log_button
+                    ),
                     onClick = viewModel::save,
                     enabled = !state.isSaving,
                     modifier = Modifier.weight(1f)

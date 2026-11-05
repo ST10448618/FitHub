@@ -1,3 +1,4 @@
+// AI-assisted (DeepSeek); reviewed and tested by the FitHub team.
 package com.example.fithub.data.local
 
 import android.content.Context
@@ -30,10 +31,9 @@ import com.example.fithub.data.local.entity.*
         CompletedExerciseEntity::class,
         UserAchievementEntity::class,
         ParticleBalanceEntity::class,
-        // Phase 3: outbox table for offline-first writes
         PendingSyncEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -54,8 +54,6 @@ abstract class FitHubDatabase : RoomDatabase() {
     abstract fun userAchievementDao(): UserAchievementDao
     abstract fun particleBalanceDao(): ParticleBalanceDao
     abstract fun workoutExerciseDao(): WorkoutExerciseDao
-
-    /** Phase 3: outbox DAO used by SyncManager and SyncStatusBanner. */
     abstract fun pendingSyncDao(): PendingSyncDao
 
     companion object {
@@ -64,24 +62,6 @@ abstract class FitHubDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: FitHubDatabase? = null
 
-        /**
-         * Room migration v1 → v2: adds the `pending_sync` outbox table.
-         *
-         * The CREATE TABLE below MUST match [PendingSyncEntity] exactly.
-         * If you change the entity, change this SQL in the same commit or
-         * Room's schema check will throw `IllegalStateException: Migration
-         * didn't properly handle…` at runtime.
-         *
-         * Verification procedure: install the pre-Phase-3 build (v1 DB on
-         * disk), upgrade-install the Phase-3 build without uninstalling —
-         * the app must launch and, in `logcat`, show
-         * `FitHub/Sync DB migrated to v2 (pending_sync ready)` without
-         * crashing. If you uninstall first, you cannot observe the
-         * migration path.
-         *
-         * Reference: https://developer.android.com/training/data-storage/room/migrating-db-versions
-         * (accessed February 2026)
-         */
         val MIGRATION_1_2: Migration = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
@@ -103,6 +83,30 @@ abstract class FitHubDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Room migration v2 → v3: adds the optional `photoUrl` column to
+         * `weight_entry` for the progress-photo timeline (Phase 6, UDF 4).
+         *
+         * The SQL matches [WeightEntryEntity] exactly: `photoUrl` is
+         * nullable `TEXT` with no default. Room checks schema at runtime and
+         * will throw if this drifts.
+         *
+         * Verification: install the Phase-5 build (DB v2 on disk), upgrade-
+         * install the Phase-6 build without uninstalling. Logcat must show
+         * `DB migrated to v3 (weight_entry.photoUrl)`.
+         *
+         * Reference: https://developer.android.com/training/data-storage/room/migrating-db-versions
+         * (accessed February 2026)
+         */
+        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE `weight_entry` ADD COLUMN `photoUrl` TEXT"
+                )
+                Log.i(LogTags.SYNC, "DB migrated to v3 (weight_entry.photoUrl)")
+            }
+        }
+
         fun getInstance(context: Context): FitHubDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(
@@ -110,15 +114,12 @@ abstract class FitHubDatabase : RoomDatabase() {
                     FitHubDatabase::class.java,
                     DB_NAME
                 )
-                    .addMigrations(MIGRATION_1_2)
-                    // Only allow downgrade to nuke — forward versions must be
-                    // explicit migrations. Never add fallbackToDestructiveMigration()
-                    // here; that would silently lose outbox rows on upgrade.
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .fallbackToDestructiveMigrationOnDowngrade()
                     .build()
                     .also {
                         INSTANCE = it
-                        Log.i(LogTags.SYNC, "FitHubDatabase instance created (version=2)")
+                        Log.i(LogTags.SYNC, "FitHubDatabase instance created (version=3)")
                     }
             }
         }
